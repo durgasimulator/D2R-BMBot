@@ -8,7 +8,7 @@ using static MapAreaStruc;
 
 public class Cows : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
     public Position TristramPos = new Position { X = 0, Y = 0 };
@@ -17,7 +17,10 @@ public class Cows : IBot
     public bool HadWirtsLeg = false;
 
     public bool HadTomeOfPortal = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -42,7 +45,6 @@ public class Cows : IBot
 
     public void RunScriptTristam()
     {
-        gameData = GameData.Instance;
         if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
@@ -270,7 +272,6 @@ public class Cows : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 public class Gamble
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public int GambleType = 0;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool CanGamble()
     {
         return (gameData.playerScan.PlayerGoldInStash >= CharConfig.GambleAboveGoldAmount);

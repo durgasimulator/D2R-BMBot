@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class Baal : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     //#####################################################
     //#####################################################
     //Special Run Variable
@@ -53,8 +53,10 @@ public class Baal : IBot
 
     public int SafeYoloStratIndex = 0;
     public int DefaultTakeRVPot = 0;
-
-  
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetVars()
     {
@@ -140,7 +142,6 @@ public class Baal : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 5; //set to town act 4 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

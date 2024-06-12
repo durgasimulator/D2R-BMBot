@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 public partial class FormCharSettings : Form
 {
+
     public List<CheckBox> AvailableSlotList = new List<CheckBox>();
     public Form1 Form1_0;
     public bool CanReloadSettings = true;

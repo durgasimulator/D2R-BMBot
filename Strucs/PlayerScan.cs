@@ -24,7 +24,7 @@ using static System.Windows.Forms.AxHost;
 
 public class PlayerScan
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public long PlayerPointer = 0;
     public long PlayerNamePointer = 0;
@@ -115,7 +115,10 @@ public class PlayerScan
     // REQUIRED METHODS
     //[DllImport("checkmem.dll")]
     //public static extern uint get_seed(uint InitSeedHash1, uint InitSeedHash2, uint EndSeedHash1);
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void GetPositions()
     {
         gameData.form.SetProcessingTime();

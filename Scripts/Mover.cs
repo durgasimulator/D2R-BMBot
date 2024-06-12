@@ -8,7 +8,7 @@ using static MapAreaStruc;
 
 public class Mover
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public int MaxMoveTry = 5; //default is 5
     public int MoveAcceptOffset = 4;
     public long StartAreaBeforeMoving = 0;
@@ -16,7 +16,10 @@ public class Mover
     public bool AllowFastMove = false;
 
     public DateTime LastTimeSinceTeleport = DateTime.Now;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool IsPositionNearOf(int ThisX, int ThisY, int Offset)
     {
         //gameData.playerScan.GetPositions();

@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class Chaos : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     //#####################################################
     //#####################################################
     //Special Run Variable
@@ -39,6 +39,10 @@ public class Chaos : IBot
     public bool CastedAtSeis = false;
 
     public bool FastChaosPopingSeals = false;
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetVars()
     {
@@ -61,7 +65,6 @@ public class Chaos : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 4; //set to town act 4 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

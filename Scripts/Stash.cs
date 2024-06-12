@@ -8,7 +8,7 @@ using static Enums;
 
 public class Stash
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public bool StashFull = false;
     Dictionary<string, int> LastitemScreenPos = new Dictionary<string, int>();
 
@@ -17,7 +17,10 @@ public class Stash
     public bool MakingCowPortal = false;
     public int DeposingGoldCount = 0;
 
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void RunStashScript()
     {
         if (StashFull) return;

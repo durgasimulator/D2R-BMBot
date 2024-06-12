@@ -8,7 +8,7 @@ using static MapAreaStruc;
 
 public class WPTaker : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
     public int TriedWPCount = 0;
@@ -18,7 +18,10 @@ public class WPTaker : IBot
     public int CurrentAct = 1;
     public int CurrentWPIndex = 1;
     public bool AdancedIndex = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         TriedWPCount = 0;
@@ -62,7 +65,6 @@ public class WPTaker : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = CurrentAct;
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

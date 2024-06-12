@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class StashStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public uint[] Stash1_ItemTxtNoList = new uint[100];
     public uint[] Stash2_ItemTxtNoList = new uint[100];
@@ -14,7 +14,10 @@ public class StashStruc
     public uint[] Stash4_ItemTxtNoList = new uint[100];
     public int CubeIndex = 0;
     public int CubeStashNumber = 0;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetStashInventory()
     {

@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class ChaosRush : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
     public bool DetectedBoss = false;
@@ -24,7 +24,10 @@ public class ChaosRush : IBot
     public int TryCountWaitingUniqueBoss = 0;
 
     public int BufferPathFindingMoveSize = 0;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -43,7 +46,6 @@ public class ChaosRush : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 4; //set to town act 4 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

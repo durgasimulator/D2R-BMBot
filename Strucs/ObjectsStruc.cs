@@ -10,7 +10,7 @@ using static System.Diagnostics.DebuggableAttribute;
 public class ObjectsStruc
 {
 
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public long ObjectPointerLocation = 0;
     public byte[] objectdatastruc = new byte[144];
@@ -31,6 +31,10 @@ public class ObjectsStruc
 
     public string ObjectOwnerName = "";
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void GetUnitData()
     {
         pUnitDataPtr = BitConverter.ToInt64(objectdatastruc, 0x10);

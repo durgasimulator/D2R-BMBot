@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 public class ItemsViewer
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public List<Bitmap> SoldItemsScreenshots = new List<Bitmap>();
     public Panel PicturePanel = new Panel();
@@ -36,8 +36,9 @@ public class ItemsViewer
         public int Bottom;
     }
 
-    public void Init()
+    public void Initialize(GameData gameData)
     {
+        this.gameData = gameData;
         PicturePanel.Size = new System.Drawing.Size(1, 1);
         PicturePanel.BackgroundImageLayout = ImageLayout.Stretch;
         PicturePanel.Visible = false;

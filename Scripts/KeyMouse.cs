@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 public class KeyMouse
 {
 
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public int ProcessingDelay = 1;
 
     private const int WH_KEYBOARD_LL = 13;
@@ -126,10 +126,9 @@ public class KeyMouse
     //###############################################
     //###############################################
 
-    public void Init()
+    public void Initialize(GameData gameData)
     {
-
-
+        this.gameData = gameData;
         sim = new InputSimulator();
 
         // Get the process ID of the target process

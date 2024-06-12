@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 public class Repair
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public bool ShouldRepair = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void RunRepairScript()
     {
         int tries = 0;

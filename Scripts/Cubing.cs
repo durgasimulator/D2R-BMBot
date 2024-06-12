@@ -8,7 +8,7 @@ using static Enums;
 
 public class Cubing
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public List<string> CubingRecipes = new List<string>();
     public List<bool> CubingRecipesEnabled = new List<bool>();
@@ -19,7 +19,10 @@ public class Cubing
     public List<int> CurrentRecipeItemLocations = new List<int>();
 
     public uint[] Cube_ItemTxtNoList = new uint[12];
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetCubeInventory()
     {
         Cube_ItemTxtNoList = new uint[12];

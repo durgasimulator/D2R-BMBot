@@ -113,11 +113,12 @@ public partial class Form1 : Form
         public ushort processorLevel;
         public ushort processorRevision;
     }
-
     public Form1()
     {
-        InitializeComponent();
         gameData = GameData.Instance;
+        gameData.Initialize(this);
+
+        InitializeComponent();
         this.Text = "D2R - BMBot (" + gameData.BotVersion + ")";
         labelGames.Text = "";//CurrentGameNumber.ToString();
         SetGameStatus("STOPPED");
@@ -129,10 +130,10 @@ public partial class Form1 : Form
         //ModifyMonsterList();
 
         //overlay graphics
-        if (gameData.overlayForm == null || gameData.overlayForm.IsDisposed)
-        {
-            gameData.overlayForm = new OverlayForm(this);
-        }
+        //if (gameData.overlayForm == null || gameData.overlayForm.IsDisposed)
+        //{
+        //    gameData.overlayForm = new OverlayForm(gameData);
+        //}
         gameData.overlayForm.Show();
 
         comboBoxItemsCategory.SelectedIndex = 0;
@@ -1810,7 +1811,7 @@ public partial class Form1 : Form
 
     private void button3_Click(object sender, EventArgs e)
     {
-        FormSettings FormSettings_0 = new FormSettings(this);
+        FormSettings FormSettings_0 = new FormSettings(gameData);
         FormSettings_0.ShowDialog();
     }
 
@@ -2016,7 +2017,7 @@ public partial class Form1 : Form
 
     private void button3_Click_1(object sender, EventArgs e)
     {
-        FormSettings FormSettings_0 = new FormSettings(this);
+        FormSettings FormSettings_0 = new FormSettings(gameData);
         FormSettings_0.ShowDialog();
     }
 

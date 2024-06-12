@@ -10,7 +10,7 @@ using static System.Diagnostics.DebuggableAttribute;
 
 public class NPCStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public long NPCPointerLocation = 0;
     public byte[] NPCdatastruc = new byte[144];
     public uint txtFileNo = 0;
@@ -25,7 +25,10 @@ public class NPCStruc
     public ushort yPosFinal_Overlay = 0;
 
     public List<int> NPC_IDs = new List<int>();
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public List<int[]> GetAllNPCNearby()
     {
         gameData.patternsScan.scanForUnitsPointer("NPC");

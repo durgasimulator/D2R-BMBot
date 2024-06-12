@@ -10,7 +10,7 @@ using static MapAreaStruc;
 
 public class BaalLeech
 {
-    GameData gameData;
+    private GameData gameData;
     //##############
     //EXTRAS FEATURES
     public bool BaalLeechFight = false;
@@ -43,11 +43,13 @@ public class BaalLeech
 
     public bool SetNoTPTime = false;
     public DateTime TimeSinceNoTP = DateTime.Now;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void RunScriptNOTInGame()
     {
-        gameData = GameData.Instance;
         TimeWaitedForTP = 0;
         CurrentStep = 0;
         LastWave4Pointer = 0;
@@ -157,7 +159,6 @@ public class BaalLeech
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         SearchSameGamesAsLastOne = false;
         SameGameRetry = 0;
         gameData.townStruc.ScriptTownAct = 5; //set to town act 5 when running this script

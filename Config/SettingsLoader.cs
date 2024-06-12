@@ -10,7 +10,7 @@ using System.Globalization;
 
 public class SettingsLoader
 {
-
+    private GameData gameData;
     public string File_PaladinHammer = Application.StartupPath + @"\Settings\Char\PaladinHammer.txt";
     public string File_SorceressBlizzard = Application.StartupPath + @"\Settings\Char\SorceressBlizzard.txt";
 
@@ -20,7 +20,10 @@ public class SettingsLoader
     public string File_CubingSettings = Application.StartupPath + @"\Settings\CubingRecipes.txt";
     public string File_Settings = Application.StartupPath + @"\Settings\Settings.txt";
     public string[] AllLines = new string[] { };
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void LoadSettings()
     {
         LoadThisFileSettings(File_CharSettings);
@@ -61,7 +64,7 @@ public class SettingsLoader
         }
         else
         {
-            GameData.Instance.method_1("Unable to find '" + Path.GetFileName(ThisFilePath) + "' file!", Color.Red);
+            gameData.method_1("Unable to find '" + Path.GetFileName(ThisFilePath) + "' file!", Color.Red);
         }
     }
 
@@ -81,11 +84,11 @@ public class SettingsLoader
 
                             if (Params[0].Contains("RunNumber"))
                             {
-                                GameData.Instance.CurrentGameNumber = int.Parse(Params[1]);
+                                gameData.CurrentGameNumber = int.Parse(Params[1]);
                             }
                             if (Params[0].Contains("D2_LOD_113C_Path"))
                             {
-                                GameData.Instance.D2_LOD_113C_Path = Params[1];
+                                gameData.D2_LOD_113C_Path = Params[1];
                             }
                         }
                     }
@@ -94,7 +97,7 @@ public class SettingsLoader
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load 'Settings.txt' file!", Color.Red);
+            gameData.method_1("Unable to load 'Settings.txt' file!", Color.Red);
         }
     }
 
@@ -233,7 +236,7 @@ public class SettingsLoader
         File.Create(ThisFilePath).Dispose();
         File.WriteAllLines(ThisFilePath, AllLines);
 
-        GameData.Instance.method_1("Saved '" + Path.GetFileName(ThisFilePath) + "' file!", Color.DarkGreen);
+        gameData.method_1("Saved '" + Path.GetFileName(ThisFilePath) + "' file!", Color.DarkGreen);
 
         SaveCurrentCharSettings();
     }
@@ -256,7 +259,7 @@ public class SettingsLoader
 
                 //#########
                 //SPECIAL BAAL FEATURES
-                Baal baal = (Baal)GameData.Instance.baal;
+                Baal baal = (Baal)gameData.baal;
                 if (Splitted[0] == "KillBaal") AllLines[i] = "KillBaal=" + baal.KillBaal;
                 if (Splitted[0] == "LeaveIfMobsIsPresent_ID")
                 {
@@ -281,21 +284,21 @@ public class SettingsLoader
 
                 //#########
                 //SPECIAL CHAOS FEATURES
-                Chaos chaos = (Chaos)GameData.Instance.chaos;
+                Chaos chaos = (Chaos)gameData.chaos;
                 if (Splitted[0] == "FastChaos") AllLines[i] = "FastChaos=" + chaos.FastChaos;
 
                 //#########
                 //SPECIAL OVERLAY FEATURES
-                if (Splitted[0] == "ShowMobs") AllLines[i] = "ShowMobs=" + GameData.Instance.overlayForm.ShowMobs;
-                if (Splitted[0] == "ShowWPs") AllLines[i] = "ShowWPs=" + GameData.Instance.overlayForm.ShowWPs;
-                if (Splitted[0] == "ShowGoodChests") AllLines[i] = "ShowGoodChests=" + GameData.Instance.overlayForm.ShowGoodChests;
-                if (Splitted[0] == "ShowLogs") AllLines[i] = "ShowLogs=" + GameData.Instance.overlayForm.ShowLogs;
-                if (Splitted[0] == "ShowBotInfos") AllLines[i] = "ShowBotInfos=" + GameData.Instance.overlayForm.ShowBotInfos;
-                if (Splitted[0] == "ShowNPC") AllLines[i] = "ShowNPC=" + GameData.Instance.overlayForm.ShowNPC;
-                if (Splitted[0] == "ShowPathFinding") AllLines[i] = "ShowPathFinding=" + GameData.Instance.overlayForm.ShowPathFinding;
-                if (Splitted[0] == "ShowExits") AllLines[i] = "ShowExits=" + GameData.Instance.overlayForm.ShowExits;
-                if (Splitted[0] == "ShowMapHackShowLines") AllLines[i] = "ShowMapHackShowLines=" + GameData.Instance.overlayForm.ShowMapHackShowLines;
-                if (Splitted[0] == "ShowUnitsScanCount") AllLines[i] = "ShowUnitsScanCount=" + GameData.Instance.overlayForm.ShowUnitsScanCount;
+                if (Splitted[0] == "ShowMobs") AllLines[i] = "ShowMobs=" + gameData.overlayForm.ShowMobs;
+                if (Splitted[0] == "ShowWPs") AllLines[i] = "ShowWPs=" + gameData.overlayForm.ShowWPs;
+                if (Splitted[0] == "ShowGoodChests") AllLines[i] = "ShowGoodChests=" + gameData.overlayForm.ShowGoodChests;
+                if (Splitted[0] == "ShowLogs") AllLines[i] = "ShowLogs=" + gameData.overlayForm.ShowLogs;
+                if (Splitted[0] == "ShowBotInfos") AllLines[i] = "ShowBotInfos=" + gameData.overlayForm.ShowBotInfos;
+                if (Splitted[0] == "ShowNPC") AllLines[i] = "ShowNPC=" + gameData.overlayForm.ShowNPC;
+                if (Splitted[0] == "ShowPathFinding") AllLines[i] = "ShowPathFinding=" + gameData.overlayForm.ShowPathFinding;
+                if (Splitted[0] == "ShowExits") AllLines[i] = "ShowExits=" + gameData.overlayForm.ShowExits;
+                if (Splitted[0] == "ShowMapHackShowLines") AllLines[i] = "ShowMapHackShowLines=" + gameData.overlayForm.ShowMapHackShowLines;
+                if (Splitted[0] == "ShowUnitsScanCount") AllLines[i] = "ShowUnitsScanCount=" + gameData.overlayForm.ShowUnitsScanCount;
                 //#########
 
                 if (Splitted[0] == "RunMapHackOnly") AllLines[i] = "RunMapHackOnly=" + CharConfig.RunMapHackOnly;
@@ -426,19 +429,19 @@ public class SettingsLoader
         File.Create(File_BotSettings).Dispose();
         File.WriteAllLines(File_BotSettings, AllLines);
 
-        GameData.Instance.method_1("Saved '" + Path.GetFileName(File_BotSettings) + "' file!", Color.DarkGreen);
+        gameData.method_1("Saved '" + Path.GetFileName(File_BotSettings) + "' file!", Color.DarkGreen);
     }
 
     public void SaveOthersSettings()
     {
         string SaveTxtt = "";
-        SaveTxtt += "RunNumber=" + GameData.Instance.CurrentGameNumber + Environment.NewLine;
-        SaveTxtt += "D2_LOD_113C_Path=" + GameData.Instance.D2_LOD_113C_Path + Environment.NewLine;
+        SaveTxtt += "RunNumber=" + gameData.CurrentGameNumber + Environment.NewLine;
+        SaveTxtt += "D2_LOD_113C_Path=" + gameData.D2_LOD_113C_Path + Environment.NewLine;
 
         File.Create(File_Settings).Dispose();
         File.WriteAllText(File_Settings, SaveTxtt);
 
-        GameData.Instance.method_1("Saved '" + Path.GetFileName(File_Settings) + "' file!", Color.DarkGreen);
+        gameData.method_1("Saved '" + Path.GetFileName(File_Settings) + "' file!", Color.DarkGreen);
     }
 
     public void LoadItemsSettings()
@@ -748,63 +751,63 @@ public class SettingsLoader
                 }
                 catch
                 {
-                    GameData.Instance.method_1("Error encountered in 'ItemsSettings.txt' file at line" + i + "!", Color.Red);
+                    gameData.method_1("Error encountered in 'ItemsSettings.txt' file at line" + i + "!", Color.Red);
                 }
             }
 
-            GameData.Instance.itemsAlert.PickItemsRunesKeyGems.Clear();
-            GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity.Clear();
-            foreach (var ThisDir in AllKeys) GameData.Instance.itemsAlert.PickItemsRunesKeyGems.Add(ThisDir.Key, ThisDir.Value);
-            foreach (var ThisDir in AllKeysQty) GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity.Add(ThisDir.Key, ThisDir.Value);
+            gameData.itemsAlert.PickItemsRunesKeyGems.Clear();
+            gameData.itemsAlert.PickItemsRunesKeyGems_Quantity.Clear();
+            foreach (var ThisDir in AllKeys) gameData.itemsAlert.PickItemsRunesKeyGems.Add(ThisDir.Key, ThisDir.Value);
+            foreach (var ThisDir in AllKeysQty) gameData.itemsAlert.PickItemsRunesKeyGems_Quantity.Add(ThisDir.Key, ThisDir.Value);
 
-            GameData.Instance.itemsAlert.PickItemsPotions.Clear();
+            gameData.itemsAlert.PickItemsPotions.Clear();
 
             //#####
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName_Flags.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName_Class.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName_Stats.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByName_Operators.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByNameDesc.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName_Flags.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName_Quality.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName_Class.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName_Stats.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByName_Operators.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByNameDesc.Clear();
             foreach (var ThisDir in AllNormall_ByName)
             {
                 if (ThisDir.Key.Contains("Potion"))
                 {
-                    GameData.Instance.itemsAlert.PickItemsPotions.Add(ThisDir.Key, ThisDir.Value);
+                    gameData.itemsAlert.PickItemsPotions.Add(ThisDir.Key, ThisDir.Value);
                 }
                 else
                 {
                     //Console.WriteLine("Key:" + ThisDir.Key + ", value:" + ThisDir.Value);
-                    GameData.Instance.itemsAlert.PickItemsNormal_ByName.Add(ThisDir.Key, ThisDir.Value);
-                    if (AllNormall_ByName_Flags.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByName_Flags.Add(ThisDir.Key, AllNormall_ByName_Flags[ThisDir.Key]);
-                    if (AllNormall_ByName_Quality.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality.Add(ThisDir.Key, AllNormall_ByName_Quality[ThisDir.Key]);
-                    if (AllNormall_ByName_Class.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByName_Class.Add(ThisDir.Key, AllNormall_ByName_Class[ThisDir.Key]);
-                    if (AllNormall_ByName_Stats.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByName_Stats.Add(ThisDir.Key, AllNormall_ByName_Stats[ThisDir.Key]);
-                    if (AllNormall_ByName_Operators.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByName_Operators.Add(ThisDir.Key, AllNormall_ByName_Operators[ThisDir.Key]);
-                    GameData.Instance.itemsAlert.PickItemsNormal_ByNameDesc.Add(ThisDir.Key, NormalNameDesc[ThisDir.Key]);
+                    gameData.itemsAlert.PickItemsNormal_ByName.Add(ThisDir.Key, ThisDir.Value);
+                    if (AllNormall_ByName_Flags.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByName_Flags.Add(ThisDir.Key, AllNormall_ByName_Flags[ThisDir.Key]);
+                    if (AllNormall_ByName_Quality.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByName_Quality.Add(ThisDir.Key, AllNormall_ByName_Quality[ThisDir.Key]);
+                    if (AllNormall_ByName_Class.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByName_Class.Add(ThisDir.Key, AllNormall_ByName_Class[ThisDir.Key]);
+                    if (AllNormall_ByName_Stats.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByName_Stats.Add(ThisDir.Key, AllNormall_ByName_Stats[ThisDir.Key]);
+                    if (AllNormall_ByName_Operators.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByName_Operators.Add(ThisDir.Key, AllNormall_ByName_Operators[ThisDir.Key]);
+                    gameData.itemsAlert.PickItemsNormal_ByNameDesc.Add(ThisDir.Key, NormalNameDesc[ThisDir.Key]);
                 }
             }
             //#####
 
             //#####
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType_Flags.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType_Class.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType_Stats.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByType_Operators.Clear();
-            GameData.Instance.itemsAlert.PickItemsNormal_ByTypeDesc.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType_Flags.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType_Quality.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType_Class.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType_Stats.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByType_Operators.Clear();
+            gameData.itemsAlert.PickItemsNormal_ByTypeDesc.Clear();
             foreach (var ThisDir in AllNormall_ByType)
             {
                 //Console.WriteLine("Key:" + ThisDir.Key + ", value:" + ThisDir.Value);
-                GameData.Instance.itemsAlert.PickItemsNormal_ByType.Add(ThisDir.Key, ThisDir.Value);
-                if (AllNormall_ByType_Flags.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByType_Flags.Add(ThisDir.Key, AllNormall_ByType_Flags[ThisDir.Key]);
-                if (AllNormall_ByType_Quality.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality.Add(ThisDir.Key, AllNormall_ByType_Quality[ThisDir.Key]);
-                if (AllNormall_ByType_Class.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByType_Class.Add(ThisDir.Key, AllNormall_ByType_Class[ThisDir.Key]);
-                if (AllNormall_ByType_Stats.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByType_Stats.Add(ThisDir.Key, AllNormall_ByType_Stats[ThisDir.Key]);
-                if (AllNormal_ByType_Operators.ContainsKey(ThisDir.Key)) GameData.Instance.itemsAlert.PickItemsNormal_ByType_Operators.Add(ThisDir.Key, AllNormal_ByType_Operators[ThisDir.Key]);
-                GameData.Instance.itemsAlert.PickItemsNormal_ByTypeDesc.Add(ThisDir.Key, NormalTypeDesc[ThisDir.Key]);
+                gameData.itemsAlert.PickItemsNormal_ByType.Add(ThisDir.Key, ThisDir.Value);
+                if (AllNormall_ByType_Flags.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByType_Flags.Add(ThisDir.Key, AllNormall_ByType_Flags[ThisDir.Key]);
+                if (AllNormall_ByType_Quality.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByType_Quality.Add(ThisDir.Key, AllNormall_ByType_Quality[ThisDir.Key]);
+                if (AllNormall_ByType_Class.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByType_Class.Add(ThisDir.Key, AllNormall_ByType_Class[ThisDir.Key]);
+                if (AllNormall_ByType_Stats.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByType_Stats.Add(ThisDir.Key, AllNormall_ByType_Stats[ThisDir.Key]);
+                if (AllNormal_ByType_Operators.ContainsKey(ThisDir.Key)) gameData.itemsAlert.PickItemsNormal_ByType_Operators.Add(ThisDir.Key, AllNormal_ByType_Operators[ThisDir.Key]);
+                gameData.itemsAlert.PickItemsNormal_ByTypeDesc.Add(ThisDir.Key, NormalTypeDesc[ThisDir.Key]);
             }
             //#####
 
@@ -812,14 +815,14 @@ public class SettingsLoader
 
             //#####
 
-            //GameData.Instance.itemsAlert.PickItemsUnique = new string[AllNormal.Count];
-            //for (int i = 0; i < AllNormal.Count; i++) GameData.Instance.itemsAlert.PickItemsUnique[i] = AllNormal[i];
+            //gameData.itemsAlert.PickItemsUnique = new string[AllNormal.Count];
+            //for (int i = 0; i < AllNormal.Count; i++) gameData.itemsAlert.PickItemsUnique[i] = AllNormal[i];
 
-            GameData.Instance.itemsAlert.CheckItemNames();
+            gameData.itemsAlert.CheckItemNames();
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load 'ItemsSettings.txt' file!", Color.Red);
+            gameData.method_1("Unable to load 'ItemsSettings.txt' file!", Color.Red);
         }
     }
 
@@ -842,12 +845,12 @@ public class SettingsLoader
                             ThisItem = AllLines[i].Substring(2);
                         }
 
-                        for (int k = 0; k < GameData.Instance.cubing.CubingRecipes.Count; k++)
+                        for (int k = 0; k < gameData.cubing.CubingRecipes.Count; k++)
                         {
-                            if (GameData.Instance.cubing.CubingRecipes[k] == ThisItem)
+                            if (gameData.cubing.CubingRecipes[k] == ThisItem)
                             {
-                                if (!PickItem && GameData.Instance.cubing.CubingRecipesEnabled[k]) AllLines[i] = ThisItem;
-                                if (PickItem && !GameData.Instance.cubing.CubingRecipesEnabled[k]) AllLines[i] = "//" + ThisItem;
+                                if (!PickItem && gameData.cubing.CubingRecipesEnabled[k]) AllLines[i] = ThisItem;
+                                if (PickItem && !gameData.cubing.CubingRecipesEnabled[k]) AllLines[i] = "//" + ThisItem;
                             }
                         }
                     }
@@ -855,11 +858,11 @@ public class SettingsLoader
             }
 
             File.WriteAllLines(File_CubingSettings, AllLines);
-            GameData.Instance.method_1("Saved 'CubingRecipes.txt' file!", Color.DarkGreen);
+            gameData.method_1("Saved 'CubingRecipes.txt' file!", Color.DarkGreen);
         }
         catch
         {
-            GameData.Instance.method_1("Unable to save 'CubingRecipes.txt' file!", Color.Red);
+            gameData.method_1("Unable to save 'CubingRecipes.txt' file!", Color.Red);
         }
     }
 
@@ -974,11 +977,11 @@ public class SettingsLoader
                             if (ThisItem.Replace(" ", "").Contains("&&[Quantity]==")) ModifiedNsameNoQty = ThisItem.Substring(0, ThisItem.IndexOf('&') - 1);
 
 
-                            foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsRunesKeyGems)
+                            foreach (var ThisDir in gameData.itemsAlert.PickItemsRunesKeyGems)
                             {
                                 if (ThisDir.Key == ModifiedNsameNoQty.Replace(" ", ""))
                                 {
-                                    int ThisQty = GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
+                                    int ThisQty = gameData.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
                                     string QtyTxt = "";
                                     if (ThisQty > 0) QtyTxt = " && [Quantity] == " + ThisQty;
 
@@ -1004,17 +1007,17 @@ public class SettingsLoader
                                     if (AllNormalByNamePickit[k] == ThisItem) ItemIndex++;
                                 }
                                 if (ItemIndex > 1) ThisItem = ThisItem + ItemIndex;
-                                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName.ContainsKey(ThisItem))
+                                if (gameData.itemsAlert.PickItemsNormal_ByName.ContainsKey(ThisItem))
                                 {
-                                    if (!PickItem && GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisItem]) AllLines[i] = FullLine + ThisDesc;
-                                    if (PickItem && !GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisItem]) AllLines[i] = "//" + FullLine + ThisDesc;
+                                    if (!PickItem && gameData.itemsAlert.PickItemsNormal_ByName[ThisItem]) AllLines[i] = FullLine + ThisDesc;
+                                    if (PickItem && !gameData.itemsAlert.PickItemsNormal_ByName[ThisItem]) AllLines[i] = "//" + FullLine + ThisDesc;
                                 }
                                 else
                                 {
                                     if (ThisItem.Contains("Potion"))
                                     {
                                         //Console.WriteLine("Doing: " + ThisItem);
-                                        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsPotions)
+                                        foreach (var ThisDir in gameData.itemsAlert.PickItemsPotions)
                                         {
                                             if (ThisDir.Key == ThisItem.Replace(" ", ""))
                                             {
@@ -1027,7 +1030,7 @@ public class SettingsLoader
                                     }
                                     else
                                     {
-                                        GameData.Instance.method_1("Error saving item (by name): " + ThisItem, Color.Red);
+                                        gameData.method_1("Error saving item (by name): " + ThisItem, Color.Red);
                                     }
                                 }
                             }
@@ -1040,14 +1043,14 @@ public class SettingsLoader
                                     if (AllNormalByTypePickit[k] == ThisItem) ItemIndex++;
                                 }
                                 if (ItemIndex > 1) ThisItem = ThisItem + ItemIndex;
-                                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType.ContainsKey(ThisItem))
+                                if (gameData.itemsAlert.PickItemsNormal_ByType.ContainsKey(ThisItem))
                                 {
-                                    if (!PickItem && GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisItem]) AllLines[i] = FullLine + ThisDesc;
-                                    if (PickItem && !GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisItem]) AllLines[i] = "//" + FullLine + ThisDesc;
+                                    if (!PickItem && gameData.itemsAlert.PickItemsNormal_ByType[ThisItem]) AllLines[i] = FullLine + ThisDesc;
+                                    if (PickItem && !gameData.itemsAlert.PickItemsNormal_ByType[ThisItem]) AllLines[i] = "//" + FullLine + ThisDesc;
                                 }
                                 else
                                 {
-                                    GameData.Instance.method_1("Error saving item (by type): " + ThisItem, Color.Red);
+                                    gameData.method_1("Error saving item (by type): " + ThisItem, Color.Red);
                                 }
                             }
                         }
@@ -1068,11 +1071,11 @@ public class SettingsLoader
             }
 
             File.WriteAllLines(File_ItemsSettings, AllLines);
-            GameData.Instance.method_1("Saved 'ItemsSettings.txt' file!", Color.DarkGreen);
+            gameData.method_1("Saved 'ItemsSettings.txt' file!", Color.DarkGreen);
         }
         catch
         {
-            GameData.Instance.method_1("Unable to save 'ItemsSettings.txt' file!", Color.Red);
+            gameData.method_1("Unable to save 'ItemsSettings.txt' file!", Color.Red);
         }
     }
 
@@ -1135,62 +1138,62 @@ public class SettingsLoader
                             
                             if (Params[0].Contains("KillBaal"))
                             {
-                                ((Baal)GameData.Instance.baal).KillBaal = bool.Parse(Params[1].ToLower());
+                                ((Baal)gameData.baal).KillBaal = bool.Parse(Params[1].ToLower());
                             }
                             if (Params[0].Contains("LeaveIfMobsIsPresent_ID"))
                             {
-                                ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_ID.Clear();
+                                ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Clear();
                                 if (Params[1].Contains(","))
                                 {
                                     string[] Splitted = Params[1].Split(',');
-                                    ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_ID.Add(uint.Parse(Splitted[i]));
+                                    ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Add(uint.Parse(Splitted[i]));
                                 }
                                 else if (Params[1] != "")
                                 {
-                                    ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_ID.Add(uint.Parse(Params[1]));
+                                    ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Add(uint.Parse(Params[1]));
                                 }
                             }
                             if (Params[0].Contains("LeaveIfMobsIsPresent_Count"))
                             {
-                                ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_Count.Clear();
+                                ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count.Clear();
                                 if (Params[1].Contains(","))
                                 {
                                     string[] Splitted = Params[1].Split(',');
-                                    ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_Count.Add(int.Parse(Splitted[i]));
+                                    ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count.Add(int.Parse(Splitted[i]));
                                 }
                                 else if (Params[1] != "")
                                 {
-                                    ((Baal)GameData.Instance.baal).LeaveIfMobsIsPresent_Count.Add(int.Parse(Params[1]));
+                                    ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count.Add(int.Parse(Params[1]));
                                 }
                             }
                             if (Params[0].Contains("LeaveIfMobsCountIsAbove"))
                             {
-                                ((Baal)GameData.Instance.baal).LeaveIfMobsCountIsAbove = int.Parse(Params[1].ToLower());
+                                ((Baal)gameData.baal).LeaveIfMobsCountIsAbove = int.Parse(Params[1].ToLower());
                             }
                             if (Params[0].Contains("SafeHealingStrat"))
                             {
-                                ((Baal)GameData.Instance.baal).SafeYoloStrat = bool.Parse(Params[1].ToLower());
+                                ((Baal)gameData.baal).SafeYoloStrat = bool.Parse(Params[1].ToLower());
                             }
 
                             //#########
                             //SPECIAL CHAOS FEATURES
                             if (Params[0].Contains("FastChaos"))
                             {
-                                ((Chaos)GameData.Instance.chaos).FastChaos = bool.Parse(Params[1].ToLower());
+                                ((Chaos)gameData.chaos).FastChaos = bool.Parse(Params[1].ToLower());
                             }
 
                             //#########
                             //SPECIAL OVERLAY FEATURES
-                            if (Params[0].Contains("ShowMobs")) GameData.Instance.overlayForm.ShowMobs = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowWPs")) GameData.Instance.overlayForm.ShowWPs = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowGoodChests")) GameData.Instance.overlayForm.ShowGoodChests = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowLogs")) GameData.Instance.overlayForm.ShowLogs = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowBotInfos")) GameData.Instance.overlayForm.ShowBotInfos = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowNPC")) GameData.Instance.overlayForm.ShowNPC = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowPathFinding")) GameData.Instance.overlayForm.ShowPathFinding = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowExits")) GameData.Instance.overlayForm.ShowExits = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowMapHackShowLines")) GameData.Instance.overlayForm.ShowMapHackShowLines = bool.Parse(Params[1].ToLower());
-                            if (Params[0].Contains("ShowUnitsScanCount")) GameData.Instance.overlayForm.ShowUnitsScanCount = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowMobs")) gameData.overlayForm.ShowMobs = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowWPs")) gameData.overlayForm.ShowWPs = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowGoodChests")) gameData.overlayForm.ShowGoodChests = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowLogs")) gameData.overlayForm.ShowLogs = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowBotInfos")) gameData.overlayForm.ShowBotInfos = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowNPC")) gameData.overlayForm.ShowNPC = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowPathFinding")) gameData.overlayForm.ShowPathFinding = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowExits")) gameData.overlayForm.ShowExits = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowMapHackShowLines")) gameData.overlayForm.ShowMapHackShowLines = bool.Parse(Params[1].ToLower());
+                            if (Params[0].Contains("ShowUnitsScanCount")) gameData.overlayForm.ShowUnitsScanCount = bool.Parse(Params[1].ToLower());
                             //#########
 
                             if (Params[0].Contains("RunMapHackOnly"))
@@ -1497,7 +1500,7 @@ public class SettingsLoader
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load 'BotSettings.txt' file!", Color.Red);
+            gameData.method_1("Unable to load 'BotSettings.txt' file!", Color.Red);
         }
     }
 
@@ -1513,8 +1516,8 @@ public class SettingsLoader
                     {
                         if (AllLines[i].Contains("="))
                         {
-                            GameData.Instance.cubing.CubingRecipes.Add(AllLines[i]);
-                            GameData.Instance.cubing.CubingRecipesEnabled.Add(true);
+                            gameData.cubing.CubingRecipes.Add(AllLines[i]);
+                            gameData.cubing.CubingRecipesEnabled.Add(true);
                         }
                     }
                     else
@@ -1524,8 +1527,8 @@ public class SettingsLoader
                             AllLines[i] = AllLines[i].Substring(2);
                             if (AllLines[i].Contains("="))
                             {
-                                GameData.Instance.cubing.CubingRecipes.Add(AllLines[i]);
-                                GameData.Instance.cubing.CubingRecipesEnabled.Add(false);
+                                gameData.cubing.CubingRecipes.Add(AllLines[i]);
+                                gameData.cubing.CubingRecipesEnabled.Add(false);
                             }
                         }
                     }
@@ -1534,7 +1537,7 @@ public class SettingsLoader
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load 'CubingRecipes.txt' file!", Color.Red);
+            gameData.method_1("Unable to load 'CubingRecipes.txt' file!", Color.Red);
         }
     }
 
@@ -1554,7 +1557,7 @@ public class SettingsLoader
         File.Create(File_CharSettings).Dispose();
         File.WriteAllLines(File_CharSettings, AllLines);
 
-        GameData.Instance.method_1("Saved '" + Path.GetFileName(File_CharSettings) + "' file!", Color.DarkGreen);
+        gameData.method_1("Saved '" + Path.GetFileName(File_CharSettings) + "' file!", Color.DarkGreen);
     }
 
     public void LoadCharSettings()
@@ -1582,7 +1585,7 @@ public class SettingsLoader
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load 'CharSettings.txt' file!", Color.Red);
+            gameData.method_1("Unable to load 'CharSettings.txt' file!", Color.Red);
         }
     }
 
@@ -1820,7 +1823,7 @@ public class SettingsLoader
         }
         catch
         {
-            GameData.Instance.method_1("Unable to load the settings file for the Current Char!", Color.Red);
+            gameData.method_1("Unable to load the settings file for the Current Char!", Color.Red);
         }
     }
 }

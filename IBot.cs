@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 // Interface for standard bot runs and rushes
 public interface IBot
 {
+    void Initialize(GameData gameData);
     void ResetVars();
     void RunScript();
     bool ScriptDone { get; set; }

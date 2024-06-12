@@ -10,7 +10,7 @@ using System.Xml.Linq;
 public class InventoryStruc
 {
 
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public int[] InventoryHasItem = new int[40];
     public int[] InventoryHasUnidItem = new int[40];
@@ -33,6 +33,10 @@ public class InventoryStruc
 
     public bool DisabledSpecialItems = false;
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void CheckInventorySpecialUniqueItems()
     {
         if (DisabledSpecialItems) return;

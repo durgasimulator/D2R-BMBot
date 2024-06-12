@@ -10,7 +10,7 @@ using static MapAreaStruc;
 
 public class Battle
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public int AreaX = 0;
     public int AreaY = 0;
@@ -41,7 +41,10 @@ public class Battle
 
     public DateTime TimeSinceLastCast = DateTime.MaxValue;
 
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool EndBossBattle()
     {
         gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);

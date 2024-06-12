@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class BaalRush : IBot
 {
-    GameData gameData;
+    private GameData gameData;
 
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
@@ -33,7 +33,10 @@ public class BaalRush : IBot
 
     public DateTime TimeSinceLastWaveDone = DateTime.Now;
     public bool TimeSinceLastWaveSet = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -56,7 +59,6 @@ public class BaalRush : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 4; //set to town act 4 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

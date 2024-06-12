@@ -9,14 +9,17 @@ using static MapAreaStruc;
 
 public class AncientsRush : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
     public Position AltarPos = new Position { X = 0, Y = 0 };
     public bool KilledAnyMember = false;
 
     public List<long> IgnoredMembers = new List<long>();
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetVars()
     {
@@ -27,7 +30,6 @@ public class AncientsRush : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

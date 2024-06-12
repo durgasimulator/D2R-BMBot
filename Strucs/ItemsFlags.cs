@@ -9,7 +9,12 @@ using System.Threading.Tasks;
 
 public class ItemsFlags
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
+
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public bool IsItemSameFlags(string ComparatorMethod, uint FlagsToCheck, uint ItemFlags)
     {

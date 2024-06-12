@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 public class AreaScript
 {
-    Form1 Form1_0;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public int GetActFromArea(Enums.Area ThisArea)
     {

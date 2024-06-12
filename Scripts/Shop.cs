@@ -8,7 +8,7 @@ using static Enums;
 
 public class Shop
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public bool FirstShopping = true;
     Dictionary<string, int> LastitemScreenPos = new Dictionary<string, int>();
@@ -21,7 +21,10 @@ public class Shop
     public bool ShopForRegainHP = false;
 
     public bool ShopForTomeOfPortal = false; //cows level portal making
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public Dictionary<string, int> ConvertShopLocToScreenPos(int ThisX, int ThisY)
     {
         //starting at 1295,580 on screen for first item in inv, increment for 48px

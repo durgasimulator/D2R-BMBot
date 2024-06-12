@@ -9,7 +9,7 @@ using static Enums;
 
 public class TerrorZones : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
 
@@ -20,7 +20,10 @@ public class TerrorZones : IBot
     public bool HasTakenAnyChest = false;
 
     public bool DoneChestsStep = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
 
     public void ResetVars()
@@ -36,7 +39,6 @@ public class TerrorZones : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         if (TerrorZonesAreas.Count == 0) TerrorZonesAreas = gameData.gameStruc.GetTerrorZones();
         if (TerrorZonesAreas.Count == 0)
         {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class Mem
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     [DllImport("kernel32.dll")]
     public static extern bool ReadProcessMemory(int hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
@@ -25,6 +25,11 @@ public class Mem
             {"UFloat", 4}, {"Float", 4},
             {"Int64", 8}, {"Double", 8}
         };
+
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void WriteRawMemory(IntPtr address, byte[] buffer, int writesize)
     {

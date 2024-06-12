@@ -6,11 +6,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 public partial class FormSettings : Form
 {
-    Form1 Form1_0;
-    GameData gameData = GameData.Instance;
-    public FormSettings(Form1 form1_1)
+    private GameData gameData;
+    public FormSettings(GameData gameData)
     {
-        Form1_0 = form1_1;
+        this.gameData = gameData;
 
         InitializeComponent();
 

@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 public class ShopBot : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
     public int MaxShopCount = -1;
     public int CurrentShopCount = 0;
     public int ShopBotTownAct = 5;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -22,7 +25,6 @@ public class ShopBot : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = ShopBotTownAct;
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

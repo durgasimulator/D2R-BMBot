@@ -12,7 +12,7 @@ using static EnumsStates;
 
 public class MobsStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public long MobsPointerLocation = 0;
     public long LastMobsPointerLocation = 0;
     public string MobsName = "";
@@ -50,6 +50,10 @@ public class MobsStruc
     List<EnumsStates.State> MobsStates = new List<EnumsStates.State>();
     List<EnumsStates.State> MobsStatesAll = new List<EnumsStates.State>();
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool IsThisMobInBound()
     {
         //return true;

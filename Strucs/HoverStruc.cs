@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 public class HoverStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public bool isHovered = false;
     public uint lastHoveredType = 0;
     public uint lastHoveredUnitId = 0;
     public byte[] hoverBuffer = new byte[12];
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool IsHoveringItem(uint ThissType, uint ThissUnitId)
     {
         if (lastHoveredType == ThissType && lastHoveredUnitId == ThissUnitId)

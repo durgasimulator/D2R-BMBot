@@ -9,12 +9,10 @@ using static MapAreaStruc;
 
 public class PathFinding
 {
+    private GameData gameData;
     // Define directions (assuming 4-direction movement)
     private int[] dx = { 1, 0, -1, 0, -1, 1, -1, 1 };
     private int[] dy = { 0, 1, 0, -1, -1, -1, 1, 1 };
-
-    public Form1 Form1_0;
-
     public int TeleportAcceptSize = 20; //not implemented yet
     public int AcceptMoveOffset = 25;
     public int ThisPlayerAreaID = 0;
@@ -37,48 +35,48 @@ public class PathFinding
 
     public bool CheckingForCloseToTargetPos = true;
 
-    public void SetForm1(Form1 form1_1)
+    public void Initialize(GameData gameData)
     {
-        Form1_0 = form1_1;
+        this.gameData = gameData;
     }
 
     public void CheckForBadMapData(int Thisindex)
     {
-        while (Thisindex > GameData.Instance.mapAreaStruc.AllMapData.Count - 1)
+        while (Thisindex > gameData.mapAreaStruc.AllMapData.Count - 1)
         {
-            GameData.Instance.mapAreaStruc.GetMapData(GameData.Instance.playerScan.mapSeedValue.ToString(), (Difficulty)GameData.Instance.playerScan.difficulty);
+            gameData.mapAreaStruc.GetMapData(gameData.playerScan.mapSeedValue.ToString(), (Difficulty)gameData.playerScan.difficulty);
         }
     }
 
     public void DebugMapCollision()
     {
-        Form1_0.ClearDebugCollision();
+        gameData.form.ClearDebugCollision();
 
-        ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)Form1_0.comboBoxCollisionArea.SelectedIndex + 1);
+        ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.form.comboBoxCollisionArea.SelectedIndex + 1);
         for (int i = 0; i < ThisCollisionGrid.GetLength(1); i++)
         {
             for (int k = 0; k < ThisCollisionGrid.GetLength(0); k++)
             {
-                if (ThisCollisionGrid[k, i]) Form1_0.AppendTextDebugCollision("-");
-                if (!ThisCollisionGrid[k, i]) Form1_0.AppendTextDebugCollision("X");
+                if (ThisCollisionGrid[k, i]) gameData.form.AppendTextDebugCollision("-");
+                if (!ThisCollisionGrid[k, i]) gameData.form.AppendTextDebugCollision("X");
             }
-            Form1_0.AppendTextDebugCollision(Environment.NewLine);
+            gameData.form.AppendTextDebugCollision(Environment.NewLine);
         }
     }
 
     public bool MoveToNextArea(Area ThisID, int AcceptOffset = 4, bool ClearAreaOnMoving = false)
     {
-        GameData.Instance.playerScan.GetPositions();
+        gameData.playerScan.GetPositions();
         IsMovingToNextArea = true;
         ThisNextAreaID = (int)ThisID;
-        ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+        ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
         //ThisCollisionGrid = ExpandGrid(ThisID);
         ThisCollisionGrid = MergeCollisionGrids(ThisID);
         CheckingForCloseToTargetPos = true;
 
         //dump data to txt file
         /*string ColisionMapTxt = "";
-        //ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
+        //ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
         for (int i = 0; i < ThisCollisionGrid.GetLength(1); i++)
         {
             for (int k = 0; k < ThisCollisionGrid.GetLength(0); k++)
@@ -88,8 +86,8 @@ public class PathFinding
             }
             ColisionMapTxt += Environment.NewLine;
         }
-        File.Create(GameData.Instance.ThisEndPath + "CollisionMap.txt").Dispose();
-        File.WriteAllText(GameData.Instance.ThisEndPath + "CollisionMap.txt", ColisionMapTxt);*/
+        File.Create(gameData.ThisEndPath + "CollisionMap.txt").Dispose();
+        File.WriteAllText(gameData.ThisEndPath + "CollisionMap.txt", ColisionMapTxt);*/
 
         try
         {
@@ -97,13 +95,13 @@ public class PathFinding
 
             //The Exit or Object find is only for a reference for pathing to the next AreaID, when we enter the next AreaID it will go out of the pathing loop
             //Get any 'exit' object in the next areaID for path reference (ignore object name)
-            ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("exit", GameData.Instance.townStruc.getAreaName((int)ThisID), (int)ThisID, new List<int>() { }, true);
+            ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("exit", gameData.townStruc.getAreaName((int)ThisID), (int)ThisID, new List<int>() { }, true);
 
             //Get any 'object' in the next areaID for path reference in case we didn't find any exit (ignore object name)
-            if (ThisFinalPosition.X == 0 && ThisFinalPosition.Y == 0) ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("object", GameData.Instance.townStruc.getAreaName((int)ThisID), (int)ThisID, new List<int>() { }, true);
+            if (ThisFinalPosition.X == 0 && ThisFinalPosition.Y == 0) ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("object", gameData.townStruc.getAreaName((int)ThisID), (int)ThisID, new List<int>() { }, true);
 
             //Console.WriteLine("Going to Pos: " + ThisFinalPosition.X + ", " + ThisFinalPosition.Y);
-            return GameData.Instance.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
+            return gameData.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
         }
         catch { }
 
@@ -112,19 +110,19 @@ public class PathFinding
 
     public bool MoveToExit(Area ThisID, int AcceptOffset = 4, bool ClearAreaOnMoving = false)
     {
-        GameData.Instance.playerScan.GetPositions();
+        gameData.playerScan.GetPositions();
         IsMovingToNextArea = false;
         CheckingForCloseToTargetPos = false;
 
-        //GameData.Instance.method_1("ToExit " + GameData.Instance.townStruc.getAreaName((int)ThisID), Color.Red);
+        //gameData.method_1("ToExit " + gameData.townStruc.getAreaName((int)ThisID), Color.Red);
         try
         {
-            ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+            ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
             CheckForBadMapData(ThisPlayerAreaID - 1);
 
-            ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("exit", GameData.Instance.townStruc.getAreaName((int)ThisID), ThisPlayerAreaID, new List<int>() { });
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
-            ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
+            ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("exit", gameData.townStruc.getAreaName((int)ThisID), ThisPlayerAreaID, new List<int>() { });
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
             try
             {
@@ -136,7 +134,7 @@ public class PathFinding
             TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
 
             //Console.WriteLine("Going to Pos: " + ThisFinalPosition.X + ", " + ThisFinalPosition.Y);
-            return GameData.Instance.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
+            return gameData.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
         }
         catch { }
 
@@ -145,25 +143,25 @@ public class PathFinding
 
     public bool MoveToNPC(string NPCName, int AcceptOffset = 4, bool ClearAreaOnMoving = false)
     {
-        GameData.Instance.playerScan.GetPositions();
+        gameData.playerScan.GetPositions();
         IsMovingToNextArea = false;
         CheckingForCloseToTargetPos = false;
 
-        //GameData.Instance.method_1("ToNPC " + NPCName, Color.Red);
+        //gameData.method_1("ToNPC " + NPCName, Color.Red);
 
         try
         {
-            ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+            ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
             CheckForBadMapData(ThisPlayerAreaID - 1);
 
-            ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("npc", NPCName, ThisPlayerAreaID, new List<int>() { });
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
-            ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
+            ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("npc", NPCName, ThisPlayerAreaID, new List<int>() { });
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
             PlayerOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
             TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
 
-            return GameData.Instance.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
+            return gameData.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
         }
         catch { }
 
@@ -172,25 +170,25 @@ public class PathFinding
 
     public bool MoveToObject(string ObjectName, int AcceptOffset = 4, bool ClearAreaOnMoving = false)
     {
-        GameData.Instance.playerScan.GetPositions();
+        gameData.playerScan.GetPositions();
         IsMovingToNextArea = false;
         CheckingForCloseToTargetPos = false;
 
-        //GameData.Instance.method_1("ToObject " + ObjectName, Color.Red);
+        //gameData.method_1("ToObject " + ObjectName, Color.Red);
 
         try
         {
-            ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+            ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
             CheckForBadMapData(ThisPlayerAreaID - 1);
 
-            ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("object", ObjectName, ThisPlayerAreaID, new List<int>() { });
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
-            ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
+            ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("object", ObjectName, ThisPlayerAreaID, new List<int>() { });
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
             PlayerOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
             TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
 
-            return GameData.Instance.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
+            return gameData.pathFinding.GetPathFinding(AcceptOffset, ClearAreaOnMoving);
         }
         catch { }
 
@@ -199,20 +197,20 @@ public class PathFinding
 
     public bool MoveToThisPos(Position ThisPositionn, int AcceptOffset = 4, bool ClearAreaOnMoving = false)
     {
-        if (GameData.Instance.playerScan.levelNo == 0) GameData.Instance.playerScan.GetPositions();
+        if (gameData.playerScan.levelNo == 0) gameData.playerScan.GetPositions();
         IsMovingToNextArea = false;
         CheckingForCloseToTargetPos = true;
 
-        //GameData.Instance.method_1("ToThisPos", Color.Red);
+        //gameData.method_1("ToThisPos", Color.Red);
 
         try
         {
-            ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+            ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
             CheckForBadMapData(ThisPlayerAreaID - 1);
 
             ThisFinalPosition = ThisPositionn;
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
-            ThisCollisionGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
             PlayerOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
             TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
@@ -228,11 +226,11 @@ public class PathFinding
     {
         bool MovedCorrectly = false;
 
-        //Console.WriteLine("player: " + GameData.Instance.playerScan.xPos + ", " + GameData.Instance.playerScan.yPos);
+        //Console.WriteLine("player: " + gameData.playerScan.xPos + ", " + gameData.playerScan.yPos);
         //Console.WriteLine("offset: " + ThisOffsetPosition.X + ", " + ThisOffsetPosition.Y);
         //Console.WriteLine("final: " + ThisFinalPosition.X + ", " + ThisFinalPosition.Y);
 
-        Point startPos = new Point(GameData.Instance.playerScan.xPos - ThisOffsetPosition.X, GameData.Instance.playerScan.yPos - ThisOffsetPosition.Y);
+        Point startPos = new Point(gameData.playerScan.xPos - ThisOffsetPosition.X, gameData.playerScan.yPos - ThisOffsetPosition.Y);
         Point targetPos = new Point(ThisFinalPosition.X - ThisOffsetPosition.X, ThisFinalPosition.Y - ThisOffsetPosition.Y);
         //Point startPos = new Point(115, 579);
         //Point targetPos = new Point(41, 429);
@@ -246,44 +244,44 @@ public class PathFinding
         //no need to move we are close already!
         if (CheckingForCloseToTargetPos)
         {
-            if (startPos.X >= (targetPos.X - GameData.Instance.mover.MoveAcceptOffset)
-                && startPos.X <= (targetPos.X + GameData.Instance.mover.MoveAcceptOffset)
-                && startPos.Y >= (targetPos.Y - GameData.Instance.mover.MoveAcceptOffset)
-                && startPos.Y <= (targetPos.Y + GameData.Instance.mover.MoveAcceptOffset))
+            if (startPos.X >= (targetPos.X - gameData.mover.MoveAcceptOffset)
+                && startPos.X <= (targetPos.X + gameData.mover.MoveAcceptOffset)
+                && startPos.Y >= (targetPos.Y - gameData.mover.MoveAcceptOffset)
+                && startPos.Y <= (targetPos.Y + gameData.mover.MoveAcceptOffset))
             {
                 return true;
             }
         }
 
-        //GameData.Instance.method_1("Start pos: " + startPos.X + ", " + startPos.Y, Color.Red);
-        //GameData.Instance.method_1("Target pos: " + targetPos.X + ", " + targetPos.Y, Color.Red);
+        //gameData.method_1("Start pos: " + startPos.X + ", " + startPos.Y, Color.Red);
+        //gameData.method_1("Target pos: " + targetPos.X + ", " + targetPos.Y, Color.Red);
 
         /*if (ThisOffsetPosition.X == 0 && ThisOffsetPosition.Y == 0)
         {
-            GameData.Instance.method_1("Offsets are bad!", Color.Red);
+            gameData.method_1("Offsets are bad!", Color.Red);
         }*/
         if (targetPos.X <= 0 || targetPos.Y <= 0)
         {
-            GameData.Instance.method_1("Target pos are bad: " + targetPos.X + ", " + targetPos.Y, Color.OrangeRed);
+            gameData.method_1("Target pos are bad: " + targetPos.X + ", " + targetPos.Y, Color.OrangeRed);
             return false;
         }
 
         path = FindPath(startPos, targetPos);
         if (path == null)
         {
-            GameData.Instance.method_1("No path found.", Color.Red);
-            //GameData.Instance.mapAreaStruc.DumpMap();
-            Form1_0.GoToNextScript();
+            gameData.method_1("No path found.", Color.Red);
+            //gameData.mapAreaStruc.DumpMap();
+            gameData.form.GoToNextScript();
             return false;
         }
 
         //################################################
         //Shorten the path so we don't go at each single unit
         int ThisOffsetToUse = AcceptMoveOffset;
-        if (GameData.Instance.townStruc.IsInTown) ThisOffsetToUse = 5;
+        if (gameData.townStruc.IsInTown) ThisOffsetToUse = 5;
         else if (!CharConfig.UseTeleport) ThisOffsetToUse = 5;
-        else if (CharConfig.UseTeleport && !GameData.Instance.townStruc.GetInTown() && (Enums.Area)GameData.Instance.playerScan.levelNo == Enums.Area.ArcaneSanctuary) ThisOffsetToUse = 1;
-        //else if(CharConfig.UseTeleport && !GameData.Instance.townStruc.GetInTown()) ThisOffsetToUse = 1;
+        else if (CharConfig.UseTeleport && !gameData.townStruc.GetInTown() && (Enums.Area)gameData.playerScan.levelNo == Enums.Area.ArcaneSanctuary) ThisOffsetToUse = 1;
+        //else if(CharConfig.UseTeleport && !gameData.townStruc.GetInTown()) ThisOffsetToUse = 1;
 
         List<Point> pathShortened = new List<Point>();
         int LastPathAdded = 0;
@@ -315,8 +313,8 @@ public class PathFinding
             IsMovingThruPath = true;
             while (IsMovingThruPath)
             {
-                GameData.Instance.playerScan.GetPositions();
-                ThisPlayerAreaID = (int)GameData.Instance.playerScan.levelNo;
+                gameData.playerScan.GetPositions();
+                ThisPlayerAreaID = (int)gameData.playerScan.levelNo;
 
                 //we are close to accept offset, stop moving to path
                 if (IsCloseToLocation(ThisFinalPosition, AcceptOffset))
@@ -347,19 +345,19 @@ public class PathFinding
 
                 if (CurrentPathIndex < path.Count - 1)
                 {
-                    GameData.Instance.mover.MoveAcceptOffset = 7;
+                    gameData.mover.MoveAcceptOffset = 7;
                 }
                 else
                 {
-                    GameData.Instance.mover.MoveAcceptOffset = 4;
+                    gameData.mover.MoveAcceptOffset = 4;
                 }
 
                 //Console.WriteLine("Pos test: " + path[CurrentPathIndex].X + ", " + path[CurrentPathIndex].Y);
-                if (GameData.Instance.mover.MoveToLocation(path[CurrentPathIndex].X + ThisOffsetPosition.X - PlayerOffsetInCollisiongrid.X, path[CurrentPathIndex].Y + ThisOffsetPosition.Y - PlayerOffsetInCollisiongrid.Y, false, false))
+                if (gameData.mover.MoveToLocation(path[CurrentPathIndex].X + ThisOffsetPosition.X - PlayerOffsetInCollisiongrid.X, path[CurrentPathIndex].Y + ThisOffsetPosition.Y - PlayerOffsetInCollisiongrid.Y, false, false))
                 {
                     BadPathIndexount = 0;
                     CurrentPathIndex++;
-                    GameData.Instance.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
+                    gameData.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
                     if (CurrentPathIndex >= path.Count - 1)
                     {
                         IsMovingThruPath = false;
@@ -368,14 +366,14 @@ public class PathFinding
                     {
                         if (ClearAreaOnMoving)
                         {
-                            if (GameData.Instance.battle.ClearingFullArea && GameData.Instance.battle.AllRooms_InArea.Count > 0)
+                            if (gameData.battle.ClearingFullArea && gameData.battle.AllRooms_InArea.Count > 0)
                             {
                                 //Remove the Rooms we just done clearing
-                                GameData.Instance.battle.RemoveCurrentRoomFromClearing();
+                                gameData.battle.RemoveCurrentRoomFromClearing();
                             }
 
-                            //GameData.Instance.method_1("Clearing area of mobs...", Color.Red);
-                            if (GameData.Instance.battle.ClearAreaOfMobs(path[CurrentPathIndex].X + ThisOffsetPosition.X - PlayerOffsetInCollisiongrid.X, path[CurrentPathIndex].Y + ThisOffsetPosition.Y - PlayerOffsetInCollisiongrid.Y, AcceptMoveOffset + 2))
+                            //gameData.method_1("Clearing area of mobs...", Color.Red);
+                            if (gameData.battle.ClearAreaOfMobs(path[CurrentPathIndex].X + ThisOffsetPosition.X - PlayerOffsetInCollisiongrid.X, path[CurrentPathIndex].Y + ThisOffsetPosition.Y - PlayerOffsetInCollisiongrid.Y, AcceptMoveOffset + 2))
                             {
                                 IsMovingToNextArea = true;
                                 IsMovingThruPath = false;
@@ -394,7 +392,7 @@ public class PathFinding
                     {
                         BadPathIndexount++;
                         CurrentPathIndex++;
-                        GameData.Instance.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
+                        gameData.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
                         if (BadPathIndexount >= 3)
                         {
                             IsMovingThruPath = false;
@@ -405,26 +403,26 @@ public class PathFinding
 
             if (!IsMovingToNextArea)
             {
-                if (AcceptOffset == 4) GameData.Instance.mover.MoveToLocation(ThisFinalPosition.X - PlayerOffsetInCollisiongrid.X, ThisFinalPosition.Y - PlayerOffsetInCollisiongrid.Y);
+                if (AcceptOffset == 4) gameData.mover.MoveToLocation(ThisFinalPosition.X - PlayerOffsetInCollisiongrid.X, ThisFinalPosition.Y - PlayerOffsetInCollisiongrid.Y);
 
                 //int tryyy = 0;
-                //while (GameData.Instance.playerScan.levelNo == ThisPlayerAreaID && tryyy <= 25)
+                //while (gameData.playerScan.levelNo == ThisPlayerAreaID && tryyy <= 25)
                 //{
-                Position itemScreenPos = GameData.Instance.gameStruc.World2Screen(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, ThisFinalPosition.X - PlayerOffsetInCollisiongrid.X, ThisFinalPosition.Y - PlayerOffsetInCollisiongrid.Y);
-                GameData.Instance.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                GameData.Instance.playerScan.GetPositions();
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisFinalPosition.X - PlayerOffsetInCollisiongrid.X, ThisFinalPosition.Y - PlayerOffsetInCollisiongrid.Y);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                gameData.playerScan.GetPositions();
                 //tryyy++;
                 //}
             }
 
             int FinalX = path[path.Count - 1].X + ThisOffsetPosition.X - PlayerOffsetInCollisiongrid.X;
             int FinalY = path[path.Count - 1].Y + ThisOffsetPosition.Y - PlayerOffsetInCollisiongrid.Y;
-            if (GameData.Instance.mover.IsPositionNearOf(FinalX, FinalY, AcceptOffset)) MovedCorrectly = true;
+            if (gameData.mover.IsPositionNearOf(FinalX, FinalY, AcceptOffset)) MovedCorrectly = true;
         }
         else
         {
-            GameData.Instance.method_1("No path found.", Color.Red);
-            Form1_0.GoToNextScript();
+            gameData.method_1("No path found.", Color.Red);
+            gameData.form.GoToNextScript();
         }
 
         return MovedCorrectly;
@@ -434,8 +432,8 @@ public class PathFinding
     {
         if (IsMovingThruPath)
         {
-            int DistX = GameData.Instance.playerScan.xPos - path[CurrentPathIndex].X;
-            int DistY = GameData.Instance.playerScan.yPos - path[CurrentPathIndex].Y;
+            int DistX = gameData.playerScan.xPos - path[CurrentPathIndex].X;
+            int DistY = gameData.playerScan.yPos - path[CurrentPathIndex].Y;
             if (DistX < 0) DistX = -DistX;
             if (DistY < 0) DistY = -DistY;
 
@@ -443,15 +441,15 @@ public class PathFinding
             int CheckCount = 0;
             while (CheckIndexxx < path.Count - 1 && CheckCount < 1)
             {
-                int DistNextX = GameData.Instance.playerScan.xPos - path[CheckIndexxx].X;
-                int DistNextY = GameData.Instance.playerScan.yPos - path[CheckIndexxx].Y;
+                int DistNextX = gameData.playerScan.xPos - path[CheckIndexxx].X;
+                int DistNextY = gameData.playerScan.yPos - path[CheckIndexxx].Y;
                 if (DistNextX < 0) DistNextX = -DistNextX;
                 if (DistNextY < 0) DistNextY = -DistNextY;
 
                 if (DistNextX < DistX && DistNextY < DistY)
                 {
                     CurrentPathIndex++; //increase pathing index, we are closer to the next destination than the current one!
-                    GameData.Instance.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
+                    gameData.overlayForm.SetPathPoints(path, CurrentPathIndex, ThisOffsetPosition, PlayerOffsetInCollisiongrid);
                 }
                 CheckIndexxx++;
                 CheckCount++;
@@ -461,16 +459,16 @@ public class PathFinding
 
     public bool[,] MergeCollisionGrids(Enums.Area ThisNewArea)
     {
-        bool[,] CurrentAreaGrid = GameData.Instance.mapAreaStruc.CollisionGrid((Enums.Area)GameData.Instance.playerScan.levelNo);
-        bool[,] NextAreaGrid = GameData.Instance.mapAreaStruc.CollisionGrid(ThisNewArea);
+        bool[,] CurrentAreaGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
+        bool[,] NextAreaGrid = gameData.mapAreaStruc.CollisionGrid(ThisNewArea);
         PlayerOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
         TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
 
         // Calculate the size of the merged grid
-        int minX = Math.Min(GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X);
-        int minY = Math.Min(GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y, GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y);
-        int maxX = Math.Max(GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width, GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X + GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width);
-        int maxY = Math.Max(GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height, GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y + GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height);
+        int minX = Math.Min(gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X);
+        int minY = Math.Min(gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y, gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y);
+        int maxX = Math.Max(gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width, gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X + gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width);
+        int maxY = Math.Max(gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height, gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y + gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height);
         int width = maxX - minX;
         int height = maxY - minY;
 
@@ -478,20 +476,20 @@ public class PathFinding
         bool[,] mergedGrid = new bool[width, height];
 
         // Copy collision data from map1 to the merged grid
-        for (int y = 0; y < GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height; y++)
+        for (int y = 0; y < gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height; y++)
         {
-            for (int x = 0; x < GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width; x++)
+            for (int x = 0; x < gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width; x++)
             {
-                mergedGrid[x - minX + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, y - minY + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y] = CurrentAreaGrid[x, y];
+                mergedGrid[x - minX + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, y - minY + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y] = CurrentAreaGrid[x, y];
             }
         }
 
         // Copy collision data from map2 to the merged grid
-        for (int y = 0; y < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height; y++)
+        for (int y = 0; y < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height; y++)
         {
-            for (int x = 0; x < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width; x++)
+            for (int x = 0; x < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width; x++)
             {
-                mergedGrid[x - minX + GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, y - minY + GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y] = NextAreaGrid[x, y];
+                mergedGrid[x - minX + gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, y - minY + gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y] = NextAreaGrid[x, y];
             }
         }
 
@@ -502,7 +500,7 @@ public class PathFinding
 
     public void SetOffsets(Enums.Area ThisNewArea)
     {
-        /*Point startPos = new Point(GameData.Instance.playerScan.xPos - ThisOffsetPosition.X, GameData.Instance.playerScan.yPos - ThisOffsetPosition.Y);
+        /*Point startPos = new Point(gameData.playerScan.xPos - ThisOffsetPosition.X, gameData.playerScan.yPos - ThisOffsetPosition.Y);
         Point targetPos = new Point(ThisFinalPosition.X - ThisOffsetPosition.X, ThisFinalPosition.Y - ThisOffsetPosition.Y);
 
         startPos.X += PlayerOffsetInCollisiongrid.X;
@@ -513,76 +511,76 @@ public class PathFinding
         PlayerOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
         TargetOffsetInCollisiongrid = new Position { X = 0, Y = 0 };
 
-        if (GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y == GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height)
+        if (gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y == gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Height)
         {
             //Expend Bottom
             //#####
-            /*if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X > GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
+            /*if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X > gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
             {
-                PlayerOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
-                TargetOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
+                PlayerOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
+                TargetOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
 
             }
-            if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
+            if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
             {
-                PlayerOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
-                TargetOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
+                PlayerOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
+                TargetOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
             }*/
             //#####
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
         }
-        if (GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y == GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height)
+        if (gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y == gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Height)
         {
             //Expend Up
             //#####
-            /*if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X > GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
+            /*if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X > gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
             {
-                PlayerOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
-                TargetOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
+                PlayerOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
+                TargetOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X;
             }
-            if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
+            if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X)
             {
-                PlayerOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
-                TargetOffsetInCollisiongrid.X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
+                PlayerOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
+                TargetOffsetInCollisiongrid.X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X;
             }*/
             //#####
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y };
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y };
         }
-        if (GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X == GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X + GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width)
+        if (gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X == gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X + gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Size.Width)
         {
             //Expend Right
             //#####
-            /*if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y > GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
+            /*if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y > gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
             {
-                PlayerOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
-                //TargetOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
+                PlayerOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
+                //TargetOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
 
             }
-            if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
+            if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
             {
-                //PlayerOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
-                TargetOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
+                //PlayerOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
+                TargetOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
             }*/
             //#####
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y };
         }
-        if (GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X == GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width)
+        if (gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X == gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.X - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Size.Width)
         {
             //Expend Left
             //#####
-            /*if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y > GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
+            /*if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y > gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
             {
-                PlayerOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
-                //TargetOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
+                PlayerOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
+                //TargetOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y;
 
             }
-            if (GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y < GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
+            if (gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y < gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y)
             {
-                //PlayerOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
-                TargetOffsetInCollisiongrid.Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - GameData.Instance.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
+                //PlayerOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
+                TargetOffsetInCollisiongrid.Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y - gameData.mapAreaStruc.AllMapData[ThisPlayerAreaID - 1].Offset.Y;
             }*/
             //#####
-            ThisOffsetPosition = new Position { X = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, Y = GameData.Instance.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y };
+            ThisOffsetPosition = new Position { X = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.X, Y = gameData.mapAreaStruc.AllMapData[(int)ThisNewArea - 1].Offset.Y };
         }
     }
 
@@ -643,8 +641,8 @@ public class PathFinding
                         }
                     }
 
-                    if (CharConfig.UseTeleport && !GameData.Instance.townStruc.GetInTown() && (Enums.Area)GameData.Instance.playerScan.levelNo == Enums.Area.ArcaneSanctuary)
-                    //if (CharConfig.UseTeleport && !GameData.Instance.townStruc.GetInTown())
+                    if (CharConfig.UseTeleport && !gameData.townStruc.GetInTown() && (Enums.Area)gameData.playerScan.levelNo == Enums.Area.ArcaneSanctuary)
+                    //if (CharConfig.UseTeleport && !gameData.townStruc.GetInTown())
                     {
                         nx = current.Position.X + (dx[p] * AcceptMoveOffset);
                         ny = current.Position.Y + (dy[p] * AcceptMoveOffset);
@@ -687,7 +685,7 @@ public class PathFinding
         }
         catch
         {
-            GameData.Instance.method_1("Issue with PathFinding CollisionGrid 'Indexes'!", Color.Red);
+            gameData.method_1("Issue with PathFinding CollisionGrid 'Indexes'!", Color.Red);
         }
 
         // No path found
@@ -697,10 +695,10 @@ public class PathFinding
     public bool IsCloseToLocation(Position ThissP, int AcceptOffset)
     {
         bool MovedCorrectly = false;
-        if (GameData.Instance.playerScan.xPosFinal >= (ThissP.X - AcceptOffset)
-                && GameData.Instance.playerScan.xPosFinal <= (ThissP.X + AcceptOffset)
-                && GameData.Instance.playerScan.yPosFinal >= (ThissP.Y - AcceptOffset)
-                && GameData.Instance.playerScan.yPosFinal <= (ThissP.Y + AcceptOffset))
+        if (gameData.playerScan.xPosFinal >= (ThissP.X - AcceptOffset)
+                && gameData.playerScan.xPosFinal <= (ThissP.X + AcceptOffset)
+                && gameData.playerScan.yPosFinal >= (ThissP.Y - AcceptOffset)
+                && gameData.playerScan.yPosFinal <= (ThissP.Y + AcceptOffset))
         {
             MovedCorrectly = true;
         }

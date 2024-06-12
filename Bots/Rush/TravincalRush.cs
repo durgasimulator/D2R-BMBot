@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class TravincalRush : IBot
 {
-    GameData gameData;
+    private GameData gameData;
 
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
@@ -18,7 +18,10 @@ public class TravincalRush : IBot
     public bool KilledAnyMember = false;
 
     public Position PortalPosition = new Position { X = 0, Y = 0 };
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -27,7 +30,6 @@ public class TravincalRush : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

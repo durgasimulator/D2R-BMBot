@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 public class BeltStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public int[] BeltHaveItems = new int[16];
     public int[] BeltItemsTypes = new int[16];
@@ -30,6 +30,10 @@ public class BeltStruc
 
     public bool GrabBothRV = false;
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public int GetPotionQuantityInBelt(int ThisPotType)
     {
         int Qty1 = 0;

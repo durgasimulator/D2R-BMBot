@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 public class MapAreaStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public List<ServerLevel> AllMapData = new List<ServerLevel>();
     public int CurrentObjectIndex = 0;
@@ -24,12 +24,12 @@ public class MapAreaStruc
     public bool[,] CurrentAreaCollisionGrid = new bool[0, 0];
     public string[] MapDataLines = new string[0];
     public List<int> AllExitsIDs = new List<int>();
-
-    public void SetForm1(Form1 form1_1)
+    public void Initialize(GameData gameData)
     {
-
+        this.gameData = gameData;
         _kooloMapPath = Application.StartupPath + @"\map.exe";
     }
+
 
     public Position GetAreaOfObject(string ObjectType, string ObjectName, List<int> IgnoreTheseIndex, int StartAreaIndexToSearch = 0, int EndAreaIndexToSearch = 1, bool ForOverlay = false)
     {

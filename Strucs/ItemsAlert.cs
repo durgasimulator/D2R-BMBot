@@ -25,7 +25,7 @@ using static Enums;
 
 public class ItemsAlert
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public Dictionary<string, bool> PickItemsRunesKeyGems = new Dictionary<string, bool>();
     public Dictionary<string, int> PickItemsRunesKeyGems_Quantity = new Dictionary<string, int>();
     public Dictionary<string, bool> PickItemsPotions = new Dictionary<string, bool>();
@@ -48,8 +48,9 @@ public class ItemsAlert
 
     public Dictionary<string, List<string>> typeMapping = new Dictionary<string, List<string>>();
 
-    public void Init()
+    public void Initialize(GameData gameData)
     {
+        this.gameData = gameData;
         typeMapping = new Dictionary<string, List<string>>()
         {
             {"amulet", new List<string>{"Amulet"}},

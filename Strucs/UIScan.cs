@@ -13,7 +13,7 @@ using System.Net.NetworkInformation;
 
 public class UIScan
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public bool invMenu = false;
     public bool charMenu = false;
@@ -40,6 +40,10 @@ public class UIScan
     public int MaxTryUIOpen = 5;
     public int MaxWaitingDelayForMenuInteractions = 10;
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void CloseAllUIMenu()
     {
         CloseAllUIMenuButThisOne("");

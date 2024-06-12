@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class Town
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public int TownAct = 0;
     public bool Towning = true;
@@ -37,6 +37,11 @@ public class Town
     public List<uint> IgnoredWPList = new List<uint>();
     public bool FirstTown = true;
     public bool CainNotFoundAct1 = false;
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
+
     public void StopTowningReturn()
     {
         CurrentScript = 0;

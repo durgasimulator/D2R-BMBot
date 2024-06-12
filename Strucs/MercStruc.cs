@@ -14,7 +14,7 @@ using static System.Windows.Forms.AxHost;
 
 public class MercStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public long MercPointerLocation = 0;
     public byte[] Mercdatastruc = new byte[144];
@@ -40,7 +40,10 @@ public class MercStruc
     public byte[] pStatB = new byte[180];
     public byte[] statBuffer = new byte[] { };
 
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public bool IsMerc(int MobNameID)
     {
         return MobNameID == (int)EnumsMobsNPC.MobsNPC.Guard || MobNameID == (int)EnumsMobsNPC.MobsNPC.Act5Hireling1Hand || MobNameID == (int)EnumsMobsNPC.MobsNPC.Act5Hireling2Hand || MobNameID == (int)EnumsMobsNPC.MobsNPC.IronWolf || MobNameID == (int)EnumsMobsNPC.MobsNPC.Rogue2;

@@ -18,7 +18,7 @@ using static MapAreaStruc;
 
 public class ItemsStruc
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public string quality = "";
     public bool identified = false;
@@ -85,6 +85,10 @@ public class ItemsStruc
 
     public bool AlreadyEmptyedInventory = false;
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void GetStatsAddr()
     {
         pStatsListExPtr = BitConverter.ToInt64(itemdatastruc, 0x88);

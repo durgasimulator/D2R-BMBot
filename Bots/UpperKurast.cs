@@ -8,14 +8,17 @@ using static MapAreaStruc;
 
 public class UpperKurast : IBot
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public int WP_X = 0;
     public int WP_Y = 0;
     public List<int> IgnoredChestList = new List<int>();
     public bool ScriptDone { get; set; } = false;
     public bool HasTakenAnyChest = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetVars()
     {
@@ -28,7 +31,6 @@ public class UpperKurast : IBot
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())

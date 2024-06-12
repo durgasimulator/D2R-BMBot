@@ -10,10 +10,13 @@ using static MapAreaStruc;
 public class ArachnidLair : IBot
 {
 
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public bool ScriptDone { get; set; } = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void ResetVars()
     {
@@ -24,12 +27,11 @@ public class ArachnidLair : IBot
     public void DetectCurrentStep()
     {
         if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderForest) CurrentStep = 1;
-        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderCavern) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderCave) CurrentStep = 2;
     }
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())
@@ -70,13 +72,13 @@ public class ArachnidLair : IBot
 
             if (CurrentStep == 1)
             {
-                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderCavern)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderCave)
                 {
                     CurrentStep++;
                     return;
                 }
 
-                gameData.pathFinding.MoveToExit(Enums.Area.SpiderCavern);
+                gameData.pathFinding.MoveToExit(Enums.Area.SpiderCave);
                 CurrentStep++;
             }
 
@@ -92,7 +94,7 @@ public class ArachnidLair : IBot
 
                 gameData.SetGameStatus("CLEARING ARACHNID LAIR");
 
-                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != Enums.Area.SpiderCavern)
+                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != Enums.Area.SpiderCave)
                 {
                     gameData.battle.ClearFullAreaOfMobs();
 

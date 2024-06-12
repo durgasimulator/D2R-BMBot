@@ -9,7 +9,7 @@ using static MapAreaStruc;
 
 public class ChaosLeech
 {
-    GameData gameData;
+    private GameData gameData;
     public int CurrentStep = 0;
     public int MaxGameTimeToEnter = CharConfig.MaxTimeEnterGame; //6mins
     public int MaxTimeWaitedForTP = (2 * 60) * 2; //2mins
@@ -36,10 +36,12 @@ public class ChaosLeech
     public int LastLeechPosYNEW = 0;
 
     public bool CastedDefense = false;
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void RunScriptNOTInGame()
     {
-        gameData = GameData.Instance;
         TimeWaitedForTP = 0;
         CurrentStep = 0;
         LastLeechPosX = 0;
@@ -144,7 +146,6 @@ public class ChaosLeech
 
     public void RunScript()
     {
-        gameData = GameData.Instance;
         gameData.townStruc.ScriptTownAct = 4; //set to town act 4 when running this script
         SameGameRetry = 0;
         GetLeechInfo();

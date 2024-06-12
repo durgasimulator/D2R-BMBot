@@ -15,7 +15,7 @@ using Microsoft.CSharp.RuntimeBinder;
 
 public class ScriptsLoader
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public void TestMethod()
     {
         Console.WriteLine("Executing MyMethod from script #2...");

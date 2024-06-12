@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 public class Potions
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public int SameHPCount = 0;
     public int GainingHPCount = 0;
     public long PlayerHPLast = 0;
@@ -29,7 +29,10 @@ public class Potions
 
     public List<int> MercHPList = new List<int>();
 
-
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
 
     public void CheckIfWeUsePotion()
     {

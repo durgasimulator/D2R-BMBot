@@ -10,7 +10,7 @@ using static Enums;
 
 public class PatternsScan
 {
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
 
     public byte[] UnitBuffer = new byte[] { };
 
@@ -51,6 +51,10 @@ public class PatternsScan
     public int UnitsScanVersion = 1;
     public int MaxUnitsIncreaseCount = 5;
     public int CurrentUnitsIncreaseCount = 0;
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     IntPtr modulePatternScan(string Tpattern)
     {
         IntPtr ThisAddr = (IntPtr)0;

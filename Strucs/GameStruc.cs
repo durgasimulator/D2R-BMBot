@@ -19,7 +19,7 @@ using static Enums;
 public class GameStruc
 {
 
-    GameData gameData = GameData.Instance;
+    private GameData gameData;
     public string GameName = "";
     public string GameDifficulty = "";
     public string GameOwnerName = "";
@@ -48,6 +48,10 @@ public class GameStruc
         [FieldOffset(1)] public byte High;
     }
 
+    public void Initialize(GameData gameData)
+    {
+        this.gameData = gameData;
+    }
     public void extract()
     {
         long gameNameOffset = (long)gameData.BaseAddress + (long)gameData.offsets["AllGamesOffset"];
