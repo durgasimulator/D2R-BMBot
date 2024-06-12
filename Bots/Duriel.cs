@@ -6,19 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class Duriel
+public class Duriel : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position OrificePos = new Position { X = 0, Y = 0 };
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -28,40 +21,40 @@ public class Duriel
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CanyonOfTheMagi) CurrentStep = 1;
-        if ((int)Form1_0.PlayerScan_0.levelNo >= (int)Enums.Area.TalRashasTomb1 && Form1_0.PlayerScan_0.levelNo <= (int)Enums.Area.TalRashasTomb7)
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CanyonOfTheMagi) CurrentStep = 1;
+        if ((int)gameData.playerScan.levelNo >= (int)Enums.Area.TalRashasTomb1 && gameData.playerScan.levelNo <= (int)Enums.Area.TalRashasTomb7)
         {
             CurrentStep = 1; //return to step1 anyway!
         }
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DurielsLair) CurrentStep = 3;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DurielsLair) CurrentStep = 3;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 2; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 2; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
-
-            Form1_0.Town_0.GoToWPArea(2, 8);
+            gameData.townStruc.GoToWPArea(2, 8);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING DURIEL");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING DURIEL");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CanyonOfTheMagi)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CanyonOfTheMagi)
                 {
                     CurrentStep++;
                 }
@@ -70,8 +63,8 @@ public class Duriel
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -79,7 +72,7 @@ public class Duriel
             if (CurrentStep == 1)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo >= (int)Enums.Area.TalRashasTomb1 && Form1_0.PlayerScan_0.levelNo <= (int)Enums.Area.TalRashasTomb7)
+                if (gameData.playerScan.levelNo >= (int)Enums.Area.TalRashasTomb1 && gameData.playerScan.levelNo <= (int)Enums.Area.TalRashasTomb7)
                 {
                     CurrentStep++;
                     return;
@@ -88,45 +81,45 @@ public class Duriel
 
                 //id":152, "type":"object", "x":453, "y":258, "name":"orifice", "op":25, "class":"quest"}
                 //Detect the correct tomb where Duriel hide
-                OrificePos = Form1_0.MapAreaStruc_0.GetAreaOfObject("object", "HoradricOrifice", new List<int>(), 65, 72);
+                OrificePos = gameData.mapAreaStruc.GetAreaOfObject("object", "HoradricOrifice", new List<int>(), 65, 72);
                 if (OrificePos.X != 0 && OrificePos.Y != 0)
                 {
                     //"id":71, "type":"exit", "x":214, "y":25, "isGoodExit":true}
-                    //Form1_0.method_1("Moving to: " + ((Enums.Area)(Form1_0.MapAreaStruc_0.CurrentObjectAreaIndex + 1)), Color.Red);
-                    Position ThisFinalPosition = Form1_0.MapAreaStruc_0.GetPositionOfObject("exit", Form1_0.Town_0.getAreaName((int)Form1_0.MapAreaStruc_0.CurrentObjectAreaIndex + 1), (int)Form1_0.PlayerScan_0.levelNo, new List<int>() { });
-                    if (Form1_0.Mover_0.MoveToLocation(ThisFinalPosition.X, ThisFinalPosition.Y))
+                    //gameData.method_1("Moving to: " + ((Enums.Area)(gameData.mapAreaStruc.CurrentObjectAreaIndex + 1)), Color.Red);
+                    Position ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("exit", gameData.townStruc.getAreaName((int)gameData.mapAreaStruc.CurrentObjectAreaIndex + 1), (int)gameData.playerScan.levelNo, new List<int>() { });
+                    if (gameData.mover.MoveToLocation(ThisFinalPosition.X, ThisFinalPosition.Y))
                     {
                         int Tryyyy = 0;
-                        while (Form1_0.PlayerScan_0.levelNo == 46 && Tryyyy <= 25)
+                        while (gameData.playerScan.levelNo == 46 && Tryyyy <= 25)
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
 
-                            Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                            Form1_0.PlayerScan_0.GetPositions();
+                            gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                            gameData.playerScan.GetPositions();
                             Tryyyy++;
                         }
                         //didn't clic correctly on tomb door, substract some pixels
                         Tryyyy = 0;
-                        while (Form1_0.PlayerScan_0.levelNo == 46 && Tryyyy <= 25)
+                        while (gameData.playerScan.levelNo == 46 && Tryyyy <= 25)
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
 
-                            Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X - 70, itemScreenPos.Y);
-                            Form1_0.PlayerScan_0.GetPositions();
+                            gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X - 70, itemScreenPos.Y);
+                            gameData.playerScan.GetPositions();
                             Tryyyy++;
                         }
                         //didn't clic correctly on tomb door, substract some pixels
                         Tryyyy = 0;
-                        while (Form1_0.PlayerScan_0.levelNo == 46 && Tryyyy <= 25)
+                        while (gameData.playerScan.levelNo == 46 && Tryyyy <= 25)
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
 
-                            Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X + 70, itemScreenPos.Y);
-                            Form1_0.PlayerScan_0.GetPositions();
+                            gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X + 70, itemScreenPos.Y);
+                            gameData.playerScan.GetPositions();
                             Tryyyy++;
                         }
 
-                        Form1_0.PathFinding_0.MoveToThisPos(OrificePos); //Move to Orifice
+                        gameData.pathFinding.MoveToThisPos(OrificePos); //Move to Orifice
 
                         CurrentStep++;
                     }
@@ -135,9 +128,9 @@ public class Duriel
                 }
                 else
                 {
-                    Form1_0.method_1("Duriel location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.method_1("Duriel location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
                 }
@@ -146,17 +139,17 @@ public class Duriel
             if (CurrentStep == 2)
             {
                 int Tryyyy = 0;
-                int StartLevel = (int)Form1_0.PlayerScan_0.levelNo;
-                while ((int)Form1_0.PlayerScan_0.levelNo == StartLevel && Tryyyy <= 25)
+                int StartLevel = (int)gameData.playerScan.levelNo;
+                while ((int)gameData.playerScan.levelNo == StartLevel && Tryyyy <= 25)
                 {
-                    Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, OrificePos.X, OrificePos.Y);
+                    Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, OrificePos.X, OrificePos.Y);
 
-                    Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X - 446, itemScreenPos.Y - 268);
-                    Form1_0.PlayerScan_0.GetPositions();
+                    gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X - 446, itemScreenPos.Y - 268);
+                    gameData.playerScan.GetPositions();
                     Tryyyy++;
                 }
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DurielsLair)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DurielsLair)
                 {
                     CurrentStep++;
                 }
@@ -164,15 +157,15 @@ public class Duriel
 
             if (CurrentStep == 3)
             {
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo != Enums.Area.DurielsLair)
+                if ((Enums.Area)gameData.playerScan.levelNo != Enums.Area.DurielsLair)
                 {
                     CurrentStep--;
                     return;
                 }
 
-                Form1_0.WaitDelay(50);  //wait a little bit so duriel can be detected
+                gameData.WaitDelay(50);  //wait a little bit so duriel can be detected
 
-                if (Form1_0.Mover_0.MoveToLocation(Form1_0.PlayerScan_0.xPos - 7, Form1_0.PlayerScan_0.yPos + 7))
+                if (gameData.mover.MoveToLocation(gameData.playerScan.xPos - 7, gameData.playerScan.yPos + 7))
                 {
                     CurrentStep++;
                 }
@@ -180,38 +173,38 @@ public class Duriel
 
             if (CurrentStep == 4)
             {
-                if (Form1_0.PlayerScan_0.levelNo >= (int)Enums.Area.TalRashasTomb1 && Form1_0.PlayerScan_0.levelNo <= (int)Enums.Area.TalRashasTomb7)
+                if (gameData.playerScan.levelNo >= (int)Enums.Area.TalRashasTomb1 && gameData.playerScan.levelNo <= (int)Enums.Area.TalRashasTomb7)
                 {
                     CurrentStep--;
                 }
 
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING DURIEL");
-                Form1_0.MobsStruc_0.DetectThisMob("getBossName", "Duriel", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Duriel", false, 200, new List<long>()))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING DURIEL");
+                gameData.mobsStruc.DetectThisMob("getBossName", "Duriel", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getBossName", "Duriel", false, 200, new List<long>()))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getBossName", "Duriel", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getBossName", "Duriel", new List<long>());
                     }
                     else
                     {
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Duriel not detected!", Color.Red);
+                    gameData.method_1("Duriel not detected!", Color.Red);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Duriel", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Duriel", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Duriel", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Duriel", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                    if (gameData.battle.EndBossBattle()) ScriptDone = true;
                     return;
                 }
             }

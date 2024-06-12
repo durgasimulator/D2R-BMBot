@@ -10,7 +10,7 @@ using static MapAreaStruc;
 
 public class Battle
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public int AreaX = 0;
     public int AreaY = 0;
@@ -41,41 +41,37 @@ public class Battle
 
     public DateTime TimeSinceLastCast = DateTime.MaxValue;
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public bool EndBossBattle()
     {
-        Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
-        if (!Form1_0.ItemsStruc_0.GetItems(true)) Form1_0.WaitDelay(CharConfig.EndBattleGrabDelay);
+        gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
+        if (!gameData.itemsStruc.GetItems(true)) gameData.WaitDelay(CharConfig.EndBattleGrabDelay);
 
         if (CharConfig.ClearAfterBoss)
         {
-            if (Form1_0.MobsStruc_0.GetMobs("", "", true, 30, new List<long>()))
+            if (gameData.mobsStruc.GetMobs("", "", true, 30, new List<long>()))
             {
-                Form1_0.Battle_0.DoBattleScript(30);
+                gameData.battle.DoBattleScript(30);
                 return false;
             }
         }
 
-        Form1_0.ItemsStruc_0.GrabAllItemsForGold();
+        gameData.itemsStruc.GrabAllItemsForGold();
 
-        Form1_0.Battle_0.ClearingArea = false;
-        Form1_0.Battle_0.DoingBattle = false;
-        Form1_0.Potions_0.CanUseSkillForRegen = true;
-        Form1_0.Town_0.FastTowning = false;
-        Form1_0.Town_0.UseLastTP = false;
+        gameData.battle.ClearingArea = false;
+        gameData.battle.DoingBattle = false;
+        gameData.potions.CanUseSkillForRegen = true;
+        gameData.townStruc.FastTowning = false;
+        gameData.townStruc.UseLastTP = false;
 
         return true;
     }
@@ -139,13 +135,13 @@ public class Battle
         Position ReturnPos = new Position { X = ThisAttackPos.X, Y = ThisAttackPos.Y };
         int ChoosenAttackLocation = 0; //0=Down, 1=Right, 2=Left, 3=Up
 
-        bool[,] ThisCollisionGrid = Form1_0.MapAreaStruc_0.CollisionGrid((Enums.Area)Form1_0.PlayerScan_0.levelNo);
+        bool[,] ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
         if (ThisCollisionGrid.GetLength(0) == 0 || ThisCollisionGrid.GetLength(1) == 0) return ReturnPos;
-        if (Form1_0.MapAreaStruc_0.AllMapData.Count == 0) return ReturnPos;
+        if (gameData.mapAreaStruc.AllMapData.Count == 0) return ReturnPos;
 
-        int ThisX = ThisAttackPos.X - Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X;
-        int ThisY = ThisAttackPos.Y - Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y;
+        int ThisX = ThisAttackPos.X - gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X;
+        int ThisY = ThisAttackPos.Y - gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y;
 
         if (ThisX < 0) return ReturnPos;
         if (ThisY < 0) return ReturnPos;
@@ -179,10 +175,10 @@ public class Battle
                         && ThisCollisionGrid[ThisX - 1, ThisY - 4]
                         && IsValid)
                     {
-                        //Form1_0.method_1("Attack from Bottom!", Color.OrangeRed);
+                        //gameData.method_1("Attack from Bottom!", Color.OrangeRed);
                         AttackPosFound = true;
                         ChoosenAttackLocation = 0; //Attack from Bottom
-                        ReturnPos = new Position { X = ThisX + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X, Y = ThisY + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y };
+                        ReturnPos = new Position { X = ThisX + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X, Y = ThisY + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y };
                     }
                     else
                     {
@@ -211,10 +207,10 @@ public class Battle
                         && ThisCollisionGrid[ThisX - 2, ThisY]
                         && IsValid)
                     {
-                        //Form1_0.method_1("Attack from Right!", Color.OrangeRed);
+                        //gameData.method_1("Attack from Right!", Color.OrangeRed);
                         AttackPosFound = true;
                         ChoosenAttackLocation = 1; //Attack from Right
-                        ReturnPos = new Position { X = ThisX + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X, Y = ThisY + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y };
+                        ReturnPos = new Position { X = ThisX + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X, Y = ThisY + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y };
                     }
                     else
                     {
@@ -245,10 +241,10 @@ public class Battle
                         && ThisCollisionGrid[ThisX + 1, ThisY - 1]
                         && IsValid)
                     {
-                        //Form1_0.method_1("Attack from Left!", Color.OrangeRed);
+                        //gameData.method_1("Attack from Left!", Color.OrangeRed);
                         AttackPosFound = true;
                         ChoosenAttackLocation = 2; //Attack from Left
-                        ReturnPos = new Position { X = ThisX + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X, Y = ThisY + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y };
+                        ReturnPos = new Position { X = ThisX + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X, Y = ThisY + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y };
                     }
                     else
                     {
@@ -279,14 +275,14 @@ public class Battle
                         && ThisCollisionGrid[ThisX, ThisY + 1]
                         && IsValid)
                     {
-                        //Form1_0.method_1("Attack from Top!", Color.OrangeRed);
+                        //gameData.method_1("Attack from Top!", Color.OrangeRed);
                         AttackPosFound = true;
                         ChoosenAttackLocation = 3; //Attack from Top
-                        ReturnPos = new Position { X = ThisX + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X, Y = ThisY + Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y };
+                        ReturnPos = new Position { X = ThisX + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X, Y = ThisY + gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y };
                     }
                     else
                     {
-                        Form1_0.method_1("No Attack pos found!", Color.Red);
+                        gameData.method_1("No Attack pos found!", Color.Red);
                         //no atack pos found??
                         AttackPosFound = true;
                         ChoosenAttackLocation++; //return attack pos = 4 (for error)
@@ -304,88 +300,88 @@ public class Battle
 
     public void CastDefense()
     {
-        if (CharConfig.UseBO && !Form1_0.Town_0.GetInTown())
+        if (CharConfig.UseBO && !gameData.townStruc.GetInTown())
         {
-            Form1_0.Potions_0.CheckIfWeUsePotion();
+            gameData.potions.CheckIfWeUsePotion();
 
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySwapWeapon);
-            Form1_0.WaitDelay(15);
-            //Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleOrder);
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleCommand);
-            Form1_0.WaitDelay(10);
-            /*Form1_0.KeyMouse_0.MouseClicc(1025, 1025);
-            Form1_0.WaitDelay(5);
-            Form1_0.KeyMouse_0.MouseClicc(1095, 610);
-            Form1_0.WaitDelay(5);*/
-            Form1_0.PlayerScan_0.GetPositions();
+            gameData.keyMouse.PressKey(CharConfig.KeySwapWeapon);
+            gameData.WaitDelay(15);
+            //gameData.keyMouse.PressKey(CharConfig.KeySkillBattleOrder);
+            gameData.keyMouse.PressKey(CharConfig.KeySkillBattleCommand);
+            gameData.WaitDelay(10);
+            /*gameData.keyMouse.MouseClicc(1025, 1025);
+            gameData.WaitDelay(5);
+            gameData.keyMouse.MouseClicc(1095, 610);
+            gameData.WaitDelay(5);*/
+            gameData.playerScan.GetPositions();
 
             //press W again to switch weapon again
-            //if (Form1_0.PlayerScan_0.RightSkill != Enums.Skill.BattleOrders)
-            if (Form1_0.PlayerScan_0.RightSkill != Enums.Skill.BattleCommand)
+            //if (gameData.playerScan.RightSkill != Enums.Skill.BattleOrders)
+            if (gameData.playerScan.RightSkill != Enums.Skill.BattleCommand)
             {
-                Form1_0.KeyMouse_0.PressKey(CharConfig.KeySwapWeapon);
-                Form1_0.WaitDelay(15);
-                //Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleOrder);
-                Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleCommand);
-                Form1_0.WaitDelay(10);
-                /*Form1_0.KeyMouse_0.MouseClicc(1025, 1025);
-                Form1_0.WaitDelay(5);
-                Form1_0.KeyMouse_0.MouseClicc(1095, 610);
-                Form1_0.WaitDelay(5);*/
-                Form1_0.PlayerScan_0.GetPositions();
+                gameData.keyMouse.PressKey(CharConfig.KeySwapWeapon);
+                gameData.WaitDelay(15);
+                //gameData.keyMouse.PressKey(CharConfig.KeySkillBattleOrder);
+                gameData.keyMouse.PressKey(CharConfig.KeySkillBattleCommand);
+                gameData.WaitDelay(10);
+                /*gameData.keyMouse.MouseClicc(1025, 1025);
+                gameData.WaitDelay(5);
+                gameData.keyMouse.MouseClicc(1095, 610);
+                gameData.WaitDelay(5);*/
+                gameData.playerScan.GetPositions();
             }
 
-            Form1_0.KeyMouse_0.MouseCliccRight_RealPos(Form1_0.CenterX, Form1_0.CenterY);
-            Form1_0.WaitDelay(35);
+            gameData.keyMouse.MouseCliccRight_RealPos(gameData.CenterX, gameData.CenterY);
+            gameData.WaitDelay(35);
 
             //select battle command
-            //Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleCommand);
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleOrder);
-            Form1_0.WaitDelay(10);
-            /*Form1_0.KeyMouse_0.MouseClicc(1025, 1025);
-            Form1_0.WaitDelay(5);
-            Form1_0.KeyMouse_0.MouseClicc(1025, 610);
-            Form1_0.WaitDelay(5);*/
-            Form1_0.KeyMouse_0.MouseCliccRight_RealPos(Form1_0.CenterX, Form1_0.CenterY);
-            Form1_0.WaitDelay(35); //60 <-
-            Form1_0.Potions_0.CheckIfWeUsePotion();
+            //gameData.keyMouse.PressKey(CharConfig.KeySkillBattleCommand);
+            gameData.keyMouse.PressKey(CharConfig.KeySkillBattleOrder);
+            gameData.WaitDelay(10);
+            /*gameData.keyMouse.MouseClicc(1025, 1025);
+            gameData.WaitDelay(5);
+            gameData.keyMouse.MouseClicc(1025, 610);
+            gameData.WaitDelay(5);*/
+            gameData.keyMouse.MouseCliccRight_RealPos(gameData.CenterX, gameData.CenterY);
+            gameData.WaitDelay(35); //60 <-
+            gameData.potions.CheckIfWeUsePotion();
 
             //select battle cry
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillBattleCry);
-            Form1_0.WaitDelay(10);
-            /*Form1_0.KeyMouse_0.MouseClicc(1025, 1025);
-            Form1_0.WaitDelay(5);
-            Form1_0.KeyMouse_0.MouseClicc(1165, 610);
-            Form1_0.WaitDelay(5);*/
-            Form1_0.KeyMouse_0.MouseCliccRight_RealPos(Form1_0.CenterX, Form1_0.CenterY);
-            Form1_0.WaitDelay(60);
+            gameData.keyMouse.PressKey(CharConfig.KeySkillBattleCry);
+            gameData.WaitDelay(10);
+            /*gameData.keyMouse.MouseClicc(1025, 1025);
+            gameData.WaitDelay(5);
+            gameData.keyMouse.MouseClicc(1165, 610);
+            gameData.WaitDelay(5);*/
+            gameData.keyMouse.MouseCliccRight_RealPos(gameData.CenterX, gameData.CenterY);
+            gameData.WaitDelay(60);
 
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySwapWeapon);
-            Form1_0.WaitDelay(15);
-            Form1_0.PlayerScan_0.GetPositions();
+            gameData.keyMouse.PressKey(CharConfig.KeySwapWeapon);
+            gameData.WaitDelay(15);
+            gameData.playerScan.GetPositions();
         }
 
         //press W again to switch weapon again
-        if (Form1_0.PlayerScan_0.RightSkill == Enums.Skill.BattleCry
-            || Form1_0.PlayerScan_0.RightSkill == Enums.Skill.BattleOrders
-            || Form1_0.PlayerScan_0.RightSkill == Enums.Skill.BattleCommand)
+        if (gameData.playerScan.RightSkill == Enums.Skill.BattleCry
+            || gameData.playerScan.RightSkill == Enums.Skill.BattleOrders
+            || gameData.playerScan.RightSkill == Enums.Skill.BattleCommand)
         {
-            Form1_0.KeyMouse_0.PressKey(CharConfig.KeySwapWeapon);
-            Form1_0.WaitDelay(15);
-            Form1_0.PlayerScan_0.GetPositions();
+            gameData.keyMouse.PressKey(CharConfig.KeySwapWeapon);
+            gameData.WaitDelay(15);
+            gameData.playerScan.GetPositions();
         }
 
         //cast sacred shield
-        Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillCastDefense);
-        Form1_0.WaitDelay(5);
-        Form1_0.KeyMouse_0.MouseCliccRight_RealPos(Form1_0.CenterX, Form1_0.CenterY);
-        Form1_0.WaitDelay(35);
+        gameData.keyMouse.PressKey(CharConfig.KeySkillCastDefense);
+        gameData.WaitDelay(5);
+        gameData.keyMouse.MouseCliccRight_RealPos(gameData.CenterX, gameData.CenterY);
+        gameData.WaitDelay(35);
 
         //cast sacred shield
-        Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillLifeAura);
-        Form1_0.WaitDelay(5);
-        Form1_0.KeyMouse_0.MouseCliccRight_RealPos(Form1_0.CenterX, Form1_0.CenterY);
-        Form1_0.WaitDelay(5);
+        gameData.keyMouse.PressKey(CharConfig.KeySkillLifeAura);
+        gameData.WaitDelay(5);
+        gameData.keyMouse.MouseCliccRight_RealPos(gameData.CenterX, gameData.CenterY);
+        gameData.WaitDelay(5);
 
         TimeSinceLastCast = DateTime.Now;
     }
@@ -401,7 +397,7 @@ public class Battle
         //ClearingFullArea = false;
 
         //ClearingArea = true;
-        if (Form1_0.MobsStruc_0.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer))
+        if (gameData.mobsStruc.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer))
         {
             ClearingArea = true;
             return true;
@@ -418,21 +414,21 @@ public class Battle
         ClearingFullArea = true;
         DoingRoomIndex = 0;
 
-        AllRooms_InArea = Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Rooms;
+        AllRooms_InArea = gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Rooms;
 
-        //if (Form1_0.MobsStruc_0.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer)) ClearingArea = true;
+        //if (gameData.mobsStruc.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer)) ClearingArea = true;
         ClearingArea = true;
     }
 
     public void SetBattleMoveAcceptOffset()
     {
-        //if (CharConfig.RunningOnChar.ToLower().Contains("sorc")) Form1_0.Mover_0.MoveAcceptOffset = 10;
-        //else Form1_0.Mover_0.MoveAcceptOffset = 4; //default
+        //if (CharConfig.RunningOnChar.ToLower().Contains("sorc")) gameData.mover.MoveAcceptOffset = 10;
+        //else gameData.mover.MoveAcceptOffset = 4; //default
     }
 
     public void ResetBattleMoveAcceptOffset()
     {
-        //Form1_0.Mover_0.MoveAcceptOffset = 4; //default
+        //gameData.mover.MoveAcceptOffset = 4; //default
     }
 
     public bool IsIncludedInList(List<int> IgnoredIDList, int ThisID)
@@ -455,7 +451,7 @@ public class Battle
 
     public void RemoveCurrentRoomFromClearing()
     {
-        //List<Room> AllRooms = Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Rooms;
+        //List<Room> AllRooms = gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Rooms;
         int LastRoomXIndex = 0;
         for (int i = 1; i < AllRooms_InArea.Count; i++)
         {
@@ -467,8 +463,8 @@ public class Battle
         List<int> RemovingRoomsAt = new List<int>();
         for (int i = 0; i < AllRooms_InArea.Count; i++)
         {
-            if (Form1_0.PlayerScan_0.xPosFinal >= AllRooms_InArea[i].X && Form1_0.PlayerScan_0.xPosFinal <= AllRooms_InArea[i].X + AllRooms_InArea[i].Width
-                && Form1_0.PlayerScan_0.yPosFinal >= AllRooms_InArea[i].Y && Form1_0.PlayerScan_0.yPosFinal <= AllRooms_InArea[i].Y + AllRooms_InArea[i].Height)
+            if (gameData.playerScan.xPosFinal >= AllRooms_InArea[i].X && gameData.playerScan.xPosFinal <= AllRooms_InArea[i].X + AllRooms_InArea[i].Width
+                && gameData.playerScan.yPosFinal >= AllRooms_InArea[i].Y && gameData.playerScan.yPosFinal <= AllRooms_InArea[i].Y + AllRooms_InArea[i].Height)
             {
                 DoingRoomIndex = i;
                 RemovingRoomsAt.Add(i + LastRoomXIndex);
@@ -489,7 +485,7 @@ public class Battle
                     if (!IsIncludedInList(IgnoredRooms_InArea, RemovingRoomsAt[i]))
                     {
                         IgnoredRooms_InArea.Add(RemovingRoomsAt[i]);
-                        //Form1_0.method_1("Removed Room: " + RemovingRoomsAt[i] + ", remaining: " + (AllRooms_InArea.Count - IgnoredRooms_InArea.Count), Color.Red);
+                        //gameData.method_1("Removed Room: " + RemovingRoomsAt[i] + ", remaining: " + (AllRooms_InArea.Count - IgnoredRooms_InArea.Count), Color.Red);
                     }
                 }
                 catch { }
@@ -499,47 +495,47 @@ public class Battle
 
     public void RunBattleScript()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ThroneOfDestruction)
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.ThroneOfDestruction)
         {
             //15096,5096
-            if (Form1_0.PlayerScan_0.yPosFinal > 5096)
+            if (gameData.playerScan.yPosFinal > 5096)
             {
                 DoingBattle = false;
                 FirstAttackCasted = false;
                 ResetBattleMoveAcceptOffset();
-                if (!ClearingFullArea) Form1_0.PathFinding_0.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
-                //Form1_0.Mover_0.MoveToLocation(AreaX, AreaY);
+                if (!ClearingFullArea) gameData.pathFinding.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
+                //gameData.mover.MoveToLocation(AreaX, AreaY);
                 ClearingArea = false;
-                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
                 return;
             }
         }
 
-        if (Form1_0.MobsStruc_0.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer))
+        if (gameData.mobsStruc.GetMobs("", "", true, ClearingSize, IgnoredMobsPointer))
         {
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.MobsStruc_0.MobsName == "BaalSubject5") Form1_0.Baal_0.Wave5Detected = true;
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && (Enums.Area) Form1_0.PlayerScan_0.levelNo == Enums.Area.ThroneOfDestruction) Form1_0.Baal_0.TimeSinceLastWaveDone = DateTime.MaxValue;
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && gameData.mobsStruc.MobsName == "BaalSubject5") ((Baal)gameData.baal).Wave5Detected = true;
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && (Enums.Area) gameData.playerScan.levelNo == Enums.Area.ThroneOfDestruction) ((Baal)gameData.baal).TimeSinceLastWaveDone = DateTime.MaxValue;
 
             DoingBattle = true;
             SetBattleMoveAcceptOffset();
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Position ThisAttackPos = GetBestAttackLocation(new Position { X = Form1_0.MobsStruc_0.xPosFinal + 1, Y = Form1_0.MobsStruc_0.yPosFinal + 5 });
+            gameData.mover.MoveAcceptOffset = 2;
+            Position ThisAttackPos = GetBestAttackLocation(new Position { X = gameData.mobsStruc.xPosFinal + 1, Y = gameData.mobsStruc.yPosFinal + 5 });
             if (ThisAttackPos.X != 0 && ThisAttackPos.Y != 0)
             {
-                if (!Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
+                if (!gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
                 {
                     TriedToMoveToMobsCount++;
                     if (TriedToMoveToMobsCount >= 2)
                     {
                         ThisAttackPos = ResetMovePostionInBetween(ThisAttackPos);
-                        Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
+                        gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
                         TriedToMoveToMobsCount = 0;
                     }
                 }
-                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
             }
-            //Form1_0.Mover_0.MoveToLocationAttack(Form1_0.MobsStruc_0.xPosFinal - 1, Form1_0.MobsStruc_0.yPosFinal + 2);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            //gameData.mover.MoveToLocationAttack(gameData.mobsStruc.xPosFinal - 1, gameData.mobsStruc.yPosFinal + 2);
+            gameData.mover.MoveAcceptOffset = 4;
             ResetBattleMoveAcceptOffset();
 
             FirstAttackCasting();
@@ -581,32 +577,32 @@ public class Battle
                 //if (DoingRoomIndex > AllRooms_InArea.Count - 1) DoingRoomIndex = AllRooms_InArea.Count - 1;
                 if (DoingRoomIndex > AllRooms_InArea.Count - 1)
                 {
-                    Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-                    Form1_0.MobsStruc_0.xPosFinal = 0;
-                    Form1_0.MobsStruc_0.yPosFinal = 0;
-                    //if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.Baal_0.Wave5Detected) Form1_0.Baal_0.Wave5Cleared = true;
+                    gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+                    gameData.mobsStruc.xPosFinal = 0;
+                    gameData.mobsStruc.yPosFinal = 0;
+                    //if (CharConfig.RunBaalScript && !gameData.baal.ScriptDone && gameData.baal.Wave5Detected) gameData.baal.Wave5Cleared = true;
                     TriedToMoveToMobsCount = 0;
                     DoingBattle = false;
                     FirstAttackCasted = false;
                     ResetBattleMoveAcceptOffset();
-                    if (!ClearingFullArea) Form1_0.PathFinding_0.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
-                    //Form1_0.Mover_0.MoveToLocation(AreaX, AreaY);
+                    if (!ClearingFullArea) gameData.pathFinding.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
+                    //gameData.mover.MoveToLocation(AreaX, AreaY);
                     ClearingArea = false;
-                    AreaIDFullyCleared = (int) Form1_0.PlayerScan_0.levelNo;
+                    AreaIDFullyCleared = (int) gameData.playerScan.levelNo;
                     return;
                 }
 
                 //Go to next room
-                bool[,] ThisCollisionGrid = Form1_0.MapAreaStruc_0.CollisionGrid((Enums.Area)Form1_0.PlayerScan_0.levelNo);
-                int RoomStartX = AllRooms_InArea[DoingRoomIndex].X - Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Offset.X;
-                int RoomStartY = AllRooms_InArea[DoingRoomIndex].Y - Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Offset.Y;
+                bool[,] ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
+                int RoomStartX = AllRooms_InArea[DoingRoomIndex].X - gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Offset.X;
+                int RoomStartY = AllRooms_InArea[DoingRoomIndex].Y - gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Offset.Y;
                 int RoomSizeX = AllRooms_InArea[DoingRoomIndex].Width;
                 int RoomSizeY = AllRooms_InArea[DoingRoomIndex].Height;
 
                 Position MovingToPos = new Position { X = AllRooms_InArea[DoingRoomIndex].X, Y = AllRooms_InArea[DoingRoomIndex].Y };
                 bool FoundWalkablePath = false;
-                //Form1_0.method_1("Check:" + RoomStartX + ", " + RoomStartY, Color.Red);
-                //Form1_0.method_1("Check size:" + RoomSizeX + ", " + RoomSizeY, Color.Red);
+                //gameData.method_1("Check:" + RoomStartX + ", " + RoomStartY, Color.Red);
+                //gameData.method_1("Check size:" + RoomSizeX + ", " + RoomSizeY, Color.Red);
                 for (int i = RoomStartX; i < RoomStartX + RoomSizeX; i++)
                 {
                     for (int k = RoomStartY; k < RoomStartY + RoomSizeY; k++)
@@ -614,14 +610,14 @@ public class Battle
                         if (ThisCollisionGrid[i, k])
                         {
                             FoundWalkablePath = true;
-                            MovingToPos = new Position { X = i + Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Offset.X, Y = k + Form1_0.MapAreaStruc_0.AllMapData[(int)(Form1_0.PlayerScan_0.levelNo - 1)].Offset.Y };
+                            MovingToPos = new Position { X = i + gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Offset.X, Y = k + gameData.mapAreaStruc.AllMapData[(int)(gameData.playerScan.levelNo - 1)].Offset.Y };
                         }
                     }
                 }
                 if (FoundWalkablePath)
                 {
-                    //Form1_0.PathFinding_0.MoveToThisPos(MovingToPos);
-                    Form1_0.PathFinding_0.MoveToThisPos(MovingToPos, 4, true);
+                    //gameData.pathFinding.MoveToThisPos(MovingToPos);
+                    gameData.pathFinding.MoveToThisPos(MovingToPos, 4, true);
                 }
                 else
                 {
@@ -630,48 +626,48 @@ public class Battle
             }
             else
             {
-                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-                Form1_0.MobsStruc_0.xPosFinal = 0;
-                Form1_0.MobsStruc_0.yPosFinal = 0;
-                //if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.Baal_0.Wave5Detected) Form1_0.Baal_0.Wave5Cleared = true;
+                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+                gameData.mobsStruc.xPosFinal = 0;
+                gameData.mobsStruc.yPosFinal = 0;
+                //if (CharConfig.RunBaalScript && !gameData.baal.ScriptDone && gameData.baal.Wave5Detected) gameData.baal.Wave5Cleared = true;
                 TriedToMoveToMobsCount = 0;
                 DoingBattle = false;
                 FirstAttackCasted = false;
                 ResetBattleMoveAcceptOffset();
-                if (!ClearingFullArea) Form1_0.PathFinding_0.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
-                //Form1_0.Mover_0.MoveToLocation(AreaX, AreaY);
+                if (!ClearingFullArea) gameData.pathFinding.MoveToThisPos(new Position { X = AreaX, Y = AreaY });
+                //gameData.mover.MoveToLocation(AreaX, AreaY);
                 ClearingArea = false;
-                AreaIDFullyCleared = (int)Form1_0.PlayerScan_0.levelNo;
+                AreaIDFullyCleared = (int)gameData.playerScan.levelNo;
             }
         }
     }
 
     public bool DoBattleScript(int MaxDistance)
     {
-        if (Form1_0.MobsStruc_0.GetMobs("", "", true, MaxDistance, new List<long>()))
+        if (gameData.mobsStruc.GetMobs("", "", true, MaxDistance, new List<long>()))
         {
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.MobsStruc_0.MobsName == "BaalSubject5") Form1_0.Baal_0.Wave5Detected = true;
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && (Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ThroneOfDestruction) Form1_0.Baal_0.TimeSinceLastWaveDone = DateTime.MaxValue;
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && gameData.mobsStruc.MobsName == "BaalSubject5") ((Baal)gameData.baal).Wave5Detected = true;
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && (Enums.Area)gameData.playerScan.levelNo == Enums.Area.ThroneOfDestruction) ((Baal)gameData.baal).TimeSinceLastWaveDone = DateTime.MaxValue;
             DoingBattle = true;
             SetBattleMoveAcceptOffset();
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Position ThisAttackPos = GetBestAttackLocation(new Position { X = Form1_0.MobsStruc_0.xPosFinal + 1, Y = Form1_0.MobsStruc_0.yPosFinal + 5 });
+            gameData.mover.MoveAcceptOffset = 2;
+            Position ThisAttackPos = GetBestAttackLocation(new Position { X = gameData.mobsStruc.xPosFinal + 1, Y = gameData.mobsStruc.yPosFinal + 5 });
             if (ThisAttackPos.X != 0 && ThisAttackPos.Y != 0)
             {
-                if (!Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
+                if (!gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
                 {
                     TriedToMoveToMobsCount++;
                     if (TriedToMoveToMobsCount >= 2)
                     {
                         ThisAttackPos = ResetMovePostionInBetween(ThisAttackPos);
-                        Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
+                        gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
                         TriedToMoveToMobsCount = 0;
                     }
                 }
-                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
             }
-            //Form1_0.Mover_0.MoveToLocationAttack(Form1_0.MobsStruc_0.xPosFinal - 1, Form1_0.MobsStruc_0.yPosFinal + 2);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            //gameData.mover.MoveToLocationAttack(gameData.mobsStruc.xPosFinal - 1, gameData.mobsStruc.yPosFinal + 2);
+            gameData.mover.MoveAcceptOffset = 4;
             ResetBattleMoveAcceptOffset();
 
             FirstAttackCasting();
@@ -686,10 +682,10 @@ public class Battle
             return true;
         }
 
-        Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-        Form1_0.MobsStruc_0.xPosFinal = 0;
-        Form1_0.MobsStruc_0.yPosFinal = 0;
-        //if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.Baal_0.Wave5Detected) Form1_0.Baal_0.Wave5Cleared = true;
+        gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+        gameData.mobsStruc.xPosFinal = 0;
+        gameData.mobsStruc.yPosFinal = 0;
+        //if (CharConfig.RunBaalScript && !gameData.baal.ScriptDone && gameData.baal.Wave5Detected) gameData.baal.Wave5Cleared = true;
         TriedToMoveToMobsCount = 0;
         DoingBattle = false;
         FirstAttackCasted = false;
@@ -699,32 +695,32 @@ public class Battle
     public void RunBattleScriptOnLastMob(List<long> IgnoredIDList)
     {
         IgnoredMobsPointer = IgnoredIDList;
-        if (Form1_0.MobsStruc_0.GetMobs(LastMobType, LastMobName, false, 200, IgnoredIDList))
+        if (gameData.mobsStruc.GetMobs(LastMobType, LastMobName, false, 200, IgnoredIDList))
         {
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.MobsStruc_0.MobsName == "BaalSubject5") Form1_0.Baal_0.Wave5Detected = true;
-            if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && (Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ThroneOfDestruction) Form1_0.Baal_0.TimeSinceLastWaveDone = DateTime.MaxValue;
-            if (Form1_0.MobsStruc_0.MobsHP > 0)
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && gameData.mobsStruc.MobsName == "BaalSubject5") ((Baal)gameData.baal).Wave5Detected = true;
+            if (CharConfig.RunBaalScript && !((Baal)gameData.baal).ScriptDone && (Enums.Area)gameData.playerScan.levelNo == Enums.Area.ThroneOfDestruction) ((Baal)gameData.baal).TimeSinceLastWaveDone = DateTime.MaxValue;
+            if (gameData.mobsStruc.MobsHP > 0)
             {
                 DoingBattle = true;
                 SetBattleMoveAcceptOffset();
-                Form1_0.Mover_0.MoveAcceptOffset = 2;
-                Position ThisAttackPos = GetBestAttackLocation(new Position { X = Form1_0.MobsStruc_0.xPosFinal + 1, Y = Form1_0.MobsStruc_0.yPosFinal + 5 });
+                gameData.mover.MoveAcceptOffset = 2;
+                Position ThisAttackPos = GetBestAttackLocation(new Position { X = gameData.mobsStruc.xPosFinal + 1, Y = gameData.mobsStruc.yPosFinal + 5 });
                 if (ThisAttackPos.X != 0 && ThisAttackPos.Y != 0)
                 {
-                    if (!Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
+                    if (!gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y))
                     {
                         TriedToMoveToMobsCount++;
                         if (TriedToMoveToMobsCount >= 2)
                         {
                             ThisAttackPos = ResetMovePostionInBetween(ThisAttackPos);
-                            Form1_0.Mover_0.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
+                            gameData.mover.MoveToLocationAttack(ThisAttackPos.X, ThisAttackPos.Y);
                             TriedToMoveToMobsCount = 0;
                         }
                     }
-                    Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                    gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
                 }
-                //Form1_0.Mover_0.MoveToLocationAttack(Form1_0.MobsStruc_0.xPosFinal - 1, Form1_0.MobsStruc_0.yPosFinal + 2);
-                Form1_0.Mover_0.MoveAcceptOffset = 4;
+                //gameData.mover.MoveToLocationAttack(gameData.mobsStruc.xPosFinal - 1, gameData.mobsStruc.yPosFinal + 2);
+                gameData.mover.MoveAcceptOffset = 4;
                 ResetBattleMoveAcceptOffset();
 
 
@@ -742,26 +738,26 @@ public class Battle
             {
                 //LastMobType = "";
                 //LastMobName = "";
-                Form1_0.MobsStruc_0.xPosFinal = 0;
-                Form1_0.MobsStruc_0.yPosFinal = 0;
-                //if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.Baal_0.Wave5Detected) Form1_0.Baal_0.Wave5Cleared = true;
+                gameData.mobsStruc.xPosFinal = 0;
+                gameData.mobsStruc.yPosFinal = 0;
+                //if (CharConfig.RunBaalScript && !gameData.baal.ScriptDone && gameData.baal.Wave5Detected) gameData.baal.Wave5Cleared = true;
                 TriedToMoveToMobsCount = 0;
                 DoingBattle = false;
                 FirstAttackCasted = false;
-                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
             }
         }
         else
         {
             //LastMobType = "";
             //LastMobName = "";
-            Form1_0.MobsStruc_0.xPosFinal = 0;
-            Form1_0.MobsStruc_0.yPosFinal = 0;
-            //if (CharConfig.RunBaalScript && !Form1_0.Baal_0.ScriptDone && Form1_0.Baal_0.Wave5Detected) Form1_0.Baal_0.Wave5Cleared = true;
+            gameData.mobsStruc.xPosFinal = 0;
+            gameData.mobsStruc.yPosFinal = 0;
+            //if (CharConfig.RunBaalScript && !gameData.baal.ScriptDone && gameData.baal.Wave5Detected) gameData.baal.Wave5Cleared = true;
             TriedToMoveToMobsCount = 0;
             DoingBattle = false;
             FirstAttackCasted = false;
-            Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+            gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
         }
     }
 
@@ -778,10 +774,10 @@ public class Battle
         ReturnPos.X = 0;
         ReturnPos.Y = 0;
 
-        if (ThisPos.X >= Form1_0.PlayerScan_0.xPosFinal) ReturnPos.X = ThisPos.X - ((ThisPos.X - Form1_0.PlayerScan_0.xPosFinal) / 2);
-        if (ThisPos.Y >= Form1_0.PlayerScan_0.yPosFinal) ReturnPos.Y = ThisPos.Y - ((ThisPos.Y - Form1_0.PlayerScan_0.yPosFinal) / 2);
-        if (ThisPos.X < Form1_0.PlayerScan_0.xPosFinal) ReturnPos.X = ThisPos.X + ((Form1_0.PlayerScan_0.xPosFinal - ThisPos.X) / 2);
-        if (ThisPos.Y < Form1_0.PlayerScan_0.yPosFinal) ReturnPos.Y = ThisPos.Y + ((Form1_0.PlayerScan_0.yPosFinal - ThisPos.Y) / 2);
+        if (ThisPos.X >= gameData.playerScan.xPosFinal) ReturnPos.X = ThisPos.X - ((ThisPos.X - gameData.playerScan.xPosFinal) / 2);
+        if (ThisPos.Y >= gameData.playerScan.yPosFinal) ReturnPos.Y = ThisPos.Y - ((ThisPos.Y - gameData.playerScan.yPosFinal) / 2);
+        if (ThisPos.X < gameData.playerScan.xPosFinal) ReturnPos.X = ThisPos.X + ((gameData.playerScan.xPosFinal - ThisPos.X) / 2);
+        if (ThisPos.Y < gameData.playerScan.yPosFinal) ReturnPos.Y = ThisPos.Y + ((gameData.playerScan.yPosFinal - ThisPos.Y) / 2);
 
         return ReturnPos;
     }
@@ -789,63 +785,63 @@ public class Battle
     public void MoveAway()
     {
         int MoveDistance = 5;
-        //Form1_0.WaitDelay(5); //wait a little bit, we just casted attack
+        //gameData.WaitDelay(5); //wait a little bit, we just casted attack
         if (MoveTryCount == 1)
         {
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Form1_0.Mover_0.MoveToLocationAttack(Form1_0.PlayerScan_0.xPosFinal + MoveDistance, Form1_0.PlayerScan_0.yPosFinal + MoveDistance);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            gameData.mover.MoveAcceptOffset = 2;
+            gameData.mover.MoveToLocationAttack(gameData.playerScan.xPosFinal + MoveDistance, gameData.playerScan.yPosFinal + MoveDistance);
+            gameData.mover.MoveAcceptOffset = 4;
         }
         if (MoveTryCount == 2)
         {
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Form1_0.Mover_0.MoveToLocationAttack(Form1_0.PlayerScan_0.xPosFinal - MoveDistance, Form1_0.PlayerScan_0.yPosFinal + MoveDistance);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            gameData.mover.MoveAcceptOffset = 2;
+            gameData.mover.MoveToLocationAttack(gameData.playerScan.xPosFinal - MoveDistance, gameData.playerScan.yPosFinal + MoveDistance);
+            gameData.mover.MoveAcceptOffset = 4;
         }
         if (MoveTryCount == 3)
         {
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Form1_0.Mover_0.MoveToLocationAttack(Form1_0.PlayerScan_0.xPosFinal + MoveDistance, Form1_0.PlayerScan_0.yPosFinal - MoveDistance);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            gameData.mover.MoveAcceptOffset = 2;
+            gameData.mover.MoveToLocationAttack(gameData.playerScan.xPosFinal + MoveDistance, gameData.playerScan.yPosFinal - MoveDistance);
+            gameData.mover.MoveAcceptOffset = 4;
         }
         if (MoveTryCount == 4)
         {
-            Form1_0.Mover_0.MoveAcceptOffset = 2;
-            Form1_0.Mover_0.MoveToLocationAttack(Form1_0.PlayerScan_0.xPosFinal - MoveDistance, Form1_0.PlayerScan_0.yPosFinal - MoveDistance);
-            Form1_0.Mover_0.MoveAcceptOffset = 4;
+            gameData.mover.MoveAcceptOffset = 2;
+            gameData.mover.MoveToLocationAttack(gameData.playerScan.xPosFinal - MoveDistance, gameData.playerScan.yPosFinal - MoveDistance);
+            gameData.mover.MoveAcceptOffset = 4;
         }
     }
 
     public void AttackTryCheck()
     {
-        Form1_0.Potions_0.CheckIfWeUsePotion();
-        Form1_0.MobsStruc_0.GetLastMobs();
-        //long AttackedThisPointer = Form1_0.MobsStruc_0.LastMobsPointerLocation;
+        gameData.potions.CheckIfWeUsePotion();
+        gameData.mobsStruc.GetLastMobs();
+        //long AttackedThisPointer = gameData.mobsStruc.LastMobsPointerLocation;
 
         //if (AttackedThisPointer == LastMobAttackedPointer)
         //{
-        if (Form1_0.MobsStruc_0.MobsHP >= LastMobAttackedHP)
+        if (gameData.mobsStruc.MobsHP >= LastMobAttackedHP)
         {
             AttackNotRegisteredCount++;
-            //Form1_0.method_1("Attack not registered! " + AttackNotRegisteredCount + "/" + MaxAttackTry, Color.OrangeRed);
+            //gameData.method_1("Attack not registered! " + AttackNotRegisteredCount + "/" + MaxAttackTry, Color.OrangeRed);
 
             if (AttackNotRegisteredCount >= CharConfig.MaxBattleAttackTries)
             {
                 AttackNotRegisteredCount = 0;
                 MoveTryCount++;
-                Form1_0.method_1("Attack not registered, moving away! " + MoveTryCount + "/" + MaxMoveTry, Color.OrangeRed);
+                gameData.method_1("Attack not registered, moving away! " + MoveTryCount + "/" + MaxMoveTry, Color.OrangeRed);
                 MoveAway();
 
                 if (MoveTryCount >= MaxMoveTry)
                 {
                     MoveTryCount = 0;
-                    IgnoredMobsPointer.Add(Form1_0.MobsStruc_0.LastMobsPointerLocation);
+                    IgnoredMobsPointer.Add(gameData.mobsStruc.LastMobsPointerLocation);
                 }
             }
         }
         else
         {
-            //Form1_0.method_1("Attack registered! " + AttackNotRegisteredCount + "/" + MaxAttackTry, Color.DarkGreen);
+            //gameData.method_1("Attack registered! " + AttackNotRegisteredCount + "/" + MaxAttackTry, Color.DarkGreen);
             AttackNotRegisteredCount = 0;
             MoveTryCount = 0;
         }
@@ -856,78 +852,78 @@ public class Battle
             MoveTryCount = 0;
         }*/
 
-        //LastMobAttackedPointer = Form1_0.MobsStruc_0.LastMobsPointerLocation;
-        LastMobAttackedHP = Form1_0.MobsStruc_0.MobsHP;
+        //LastMobAttackedPointer = gameData.mobsStruc.LastMobsPointerLocation;
+        LastMobAttackedHP = gameData.mobsStruc.MobsHP;
     }
 
     public void SetSkills()
     {
-        Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillAttack);
-        Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillAura);
+        gameData.keyMouse.PressKey(CharConfig.KeySkillAttack);
+        gameData.keyMouse.PressKey(CharConfig.KeySkillAura);
     }
 
     public void CastSkills()
     {
-        Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-        if (Form1_0.MobsStruc_0.xPosFinal != 0 && Form1_0.MobsStruc_0.yPosFinal != 0)
+        gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+        if (gameData.mobsStruc.xPosFinal != 0 && gameData.mobsStruc.yPosFinal != 0)
         {
-            Form1_0.PlayerScan_0.GetPositions();
-            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, Form1_0.MobsStruc_0.xPosFinal, Form1_0.MobsStruc_0.yPosFinal);
+            gameData.playerScan.GetPositions();
+            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, gameData.mobsStruc.xPosFinal, gameData.mobsStruc.yPosFinal);
             if (!CharConfig.PlayerAttackWithRightHand)
             {
-                Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK(itemScreenPos.X, itemScreenPos.Y - 30);
+                gameData.keyMouse.SendSHIFT_CLICK_ATTACK(itemScreenPos.X, itemScreenPos.Y - 30);
             }
             else
             {
-                Form1_0.KeyMouse_0.MouseCliccRightAttackMove(itemScreenPos.X, itemScreenPos.Y - 30);
+                gameData.keyMouse.MouseCliccRightAttackMove(itemScreenPos.X, itemScreenPos.Y - 30);
             }
         }
         else
         {
             if (!CharConfig.PlayerAttackWithRightHand)
             {
-                Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK(Form1_0.CenterX, Form1_0.CenterY - 1);
+                gameData.keyMouse.SendSHIFT_CLICK_ATTACK(gameData.CenterX, gameData.CenterY - 1);
             }
             else
             {
-                Form1_0.KeyMouse_0.MouseCliccRightAttackMove(Form1_0.CenterX, Form1_0.CenterY - 1);
+                gameData.keyMouse.MouseCliccRightAttackMove(gameData.CenterX, gameData.CenterY - 1);
             }
         }
-        Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-        //Form1_0.WaitDelay(5);
-        //Form1_0.WaitDelay(1);
+        gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+        //gameData.WaitDelay(5);
+        //gameData.WaitDelay(1);
     }
 
     public void CastSkillsNoMove()
     {
-        if (Form1_0.MobsStruc_0.xPosFinal != 0 && Form1_0.MobsStruc_0.yPosFinal != 0)
+        if (gameData.mobsStruc.xPosFinal != 0 && gameData.mobsStruc.yPosFinal != 0)
         {
-            Form1_0.PlayerScan_0.GetPositions();
-            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, Form1_0.MobsStruc_0.xPosFinal, Form1_0.MobsStruc_0.yPosFinal);
+            gameData.playerScan.GetPositions();
+            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, gameData.mobsStruc.xPosFinal, gameData.mobsStruc.yPosFinal);
             if (!CharConfig.PlayerAttackWithRightHand)
             {
-                //Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK(itemScreenPos.X, itemScreenPos.Y - 30);
-                Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK_CAST_NO_MOVE(itemScreenPos.X, itemScreenPos.Y - 30);
+                //gameData.keyMouse.SendSHIFT_CLICK_ATTACK(itemScreenPos.X, itemScreenPos.Y - 30);
+                gameData.keyMouse.SendSHIFT_CLICK_ATTACK_CAST_NO_MOVE(itemScreenPos.X, itemScreenPos.Y - 30);
             }
             else
             {
-                Form1_0.KeyMouse_0.MouseCliccRightAttackMove(itemScreenPos.X, itemScreenPos.Y - 30);
+                gameData.keyMouse.MouseCliccRightAttackMove(itemScreenPos.X, itemScreenPos.Y - 30);
             }
         }
         else
         {
             if (!CharConfig.PlayerAttackWithRightHand)
             {
-                //Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK(Form1_0.CenterX, Form1_0.CenterY - 1);
-                Form1_0.KeyMouse_0.SendSHIFT_CLICK_ATTACK_CAST_NO_MOVE(Form1_0.CenterX, Form1_0.CenterY - 1);
+                //gameData.keyMouse.SendSHIFT_CLICK_ATTACK(gameData.CenterX, gameData.CenterY - 1);
+                gameData.keyMouse.SendSHIFT_CLICK_ATTACK_CAST_NO_MOVE(gameData.CenterX, gameData.CenterY - 1);
             }
             else
             {
-                Form1_0.KeyMouse_0.MouseCliccRightAttackMove(Form1_0.CenterX, Form1_0.CenterY - 1);
+                gameData.keyMouse.MouseCliccRightAttackMove(gameData.CenterX, gameData.CenterY - 1);
             }
         }
-        //Form1_0.WaitDelay(5);
-        //Form1_0.WaitDelay(1);
+        //gameData.WaitDelay(5);
+        //gameData.WaitDelay(1);
     }
 
     public void FirstAttackCasting()
@@ -936,13 +932,13 @@ public class Battle
         {
             if (CharConfig.RunningOnChar == "SorceressBlizzard")
             {
-                Form1_0.KeyMouse_0.PressKey(CharConfig.KeySkillAttack); //select static
+                gameData.keyMouse.PressKey(CharConfig.KeySkillAttack); //select static
 
                 int tryes = 0;
                 while (tryes < 6)
                 {
                     CastSkills();
-                    Form1_0.WaitDelay(35);
+                    gameData.WaitDelay(35);
                     tryes++;
                 }
             }

@@ -65,14 +65,14 @@ public partial class FormD2LOD : Form
             {
                 key.SetValue("InstallPath", InstallDir);
 
-                Form1_0.method_1("Registry key created: " + keyPath, Color.Magenta);
-                Form1_0.method_1("'InstallPath': " + InstallDir, Color.Magenta);
-                Form1_0.method_1("---------------------------------", Color.DarkGreen);
-                Form1_0.method_1("Ready to install the 1.13C Patch!", Color.DarkGreen);
+                GameData.Instance.method_1("Registry key created: " + keyPath, Color.Magenta);
+                GameData.Instance.method_1("'InstallPath': " + InstallDir, Color.Magenta);
+                GameData.Instance.method_1("---------------------------------", Color.DarkGreen);
+                GameData.Instance.method_1("Ready to install the 1.13C Patch!", Color.DarkGreen);
             }
             else
             {
-                Form1_0.method_1("Failed to create registry key: " + keyPath, Color.Red);
+                GameData.Instance.method_1("Failed to create registry key: " + keyPath, Color.Red);
             }
         }
     }

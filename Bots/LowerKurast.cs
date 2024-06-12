@@ -6,21 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class LowerKurast
+public class LowerKurast : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
     public int WP_X = 0;
     public int WP_Y = 0;
     public List<int> IgnoredChestList = new List<int>();
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public bool HasTakenAnyChest = false;
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
+
 
     public void ResetVars()
     {
@@ -33,40 +29,41 @@ public class LowerKurast
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 5; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 5; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(3, 4);
+            gameData.townStruc.GoToWPArea(3, 4);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING LOWER KURAST");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING LOWER KURAST");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.LowerKurast)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.LowerKurast)
                 {
-                    WP_X = Form1_0.PlayerScan_0.xPos - 3;
-                    WP_Y = Form1_0.PlayerScan_0.yPos - 3;
+                    WP_X = gameData.playerScan.xPos - 3;
+                    WP_Y = gameData.playerScan.yPos - 3;
 
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
@@ -79,28 +76,28 @@ public class LowerKurast
 
             if (CurrentStep == 2)
             {
-                //Form1_0.ItemsStruc_0.GrabAllItemsForGold();
+                //gameData.itemsStruc.GrabAllItemsForGold();
 
-                //Form1_0.LeaveGame(true);
+                //gameData.LeaveGame(true);
 
-                if (Form1_0.Mover_0.MoveToLocation(WP_X, WP_Y))
+                if (gameData.mover.MoveToLocation(WP_X, WP_Y))
                 {
                     //take back wp
-                    //if (Form1_0.ObjectsStruc_0.GetObjects("Act3TownWaypoint", false))
+                    //if (gameData.objectsStruc.GetObjects("Act3TownWaypoint", false))
                     //{
-                    Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, WP_X, WP_Y);
+                    Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, WP_X, WP_Y);
 
-                    Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                    //Form1_0.Mover_0.FinishMoving();
-                    if (Form1_0.UIScan_0.WaitTilUIOpen("waypointMenu"))
+                    gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                    //gameData.mover.FinishMoving();
+                    if (gameData.uiScan.WaitTilUIOpen("waypointMenu"))
                     {
-                        Form1_0.Town_0.SelectTownWP();
-                        Form1_0.Town_0.Towning = true;
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.UseLastTP = false;
+                        gameData.townStruc.SelectTownWP();
+                        gameData.townStruc.Towning = true;
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.UseLastTP = false;
                         ScriptDone = true;
 
-                        //Form1_0.LeaveGame(true); //#####
+                        //gameData.LeaveGame(true); //#####
                     }
                     //}
                 }
@@ -121,106 +118,106 @@ public class LowerKurast
 
         //JungleMediumChestLeft ####
 
-        MapAreaStruc.Position ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", (int)Enums.Area.LowerKurast, IgnoredChestList);
-        int ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+        MapAreaStruc.Position ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", (int)Enums.Area.LowerKurast, IgnoredChestList);
+        int ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
         int Tryy = 0;
         while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
         {
-            if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+            if (!gameData.Running || !gameData.gameStruc.IsInGame())
             {
                 ScriptDone = true;
                 return;
             }
 
-            if (Form1_0.Mover_0.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
+            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
             {
                 HasTakenAnyChest = true;
 
-                Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
 
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
 
                 int tryy2 = 0;
-                while (Form1_0.ItemsStruc_0.GetItems(true) && tryy2 < 20)
+                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
                 {
-                    Form1_0.PlayerScan_0.GetPositions();
-                    Form1_0.ItemsStruc_0.GetItems(false);
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.playerScan.GetPositions();
+                    gameData.itemsStruc.GetItems(false);
+                    gameData.potions.CheckIfWeUsePotion();
                     tryy2++;
                 }
                 IgnoredChestList.Add(ChestObject);
             }
 
-            ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", (int)Enums.Area.LowerKurast, IgnoredChestList);
-            ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", (int)Enums.Area.LowerKurast, IgnoredChestList);
+            ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
 
             Tryy++;
         }
 
-        if (!HasTakenAnyChest) Form1_0.MapAreaStruc_0.DumpMap();
+        if (!HasTakenAnyChest) gameData.mapAreaStruc.DumpMap();
 
         //##############
-        /*ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "JungleStashObject2", 78, IgnoredChestList);
+        /*ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "JungleStashObject2", 78, IgnoredChestList);
         Tryy = 0;
         while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
         {
-            if (Form1_0.Mover_0.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
+            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
             {
-                Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
 
                 int tryy2 = 0;
-                while (Form1_0.ItemsStruc_0.GetItems(true) && tryy2 < 20)
+                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
                 {
-                    Form1_0.PlayerScan_0.GetPositions();
-                    Form1_0.ItemsStruc_0.GetItems(false);
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.playerScan.GetPositions();
+                    gameData.itemsStruc.GetItems(false);
+                    gameData.potions.CheckIfWeUsePotion();
                     tryy2++;
                 }
-                IgnoredChestList.Add(Form1_0.MapAreaStruc_0.CurrentObjectIndex);
+                IgnoredChestList.Add(gameData.mapAreaStruc.CurrentObjectIndex);
             }
 
-            ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "JungleStashObject2", 78, IgnoredChestList);
+            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "JungleStashObject2", 78, IgnoredChestList);
 
             Tryy++;
         }
         //##############
-        ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "JungleStashObject3", 78, IgnoredChestList);
+        ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "JungleStashObject3", 78, IgnoredChestList);
         Tryy = 0;
         while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
         {
-            if (Form1_0.Mover_0.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
+            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
             {
-                Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
 
                 int tryy2 = 0;
-                while (Form1_0.ItemsStruc_0.GetItems(true) && tryy2 < 20)
+                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
                 {
-                    Form1_0.PlayerScan_0.GetPositions();
-                    Form1_0.ItemsStruc_0.GetItems(false);
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.playerScan.GetPositions();
+                    gameData.itemsStruc.GetItems(false);
+                    gameData.potions.CheckIfWeUsePotion();
                     tryy2++;
                 }
-                IgnoredChestList.Add(Form1_0.MapAreaStruc_0.CurrentObjectIndex);
+                IgnoredChestList.Add(gameData.mapAreaStruc.CurrentObjectIndex);
             }
 
-            ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "JungleStashObject3", 78, IgnoredChestList);
+            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "JungleStashObject3", 78, IgnoredChestList);
 
             Tryy++;
         }*/

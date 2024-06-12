@@ -10,7 +10,7 @@ using static System.Diagnostics.DebuggableAttribute;
 public class ObjectsStruc
 {
 
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public long ObjectPointerLocation = 0;
     public byte[] objectdatastruc = new byte[144];
@@ -31,21 +31,16 @@ public class ObjectsStruc
 
     public string ObjectOwnerName = "";
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public void GetUnitData()
     {
         pUnitDataPtr = BitConverter.ToInt64(objectdatastruc, 0x10);
         pUnitData = new byte[144];
-        Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr, ref pUnitData, pUnitData.Length);
-        interactType = Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x08));
+        gameData.mem.ReadRawMemory(pUnitDataPtr, ref pUnitData, pUnitData.Length);
+        interactType = gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x08));
 
         //########
         byte[] pUnitNameData = new byte[16];
-        Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr + 0x34, ref pUnitNameData, pUnitNameData.Length);
+        gameData.mem.ReadRawMemory(pUnitDataPtr + 0x34, ref pUnitNameData, pUnitNameData.Length);
         ObjectOwnerName = "";
         for (int i2 = 0; i2 < 16; i2++)
         {
@@ -62,25 +57,25 @@ public class ObjectsStruc
         try
         {
             //"object", "GoodChest"
-            Form1_0.PatternsScan_0.scanForUnitsPointer("objects");
+            gameData.patternsScan.scanForUnitsPointer("objects");
 
             List<int[]> objectsPositions2 = new List<int[]>();
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllObjectsPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllObjectsPointers)
             {
                 ObjectPointerLocation = ThisCurrentPointer.Key;
                 if (ObjectPointerLocation > 0)
                 {
                     //objectdatastruc = new byte[144];
                     objectdatastruc = new byte[64];
-                    Form1_0.Mem_0.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
+                    gameData.mem.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
 
                     txtFileNo = BitConverter.ToUInt32(objectdatastruc, 4);
                     //ObjectUnitID = BitConverter.ToUInt32(objectdatastruc, 0x08);
                     //GetUnitData();
                     GetUnitPathData();
 
-                    //Form1_0.method_1("Object: " + getObjectName((int)txtFileNo) + " - " + itemx + ", " + itemy, Color.DarkOrchid);
+                    //gameData.method_1("Object: " + getObjectName((int)txtFileNo) + " - " + itemx + ", " + itemy, Color.DarkOrchid);
                     if (itemx != 0 && itemy != 0)
                     {
                         if (getObjectName((int)txtFileNo) == ObjectType)
@@ -96,14 +91,14 @@ public class ObjectsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetAllObjectsNearby()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetAllObjectsNearby()'", Color.OrangeRed);
         }
         return new List<int[]>();
     }
 
     public void DebugObjects()
     {
-        Form1_0.ClearDebugobjects();
+        gameData.form.ClearDebugobjects();
         DebuggingObjects = true;
         GetObjects("", false);
         DebuggingObjects = false;
@@ -121,29 +116,29 @@ public class ObjectsStruc
             LastDiffX = 999;
             LastDiffY = 999;
             long LastPointer = 0;
-            Form1_0.PatternsScan_0.scanForUnitsPointer("objects");
+            gameData.patternsScan.scanForUnitsPointer("objects");
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllObjectsPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllObjectsPointers)
             {
                 ObjectPointerLocation = ThisCurrentPointer.Key;
                 if (ObjectPointerLocation > 0)
                 {
                     //objectdatastruc = new byte[144];
                     objectdatastruc = new byte[64];
-                    Form1_0.Mem_0.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
+                    gameData.mem.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
 
                     txtFileNo = BitConverter.ToUInt32(objectdatastruc, 4);
                     ObjectUnitID = BitConverter.ToUInt32(objectdatastruc, 0x08);
                     GetUnitData();
                     GetUnitPathData();
 
-                    //Form1_0.method_1("Object: " + getObjectName((int)txtFileNo) + " - " + itemx + ", " + itemy, Color.DarkOrchid);
+                    //gameData.method_1("Object: " + getObjectName((int)txtFileNo) + " - " + itemx + ", " + itemy, Color.DarkOrchid);
 
                     if (DebuggingObjects)
                     {
-                        if ((itemx != 0 && itemy != 0 && Form1_0.checkBoxShowValidObjectOnly.Checked) || !Form1_0.checkBoxShowValidObjectOnly.Checked)
+                        if ((itemx != 0 && itemy != 0 && gameData.form.checkBoxShowValidObjectOnly.Checked) || !gameData.form.checkBoxShowValidObjectOnly.Checked)
                         {
-                            Form1_0.AppendTextDebugObjects("ID:" + txtFileNo + "(" + getObjectName((int)txtFileNo) + ") at:" + itemx + ", " + itemy + Environment.NewLine);
+                            gameData.form.AppendTextDebugObjects("ID:" + txtFileNo + "(" + getObjectName((int)txtFileNo) + ") at:" + itemx + ", " + itemy + Environment.NewLine);
                         }
                     }
 
@@ -153,10 +148,10 @@ public class ObjectsStruc
                         {
                             if (ObjectUnitID != 0 && ObjectUnitID != 4 && !IsIgnoredID(IgnoredIDList) && itemx != 0 && itemy != 0)
                             {
-                                //Form1_0.method_1("PortalID: 0x" + ObjectUnitID.ToString("X") + " to Area: " + interactType + " (" + ((Enums.Area)interactType) + ")", System.Drawing.Color.DarkMagenta);
-                                //Form1_0.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
+                                //gameData.method_1("PortalID: 0x" + ObjectUnitID.ToString("X") + " to Area: " + interactType + " (" + ((Enums.Area)interactType) + ")", System.Drawing.Color.DarkMagenta);
+                                //gameData.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
 
-                                //string SavePathh = Form1_0.ThisEndPath + "PortalStrucpPath";
+                                //string SavePathh = gameData.ThisEndPath + "PortalStrucpPath";
                                 //File.Create(SavePathh).Dispose();
                                 //File.WriteAllBytes(SavePathh, pPath);
 
@@ -180,7 +175,7 @@ public class ObjectsStruc
                         {
                             if (itemx != 0 && itemy != 0)
                             {
-                                //Form1_0.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
+                                //gameData.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
                                 SetNearestObject(Nearest);
                                 if (!Nearest)
                                 {
@@ -193,10 +188,10 @@ public class ObjectsStruc
                     {
                         if (getObjectName((int)txtFileNo) == ObjectType && !IsIgnoredID(IgnoredIDList))
                         {
-                            //Form1_0.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
+                            //gameData.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
                             if (itemx != 0 && itemy != 0)
                             {
-                                //Form1_0.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
+                                //gameData.method_1("Object: " + itemx + ", " + itemy + " - " + getObjectName((int)txtFileNo), Color.DarkOrchid);
 
                                 SetNearestObject(Nearest);
                                 if (!Nearest)
@@ -215,7 +210,7 @@ public class ObjectsStruc
                 ObjectPointerLocation = NearestObjectPointer;
                 //objectdatastruc = new byte[144];
                 objectdatastruc = new byte[64];
-                Form1_0.Mem_0.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
+                gameData.mem.ReadRawMemory(ObjectPointerLocation, ref objectdatastruc, objectdatastruc.Length);
                 txtFileNo = BitConverter.ToUInt32(objectdatastruc, 4);
                 ObjectUnitID = BitConverter.ToUInt32(objectdatastruc, 0x08);
                 GetUnitPathData();
@@ -224,8 +219,8 @@ public class ObjectsStruc
                 {
                     if (itemx != 0 && itemy != 0)
                     {
-                        int DiffXPlayer = itemx - Form1_0.PlayerScan_0.xPosFinal;
-                        int DiffYPlayer = itemy - Form1_0.PlayerScan_0.yPosFinal;
+                        int DiffXPlayer = itemx - gameData.playerScan.xPosFinal;
+                        int DiffYPlayer = itemy - gameData.playerScan.yPosFinal;
                         if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                         if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -259,7 +254,7 @@ public class ObjectsStruc
             {
                 //objectdatastruc = new byte[144];
                 objectdatastruc = new byte[64];
-                Form1_0.Mem_0.ReadRawMemory(LastPointer, ref objectdatastruc, objectdatastruc.Length);
+                gameData.mem.ReadRawMemory(LastPointer, ref objectdatastruc, objectdatastruc.Length);
                 txtFileNo = BitConverter.ToUInt32(objectdatastruc, 4);
                 ObjectUnitID = BitConverter.ToUInt32(objectdatastruc, 0x08);
                 GetUnitPathData();
@@ -268,7 +263,7 @@ public class ObjectsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetObjects()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetObjects()'", Color.OrangeRed);
         }
 
         return false;
@@ -300,8 +295,8 @@ public class ObjectsStruc
             //Console.WriteLine("found near mob" + txtFileNo + " at: " + itemx + ", " + itemy);
             if (itemx != 0 && itemy != 0)
             {
-                int DiffXPlayer = itemx - Form1_0.PlayerScan_0.xPosFinal;
-                int DiffYPlayer = itemy - Form1_0.PlayerScan_0.yPosFinal;
+                int DiffXPlayer = itemx - gameData.playerScan.xPosFinal;
+                int DiffYPlayer = itemy - gameData.playerScan.yPosFinal;
                 if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                 if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -322,17 +317,17 @@ public class ObjectsStruc
     {
         pPathPtr = BitConverter.ToInt64(objectdatastruc, 0x38);
         //pPath = new byte[0x32];
-        //Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        //gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
         //itemx = BitConverter.ToUInt16(pPath, 0x10);
         //itemy = BitConverter.ToUInt16(pPath, 0x14);
-        itemx = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pPathPtr + 0x10));
-        itemy = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pPathPtr + 0x14));
+        itemx = gameData.mem.ReadUInt16Raw((IntPtr)(pPathPtr + 0x10));
+        itemy = gameData.mem.ReadUInt16Raw((IntPtr)(pPathPtr + 0x14));
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpObjectPathStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpObjectPathStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, pPath);
 
-        //Form1_0.method_1("Object: " + itemx + ", " + itemy + " - " + NormalType + " - " + getObjectName((int)txtFileNo));
+        //gameData.method_1("Object: " + itemx + ", " + itemy + " - " + NormalType + " - " + getObjectName((int)txtFileNo));
     }
 
     public int isShrine(int txtFileNo)

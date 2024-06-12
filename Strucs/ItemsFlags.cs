@@ -9,12 +9,7 @@ using System.Threading.Tasks;
 
 public class ItemsFlags
 {
-    Form1 Form1_0;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
+    GameData gameData = GameData.Instance;
 
     public bool IsItemSameFlags(string ComparatorMethod, uint FlagsToCheck, uint ItemFlags)
     {
@@ -51,15 +46,15 @@ public class ItemsFlags
 
     public void calculateFlags(uint flags)
     {
-        Form1_0.ItemsStruc_0.identified = false;
-        Form1_0.ItemsStruc_0.isSocketed = false;
-        Form1_0.ItemsStruc_0.inStore = false;
-        Form1_0.ItemsStruc_0.ethereal = false;
-        //Form1_0.ItemsStruc_0.inpersonalstash = false;
+        gameData.itemsStruc.identified = false;
+        gameData.itemsStruc.isSocketed = false;
+        gameData.itemsStruc.inStore = false;
+        gameData.itemsStruc.ethereal = false;
+        //gameData.itemsStruc.inpersonalstash = false;
 
         /*if ((0x00000001 & flags) != 0)
         { //; IFLAG_TARGET
-            Form1_0.ItemsStruc_0.inpersonalstash = true;
+            gameData.itemsStruc.inpersonalstash = true;
         }*/
         //if (0x00000002 & flags) {  //IFLAG_TARGET
         //}
@@ -69,7 +64,7 @@ public class ItemsFlags
         //}
         if ((0x00000010 & flags) != 0)
         { //IFLAG_IDENTIFIED
-            Form1_0.ItemsStruc_0.identified = true;
+            gameData.itemsStruc.identified = true;
         }
         //if (0x00000020 & flags) {  //IFLAG_QUANTITY
         //}
@@ -85,13 +80,13 @@ public class ItemsFlags
         //}
         if ((0x00000800 & flags) != 0)
         {  //IFLAG_SOCKETED
-            Form1_0.ItemsStruc_0.isSocketed = true;
+            gameData.itemsStruc.isSocketed = true;
         }
         //if (0x00001000 & flags) {  //IFLAG_NOSELL
         //}
         if ((0x00002000 & flags) != 0)
         {  //IFLAG_INSTORE
-            Form1_0.ItemsStruc_0.inStore = true;
+            gameData.itemsStruc.inStore = true;
         }
         //if (0x00004000 & flags) {  //IFLAG_NOEQUIP
         //}
@@ -105,7 +100,7 @@ public class ItemsFlags
         //}
         if ((0x00400000 & flags) != 0)
         { //IFLAG_ETHEREAL
-            Form1_0.ItemsStruc_0.ethereal = true;
+            gameData.itemsStruc.ethereal = true;
         }
         //if (0x01000000 & flags) { //IFLAG_PERSONALIZED
         //}

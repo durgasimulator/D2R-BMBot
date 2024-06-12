@@ -7,21 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class AncientsRush
+public class AncientsRush : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position AltarPos = new Position { X = 0, Y = 0 };
     public bool KilledAnyMember = false;
 
     public List<long> IgnoredMembers = new List<long>();
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -32,75 +27,76 @@ public class AncientsRush
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 3; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(5, 7);
+            gameData.townStruc.GoToWPArea(5, 7);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING ANCIENTS");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING ANCIENTS");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.TheAncientsWay)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.TheAncientsWay)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
             if (CurrentStep == 1)
             {
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ArreatSummit, 10);
+                gameData.pathFinding.MoveToExit(Enums.Area.ArreatSummit, 10);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
-                Form1_0.SetGameStatus("Ancients clearing");
+                gameData.SetGameStatus("Ancients clearing");
 
-                if (!Form1_0.Battle_0.DoBattleScript(15))
+                if (!gameData.battle.DoBattleScript(15))
                 {
-                    Form1_0.PathFinding_0.MoveToExit(Enums.Area.ArreatSummit, 10);
+                    gameData.pathFinding.MoveToExit(Enums.Area.ArreatSummit, 10);
 
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
                     CurrentStep++;
                 }
             }
 
             if (CurrentStep == 3)
             {
-                Form1_0.SetGameStatus("Ancients waiting on leecher");
+                gameData.SetGameStatus("Ancients waiting on leecher");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(15);
+                gameData.battle.DoBattleScript(15);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.TheAncientsWay
-                    || Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.ArreatSummit)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.TheAncientsWay
+                    || gameData.playerScan.LeechlevelNo == (int)Enums.Area.ArreatSummit)
                 {
                     CurrentStep++;
                 }
@@ -108,38 +104,38 @@ public class AncientsRush
 
             if (CurrentStep == 4)
             {
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.ArreatSummit)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.ArreatSummit)
                 {
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToExit(Enums.Area.ArreatSummit);
+                    gameData.pathFinding.MoveToExit(Enums.Area.ArreatSummit);
                     CurrentStep++;
                 }
             }
 
             if (CurrentStep == 5)
             {
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.TheAncientsWay)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.TheAncientsWay)
                 {
                     CurrentStep--;
                     return;
                 }
 
-                AltarPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "AncientsAltar", (int)Enums.Area.ArreatSummit, new List<int>());
+                AltarPos = gameData.mapAreaStruc.GetPositionOfObject("object", "AncientsAltar", (int)Enums.Area.ArreatSummit, new List<int>());
                 if (AltarPos.X != 0 && AltarPos.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(AltarPos);
+                    gameData.pathFinding.MoveToThisPos(AltarPos);
 
                     //repeat clic on altar
                     int tryyy = 0;
                     while (tryyy <= 25)
                     {
-                        Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, AltarPos.X, AltarPos.Y);
+                        Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, AltarPos.X, AltarPos.Y);
 
-                        Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                        Form1_0.PlayerScan_0.GetPositions();
+                        gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                        gameData.playerScan.GetPositions();
                         tryyy++;
                     }
 
@@ -147,56 +143,56 @@ public class AncientsRush
                 }
                 else
                 {
-                    Form1_0.method_1("Ancients Altar location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
+                    gameData.method_1("Ancients Altar location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
                     ScriptDone = true;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.UseLastTP = false;
                     return;
                 }
             }
 
             if (CurrentStep == 6)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING ANCIENTS");
-                Form1_0.MobsStruc_0.DetectThisMob("getSuperUniqueName", "Ancient Barbarian 1", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Ancient Barbarian 1", false, 200, IgnoredMembers))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING ANCIENTS");
+                gameData.mobsStruc.DetectThisMob("getSuperUniqueName", "Ancient Barbarian 1", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Ancient Barbarian 1", false, 200, IgnoredMembers))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 1", IgnoredMembers);
+                        gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 1", IgnoredMembers);
                     }
                     else
                     {
                         KilledAnyMember = true;
-                        IgnoredMembers.Add(Form1_0.MobsStruc_0.MobsPointerLocation);
+                        IgnoredMembers.Add(gameData.mobsStruc.MobsPointerLocation);
 
 
-                        if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Ancient Barbarian 2", false, 200, IgnoredMembers))
+                        if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Ancient Barbarian 2", false, 200, IgnoredMembers))
                         {
-                            if (Form1_0.MobsStruc_0.MobsHP > 0)
+                            if (gameData.mobsStruc.MobsHP > 0)
                             {
-                                Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 2", IgnoredMembers);
+                                gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 2", IgnoredMembers);
                             }
                             else
                             {
-                                IgnoredMembers.Add(Form1_0.MobsStruc_0.MobsPointerLocation);
+                                IgnoredMembers.Add(gameData.mobsStruc.MobsPointerLocation);
 
 
-                                if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Ancient Barbarian 3", false, 200, IgnoredMembers))
+                                if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Ancient Barbarian 3", false, 200, IgnoredMembers))
                                 {
-                                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                                    if (gameData.mobsStruc.MobsHP > 0)
                                     {
-                                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 3", IgnoredMembers);
+                                        gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Ancient Barbarian 3", IgnoredMembers);
                                     }
                                     else
                                     {
-                                        IgnoredMembers.Add(Form1_0.MobsStruc_0.MobsPointerLocation);
+                                        IgnoredMembers.Add(gameData.mobsStruc.MobsPointerLocation);
 
                                         //Done all killed!
-                                        Form1_0.Potions_0.CanUseSkillForRegen = true;
-                                        Form1_0.Town_0.UseLastTP = false;
-                                        Form1_0.Town_0.FastTowning = false;
+                                        gameData.potions.CanUseSkillForRegen = true;
+                                        gameData.townStruc.UseLastTP = false;
+                                        gameData.townStruc.FastTowning = false;
                                         ScriptDone = true;
                                     }
                                 }
@@ -206,11 +202,11 @@ public class AncientsRush
                 }
                 else
                 {
-                    if (!KilledAnyMember) Form1_0.method_1("Ancients Members not detected!", Color.Red);
+                    if (!KilledAnyMember) gameData.method_1("Ancients Members not detected!", Color.Red);
 
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
-                    Form1_0.Town_0.UseLastTP = false;
-                    Form1_0.Town_0.FastTowning = false;
+                    gameData.potions.CanUseSkillForRegen = true;
+                    gameData.townStruc.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
                     ScriptDone = true;
                 }
             }

@@ -10,7 +10,7 @@ using static Enums;
 
 public class PatternsScan
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public byte[] UnitBuffer = new byte[] { };
 
@@ -51,19 +51,13 @@ public class PatternsScan
     public int UnitsScanVersion = 1;
     public int MaxUnitsIncreaseCount = 5;
     public int CurrentUnitsIncreaseCount = 0;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     IntPtr modulePatternScan(string Tpattern)
     {
         IntPtr ThisAddr = (IntPtr)0;
 
         //method_1("Patterns: " + Tpattern);
         byte[] ThisCheckbytes = StringToByteArray(Tpattern.Replace(" ", ""));
-        long ThisAddrF = Search(Form1_0.buffer, ThisCheckbytes, 0, "pattern");
+        long ThisAddrF = Search(gameData.buffer, ThisCheckbytes, 0, "pattern");
         if (ThisAddrF > 0)
         {
             return (IntPtr)ThisAddrF;
@@ -158,109 +152,109 @@ public class PatternsScan
         //; unit table
         string pattern = "48 03 C7 49 8B 8C C6";
         IntPtr patternAddress = modulePatternScan(pattern);
-        IntPtr unitTable = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 7);
-        Form1_0.offsets["unitTable"] = unitTable;
-        Form1_0.method_1("UnitTable offset: 0x" + unitTable.ToString("X"), Color.Black);
+        IntPtr unitTable = (IntPtr)gameData.mem.ReadInt(patternAddress + 7);
+        gameData.offsets["unitTable"] = unitTable;
+        gameData.method_1("UnitTable offset: 0x" + unitTable.ToString("X"), Color.Black);
 
         //; ui
         pattern = "40 84 ed 0f 94 05";
         patternAddress = modulePatternScan(pattern);
-        IntPtr offsetBuffer = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 6);
+        IntPtr offsetBuffer = (IntPtr)gameData.mem.ReadInt(patternAddress + 6);
         //IntPtr uiOffset = (IntPtr) (((Int64) patternAddress - (Int64) BaseAddress) + 10 + (Int64) offsetBuffer);
         IntPtr uiOffset = (IntPtr)(((Int64)patternAddress) + 10 + (Int64)offsetBuffer);
-        Form1_0.offsets["uiOffset"] = uiOffset;
-        Form1_0.method_1("UI offset: 0x" + uiOffset.ToString("X"), Color.Black);
+        gameData.offsets["uiOffset"] = uiOffset;
+        gameData.method_1("UI offset: 0x" + uiOffset.ToString("X"), Color.Black);
 
         //; expansion
         //pattern = "48 8B 05 ?? ?? ?? ?? 48 8B D9 F3 0F 10 50 ??";
         pattern = "48 8B 05 ?? ?? ?? ?? 48 8B D9 F3 0F 10 50";
         patternAddress = modulePatternScan(pattern);
-        offsetBuffer = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 3);
+        offsetBuffer = (IntPtr)gameData.mem.ReadInt(patternAddress + 3);
         //IntPtr expOffset = (IntPtr) (((Int64) patternAddress - (Int64) BaseAddress) + 7 + (Int64) offsetBuffer);
         IntPtr expOffset = (IntPtr)(((Int64)patternAddress) + 7 + (Int64)offsetBuffer);
-        Form1_0.offsets["expOffset"] = expOffset;
-        Form1_0.method_1("Expansion offset: 0x" + expOffset.ToString("X"), Color.Black);
+        gameData.offsets["expOffset"] = expOffset;
+        gameData.method_1("Expansion offset: 0x" + expOffset.ToString("X"), Color.Black);
 
         //; game data(IP and name)
         //pattern = "44 88 25 ?? ?? ?? ?? 66 44 89 25 ?? ?? ?? ??";
         pattern = "44 88 25 ?? ?? ?? ?? 66 44 89 25";
         patternAddress = modulePatternScan(pattern);
-        offsetBuffer = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 0x3);
+        offsetBuffer = (IntPtr)gameData.mem.ReadInt(patternAddress + 0x3);
         //IntPtr gameDataOffset = (IntPtr) (((Int64) patternAddress - (Int64) BaseAddress) - 0x121 + (Int64) offsetBuffer);
         IntPtr gameDataOffset = (IntPtr)(((Int64)patternAddress) - 0x121 + (Int64)offsetBuffer);
-        Form1_0.offsets["gameDataOffset"] = gameDataOffset;
-        Form1_0.method_1("Game data offset: 0x" + gameDataOffset.ToString("X"), Color.Black);
+        gameData.offsets["gameDataOffset"] = gameDataOffset;
+        gameData.method_1("Game data offset: 0x" + gameDataOffset.ToString("X"), Color.Black);
 
         //; menu visibility
         pattern = "8B 05 ?? ?? ?? ?? 89 44 24 20 74 07";
         patternAddress = modulePatternScan(pattern);
-        offsetBuffer = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 2);
+        offsetBuffer = (IntPtr)gameData.mem.ReadInt(patternAddress + 2);
         //IntPtr menuOffset = (IntPtr) (((Int64) patternAddress - (Int64) BaseAddress) + 6 + (Int64) offsetBuffer);
         IntPtr menuOffset = (IntPtr)(((Int64)patternAddress) + 6 + (Int64)offsetBuffer);
-        Form1_0.offsets["menuOffset"] = menuOffset;
-        Form1_0.method_1("Menu offset: 0x" + menuOffset.ToString("X"), Color.Black);
+        gameData.offsets["menuOffset"] = menuOffset;
+        gameData.method_1("Menu offset: 0x" + menuOffset.ToString("X"), Color.Black);
 
         //; last hover object
         //pattern = "C6 84 C2 ?? ?? ?? ?? ?? 48 8B 74 24 ??";
         pattern = "C6 84 C2 ?? ?? ?? ?? ?? 48 8B 74 24";
         patternAddress = modulePatternScan(pattern);
-        IntPtr hoverOffset = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 3) - 1;
-        Form1_0.offsets["hoverOffset"] = hoverOffset;
-        Form1_0.method_1("Hover offset: 0x" + hoverOffset.ToString("X"), Color.Black);
+        IntPtr hoverOffset = (IntPtr)gameData.mem.ReadInt(patternAddress + 3) - 1;
+        gameData.offsets["hoverOffset"] = hoverOffset;
+        gameData.method_1("Hover offset: 0x" + hoverOffset.ToString("X"), Color.Black);
 
         //; roster
         pattern = "02 45 33 D2 4D 8B";
         patternAddress = modulePatternScan(pattern);
-        offsetBuffer = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress - 3);
+        offsetBuffer = (IntPtr)gameData.mem.ReadInt(patternAddress - 3);
         //IntPtr rosterOffset = (IntPtr) (((Int64) patternAddress - (Int64) BaseAddress) + 1 + (Int64) offsetBuffer);
         IntPtr rosterOffset = (IntPtr)(((Int64)patternAddress) + 1 + (Int64)offsetBuffer);
-        Form1_0.offsets["rosterOffset"] = rosterOffset;
-        Form1_0.method_1("Roster offset: 0x" + rosterOffset.ToString("X"), Color.Black);
+        gameData.offsets["rosterOffset"] = rosterOffset;
+        gameData.method_1("Roster offset: 0x" + rosterOffset.ToString("X"), Color.Black);
 
         //#################################################################################################
         /*All games available offset: 0x2A19F10
         Selected game offset: 0x229DBD10
         Selected Char offset: 0x1E1EEF8*/
-        Form1_0.offsets["AllGamesOffset"] = ((IntPtr)0x2A19F10);
-        Form1_0.method_1("All games available offset: 0x" + 0x2A19F10.ToString("X"), Color.Black);
+        gameData.offsets["AllGamesOffset"] = ((IntPtr)0x2A19F10);
+        gameData.method_1("All games available offset: 0x" + 0x2A19F10.ToString("X"), Color.Black);
 
-        Form1_0.offsets["GameSelectedOffset"] = ((IntPtr)0x29DBD10);
-        Form1_0.method_1("Selected game offset: 0x" + 0x29DBD10.ToString("X"), Color.Black);
+        gameData.offsets["GameSelectedOffset"] = ((IntPtr)0x29DBD10);
+        gameData.method_1("Selected game offset: 0x" + 0x29DBD10.ToString("X"), Color.Black);
 
-        Form1_0.offsets["SelectedChar"] = ((IntPtr)0x1E1EEF8);
-        Form1_0.method_1("Selected Char offset: 0x" + 0x1E1EEF8.ToString("X"), Color.Black);
+        gameData.offsets["SelectedChar"] = ((IntPtr)0x1E1EEF8);
+        gameData.method_1("Selected Char offset: 0x" + 0x1E1EEF8.ToString("X"), Color.Black);
 
         /*
         //; all games datas
         pattern = "F8 1E 8B 9F F7 7F 00";
         patternAddress = (IntPtr)(modulePatternScan(pattern) + 16);
         //patternAddress = modulePatternScan(pattern);
-        //IntPtr GameTable = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 6);
-        Form1_0.offsets["AllGamesOffset"] = patternAddress;
-        Form1_0.method_1("All games available offset: 0x" + patternAddress.ToString("X"), Color.Black);
+        //IntPtr GameTable = (IntPtr)gameData.mem.ReadInt(patternAddress + 6);
+        gameData.offsets["AllGamesOffset"] = patternAddress;
+        gameData.method_1("All games available offset: 0x" + patternAddress.ToString("X"), Color.Black);
 
         //; game selected data
         //pattern = "01 8D 14 51 F7 E2 42";
         pattern = "08 04 8C 9F F7 7F 00";
         patternAddress = (IntPtr)(modulePatternScan(pattern) + 16);
         //patternAddress = modulePatternScan(pattern);
-        //IntPtr GameTable = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 7);
+        //IntPtr GameTable = (IntPtr)gameData.mem.ReadInt(patternAddress + 7);
         //pattern = "50 E4 0F 67 F6 7F 00";
         //patternAddress = (IntPtr)(modulePatternScan(pattern) + 64);
-        //IntPtr unitTable = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 7);
+        //IntPtr unitTable = (IntPtr)gameData.mem.ReadInt(patternAddress + 7);
         IntPtr GameTable = patternAddress;
-        //Form1_0.offsets["GameSelectedOffset"] = GameTable + 0x113;
-        //Form1_0.method_1("Selected game offset: 0x" + (GameTable + 0x113).ToString("X"), Color.Black);
-        Form1_0.offsets["GameSelectedOffset"] = GameTable;
-        Form1_0.method_1("Selected game offset: 0x" + (GameTable).ToString("X"), Color.Black);
+        //gameData.offsets["GameSelectedOffset"] = GameTable + 0x113;
+        //gameData.method_1("Selected game offset: 0x" + (GameTable + 0x113).ToString("X"), Color.Black);
+        gameData.offsets["GameSelectedOffset"] = GameTable;
+        gameData.method_1("Selected game offset: 0x" + (GameTable).ToString("X"), Color.Black);
 
         //; selected char
         pattern = "D0 DA 8A 9F F7 7F 00";
         patternAddress = (IntPtr)(modulePatternScan(pattern) + 0x18);
         //patternAddress = modulePatternScan(pattern);
-        //IntPtr GameTable = (IntPtr)Form1_0.Mem_0.ReadInt(patternAddress + 6);
-        Form1_0.offsets["SelectedChar"] = patternAddress;
-        Form1_0.method_1("Selected Char offset: 0x" + patternAddress.ToString("X"), Color.Black);*/
+        //IntPtr GameTable = (IntPtr)gameData.mem.ReadInt(patternAddress + 6);
+        gameData.offsets["SelectedChar"] = patternAddress;
+        gameData.method_1("Selected Char offset: 0x" + patternAddress.ToString("X"), Color.Black);*/
 
         //DetectFirstUnitPointer();
     }
@@ -302,7 +296,7 @@ public class PatternsScan
         bool GoodPlayerPointer = true;
         if (SearchType == "player")
         {
-            long pathAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(AtPoiinter + 0x38));
+            long pathAddress = gameData.mem.ReadInt64Raw((IntPtr)(AtPoiinter + 0x38));
             //Console.WriteLine(pathAddress);
             if (pathAddress == 0) GoodPlayerPointer = false;
         }
@@ -341,19 +335,19 @@ public class PatternsScan
         /*if (ThisVersion == 1 && StartIndexItem_V1_Debug != CheckThisI)
         {
             StartIndexItem_V1_Debug = CheckThisI;
-            Form1_0.method_1("V1 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
+            gameData.method_1("V1 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
             IsDebugging = true;
         }
         if (ThisVersion == 2 && StartIndexItem_V2_Debug != CheckThisI)
         {
             StartIndexItem_V2_Debug = CheckThisI;
-            Form1_0.method_1("V2 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
+            gameData.method_1("V2 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
             IsDebugging = true;
         }
         if (ThisVersion == 3 && StartIndexItem_V3_Debug != CheckThisI)
         {
             StartIndexItem_V3_Debug = CheckThisI;
-            Form1_0.method_1("V3 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
+            gameData.method_1("V3 Units pointer start at: 0x" + CheckThisI.ToString("X"), Color.DarkViolet);
             IsDebugging = true;
         }*/
         //###############
@@ -365,8 +359,8 @@ public class PatternsScan
         string SavePathh = "";
         if (IsDebugging)
         {
-            //SavePathh = Form1_0.ThisEndPath + "DumpHexUnitsV" + ThisVersion + "_0x" + CheckThisI.ToString("X");
-            SavePathh = Form1_0.ThisEndPath + "DumpHexUnitsV" + ThisVersion;
+            //SavePathh = gameData.ThisEndPath + "DumpHexUnitsV" + ThisVersion + "_0x" + CheckThisI.ToString("X");
+            SavePathh = gameData.form.ThisEndPath + "DumpHexUnitsV" + ThisVersion;
             File.Create(SavePathh).Dispose();
         }
 
@@ -378,24 +372,24 @@ public class PatternsScan
             if (IsDebugging)
             {
                 byte[] CurrentUnitBuff = new byte[(0x48 + 0x170)];
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref CurrentUnitBuff, CurrentUnitBuff.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref CurrentUnitBuff, CurrentUnitBuff.Length);
                 AppendAllBytes(SavePathh, CurrentUnitBuff);
             }
 
             ThisCheckbytes = new byte[] { (byte)UnitType.Item, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-            Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+            gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
             if (IsGoodUnitPointer(CheckThisI, "item")) { UnitsScannedCount++; ScannedItemsCount++; }
 
             ThisCheckbytes = new byte[] { (byte)UnitType.Player, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-            Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+            gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
             if (IsGoodUnitPointer(CheckThisI, "player")) { UnitsScannedCount++; ScannedPlayerCount++; }
 
             ThisCheckbytes = new byte[] { (byte)UnitType.GameObject, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-            Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+            gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
             if (IsGoodUnitPointer(CheckThisI, "objects")) { UnitsScannedCount++; ScannedObjectsCount++; }
 
             ThisCheckbytes = new byte[] { (byte)UnitType.NPC, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-            Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+            gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
             if (IsGoodUnitPointer(CheckThisI, "NPC")) { UnitsScannedCount++; ScannedNPCCount++; }
         }
 
@@ -432,28 +426,28 @@ public class PatternsScan
             if (SearchUnitsType == "item")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Item, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "item");
             }
 
             if (SearchUnitsType == "player")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Player, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "player");
             }
 
             if (SearchUnitsType == "objects")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.GameObject, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "objects");
             }
 
             if (SearchUnitsType == "NPC")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.NPC, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "NPC");
             }
         }
@@ -470,12 +464,12 @@ public class PatternsScan
 
     public void DetectFirstUnitPointer()
     {
-        long UnitOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["unitTable"] + Form1_0.UnitStrucOffset;
+        long UnitOffset = (long)gameData.BaseAddress + (long)gameData.offsets["unitTable"] + gameData.UnitStrucOffset;
 
         AllPossiblePointers = new List<long>();
         for (int i = 0; i < ((128 + 516) * 10); i += 8)
         {
-            long UnitPointerLocation = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(UnitOffset + i));
+            long UnitPointerLocation = gameData.mem.ReadInt64Raw((IntPtr)(UnitOffset + i));
             if (UnitPointerLocation > 0) AllPossiblePointers.Add(UnitPointerLocation);
         }
 
@@ -500,7 +494,7 @@ public class PatternsScan
             CheckThisI -= (0x48 + 0x170);
 
             byte[] CurrentUnitBuff = new byte[8];
-            Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref CurrentUnitBuff, CurrentUnitBuff.Length);
+            gameData.mem.ReadRawMemory(CheckThisI, ref CurrentUnitBuff, CurrentUnitBuff.Length);
 
             //Console.WriteLine(CurrentUnitBuff[0].ToString("X2") + " " + CurrentUnitBuff[1].ToString("X2") + " " + CurrentUnitBuff[2].ToString("X2") + " " + CurrentUnitBuff[3].ToString("X2") + " "
             //    + CurrentUnitBuff[4].ToString("X2") + " " + CurrentUnitBuff[5].ToString("X2") + " " + CurrentUnitBuff[6].ToString("X2") + " " + CurrentUnitBuff[7].ToString("X2") + " ");
@@ -509,7 +503,7 @@ public class PatternsScan
             {
                 BadCount = 0;
                 StartIndexItem_V2 = CheckThisI;
-                //Form1_0.method_1("Possible Units pointer start at: 0x" + StartIndexItem_V2.ToString("X"), Color.DarkViolet);
+                //gameData.method_1("Possible Units pointer start at: 0x" + StartIndexItem_V2.ToString("X"), Color.DarkViolet);
             }
             else
             {
@@ -522,7 +516,7 @@ public class PatternsScan
                     {
                         StartIndexItemLast_V2 = StartIndexItem_V2;
                         //ScanUnitsNumber += i;
-                        Form1_0.method_1("Units pointer start at: 0x" + StartIndexItem_V2.ToString("X"), Color.Black);
+                        gameData.method_1("Units pointer start at: 0x" + StartIndexItem_V2.ToString("X"), Color.Black);
                     }
                     return;
                 }
@@ -552,28 +546,28 @@ public class PatternsScan
             if (SearchUnitsType == "item")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Item, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "item");
             }
 
             if (SearchUnitsType == "player")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Player, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "player");
             }
 
             if (SearchUnitsType == "objects")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.GameObject, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "objects");
             }
 
             if (SearchUnitsType == "NPC")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.NPC, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "NPC");
             }
         }
@@ -590,7 +584,7 @@ public class PatternsScan
         {
             ScanUnitsNumber += 100;
             ScanUnitsNegativeOffset += 25;
-            Form1_0.method_1("Units Scan have increased trying to detect more Units, but glitch may happend too!", Color.OrangeRed);
+            gameData.method_1("Units Scan have increased trying to detect more Units, but glitch may happend too!", Color.OrangeRed);
             CurrentUnitsIncreaseCount++;
         }
     }
@@ -607,7 +601,7 @@ public class PatternsScan
         long UnitOffset = 0;
         try
         {
-            UnitOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["unitTable"] + Form1_0.UnitStrucOffset;
+            UnitOffset = (long)gameData.BaseAddress + (long)gameData.offsets["unitTable"] + gameData.UnitStrucOffset;
         }
         catch
         {
@@ -621,11 +615,11 @@ public class PatternsScan
 
         for (int i = 0; i < ((128 + 516) * 10); i += 8)
         {
-            long UnitPointerLocation = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(UnitOffset + i));
+            long UnitPointerLocation = gameData.mem.ReadInt64Raw((IntPtr)(UnitOffset + i));
             if (UnitPointerLocation > 0)
             {
-                uint UnitTypeT = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(UnitPointerLocation));
-                uint TxtFileNoT = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(UnitPointerLocation + 4));
+                uint UnitTypeT = gameData.mem.ReadUInt32Raw((IntPtr)(UnitPointerLocation));
+                uint TxtFileNoT = gameData.mem.ReadUInt32Raw((IntPtr)(UnitPointerLocation + 4));
 
                 // Do ONLY UnitType:4 && TxtFileNo:!3
                 if (SearchUnitsType == "item")
@@ -715,12 +709,12 @@ public class PatternsScan
                 if (DiffVal < 0xFFFFF)  //here
                 {
                     ScanUnitsNumber += UnitNumberDiff;
-                    Form1_0.method_1("Units start diff: 0x" + (DiffVal).ToString("X") + ", scann for: " + ScanUnitsNumber + " +" + UnitNumberDiff, Color.DarkOrchid);
+                    gameData.method_1("Units start diff: 0x" + (DiffVal).ToString("X") + ", scann for: " + ScanUnitsNumber + " +" + UnitNumberDiff, Color.DarkOrchid);
                 }
                 else
                 {
                     StartIndexItem = StartIndexItemLast; //correct the pointer
-                                                         //Form1_0.method_1("BAD Item start diff: 0x" + (DiffVal).ToString("X") + ", scann for: " + ScanUnitsNumber + " +" + UnitNumberDiff, Color.Red);
+                                                         //gameData.method_1("BAD Item start diff: 0x" + (DiffVal).ToString("X") + ", scann for: " + ScanUnitsNumber + " +" + UnitNumberDiff, Color.Red);
                 }
             }
             StartIndexItemLast = StartIndexItem;
@@ -745,28 +739,28 @@ public class PatternsScan
             if (SearchUnitsType == "item")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Item, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "item");
             }
 
             if (SearchUnitsType == "player")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.Player, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "player");
             }
 
             if (SearchUnitsType == "objects")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.GameObject, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "objects");
             }
 
             if (SearchUnitsType == "NPC")
             {
                 ThisCheckbytes = new byte[] { (byte)UnitType.NPC, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                 unitPatternScan(CheckThisI, "NPC");
             }
         }
@@ -780,10 +774,10 @@ public class PatternsScan
                 if (!AllScannedPointers.ContainsKey(CheckThisI))
                 {
                     //AllScannedPointers.Add(CheckThisI);
-                    //Form1_0.method_1("Missed item pointer: " + CheckThisI.ToString("X"), Color.Red);
+                    //gameData.method_1("Missed item pointer: " + CheckThisI.ToString("X"), Color.Red);
 
                     ThisCheckbytes = new byte[] { (byte)UnitType.Item, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                    Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                    gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                     unitPatternScan(CheckThisI, "item");
                 }
             }
@@ -797,10 +791,10 @@ public class PatternsScan
                 if (!AllScannedPointers.ContainsKey(CheckThisI))
                 {
                     //AllScannedPointers.Add(CheckThisI);
-                    //Form1_0.method_1("Missed player pointer: " + CheckThisI.ToString("X"), Color.Red);
+                    //gameData.method_1("Missed player pointer: " + CheckThisI.ToString("X"), Color.Red);
 
                     ThisCheckbytes = new byte[] { (byte)UnitType.Player, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                    Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                    gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                     unitPatternScan(CheckThisI, "player");
                 }
             }
@@ -814,10 +808,10 @@ public class PatternsScan
                 if (!AllScannedPointers.ContainsKey(CheckThisI))
                 {
                     //AllScannedPointers.Add(CheckThisI);
-                    //Form1_0.method_1("Missed object pointer: " + CheckThisI.ToString("X"), Color.Red);
+                    //gameData.method_1("Missed object pointer: " + CheckThisI.ToString("X"), Color.Red);
 
                     ThisCheckbytes = new byte[] { (byte)UnitType.GameObject, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                    Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                    gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                     unitPatternScan(CheckThisI, "objects");
                 }
             }
@@ -831,10 +825,10 @@ public class PatternsScan
                 if (!AllScannedPointers.ContainsKey(CheckThisI))
                 {
                     //AllScannedPointers.Add(CheckThisI);
-                    //Form1_0.method_1("Missed npc pointer: " + CheckThisI.ToString("X"), Color.Red);
+                    //gameData.method_1("Missed npc pointer: " + CheckThisI.ToString("X"), Color.Red);
 
                     ThisCheckbytes = new byte[] { (byte)UnitType.NPC, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
-                    Form1_0.Mem_0.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
+                    gameData.mem.ReadRawMemory(CheckThisI, ref UnitBuffer, UnitBuffer.Length);
                     unitPatternScan(CheckThisI, "NPC");
                 }
             }

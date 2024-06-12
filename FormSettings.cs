@@ -7,7 +7,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 public partial class FormSettings : Form
 {
     Form1 Form1_0;
-
+    GameData gameData = GameData.Instance;
     public FormSettings(Form1 form1_1)
     {
         Form1_0 = form1_1;
@@ -51,7 +51,7 @@ public partial class FormSettings : Form
     {
         checkBoxShowOverlay.Checked = CharConfig.ShowOverlay;
 
-        textBoxD2Path.Text = Form1_0.D2_LOD_113C_Path;
+        textBoxD2Path.Text = GameData.Instance.D2_LOD_113C_Path;
         numericUpDownMaxTime.Value = CharConfig.MaxGameTime;
         checkBoxRush.Checked = CharConfig.IsRushing;
         textBox1LeechName.Text = CharConfig.RushLeecherName;
@@ -123,46 +123,46 @@ public partial class FormSettings : Form
 
         comboBoxDifficulty.SelectedIndex = CharConfig.GameDifficulty;
 
-        if (Form1_0.CurrentGameNumber <= 0) Form1_0.CurrentGameNumber = 1;
-        numericUpDownRunNumber.Value = Form1_0.CurrentGameNumber;
+        if (GameData.Instance.CurrentGameNumber <= 0) GameData.Instance.CurrentGameNumber = 1;
+        numericUpDownRunNumber.Value = GameData.Instance.CurrentGameNumber;
 
         //###################
         //SPECIALS BAAL FEATURES
-        checkBoxKillBaal.Checked = Form1_0.Baal_0.KillBaal;
-        checkBoxBaalSafeHealing.Checked = Form1_0.Baal_0.SafeYoloStrat;
-        numericUpDownBaalLeaveMobsCount.Value = Form1_0.Baal_0.LeaveIfMobsCountIsAbove;
-        for (int i = 0; i < Form1_0.Baal_0.LeaveIfMobsIsPresent_ID.Count; i++)
+        checkBoxKillBaal.Checked = ((Baal)gameData.baal).KillBaal;
+        checkBoxBaalSafeHealing.Checked = ((Baal)gameData.baal).SafeYoloStrat;
+        numericUpDownBaalLeaveMobsCount.Value = ((Baal)gameData.baal).LeaveIfMobsCountIsAbove;
+        for (int i = 0; i < ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Count; i++)
         {
             string[] arr = new string[2];
-            arr[0] = Form1_0.Baal_0.LeaveIfMobsIsPresent_ID[i].ToString();
-            arr[1] = Form1_0.Baal_0.LeaveIfMobsIsPresent_Count[i].ToString();
+            arr[0] = ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID[i].ToString();
+            arr[1] = ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count[i].ToString();
             ListViewItem item = new ListViewItem(arr);
 
             listViewBaalLeaveOnMobs.Items.Add(item);
         }
 
-        checkBoxBaalLeechFightMobs.Checked = Form1_0.BaalLeech_0.BaalLeechFight;
+        checkBoxBaalLeechFightMobs.Checked = gameData.baalLeech.BaalLeechFight;
 
         //###################
         //SPECIALS CHAOS FEATURES
-        checkBoxFastChaos.Checked = Form1_0.Chaos_0.FastChaos;
+        checkBoxFastChaos.Checked = ((Chaos)gameData.chaos).FastChaos;
 
         //###################
         //SPECIALS OVERLAY FEATURES
-        checkBoxOverlayShowMobs.Checked = Form1_0.overlayForm.ShowMobs;
-        checkBoxOverlayShowWP.Checked = Form1_0.overlayForm.ShowWPs;
-        checkBoxOverlayShowGoodChest.Checked = Form1_0.overlayForm.ShowGoodChests;
-        checkBoxOverlayShowLogs.Checked = Form1_0.overlayForm.ShowLogs;
-        checkBoxOverlayShowBotInfos.Checked = Form1_0.overlayForm.ShowBotInfos;
-        checkBoxOverlayShowNPC.Checked = Form1_0.overlayForm.ShowNPC;
-        checkBoxOverlayShowPath.Checked = Form1_0.overlayForm.ShowPathFinding;
-        checkBoxOverlayShowExits.Checked = Form1_0.overlayForm.ShowExits;
-        checkBoxOverlayShowMH.Checked = Form1_0.overlayForm.ShowMapHackShowLines;
-        checkBoxOverlayShowUnitsCount.Checked = Form1_0.overlayForm.ShowUnitsScanCount;
+        checkBoxOverlayShowMobs.Checked = gameData.overlayForm.ShowMobs;
+        checkBoxOverlayShowWP.Checked = gameData.overlayForm.ShowWPs;
+        checkBoxOverlayShowGoodChest.Checked = gameData.overlayForm.ShowGoodChests;
+        checkBoxOverlayShowLogs.Checked = gameData.overlayForm.ShowLogs;
+        checkBoxOverlayShowBotInfos.Checked = gameData.overlayForm.ShowBotInfos;
+        checkBoxOverlayShowNPC.Checked = gameData.overlayForm.ShowNPC;
+        checkBoxOverlayShowPath.Checked = gameData.overlayForm.ShowPathFinding;
+        checkBoxOverlayShowExits.Checked = gameData.overlayForm.ShowExits;
+        checkBoxOverlayShowMH.Checked = gameData.overlayForm.ShowMapHackShowLines;
+        checkBoxOverlayShowUnitsCount.Checked = gameData.overlayForm.ShowUnitsScanCount;
         //###################
         //SHOP BOT
-        numericUpDownMaxShopCount.Value = Form1_0.ShopBot_0.MaxShopCount;
-        numericUpDownShopTownAct.Value = Form1_0.ShopBot_0.ShopBotTownAct;
+        numericUpDownMaxShopCount.Value = ((ShopBot)gameData.shopBot).MaxShopCount;
+        numericUpDownShopTownAct.Value = ((ShopBot)gameData.shopBot).ShopBotTownAct;
         //###################
 
         SetCreateGameGroupbox();
@@ -254,7 +254,7 @@ public partial class FormSettings : Form
     {
         CharConfig.ShowOverlay = checkBoxShowOverlay.Checked;
 
-        Form1_0.D2_LOD_113C_Path = textBoxD2Path.Text;
+        gameData.D2_LOD_113C_Path = textBoxD2Path.Text;
         CharConfig.MaxGameTime = (int)numericUpDownMaxTime.Value;
         CharConfig.IsRushing = checkBoxRush.Checked;
         CharConfig.RushLeecherName = textBox1LeechName.Text;
@@ -325,39 +325,39 @@ public partial class FormSettings : Form
 
         CharConfig.GameDifficulty = comboBoxDifficulty.SelectedIndex;
 
-        Form1_0.CurrentGameNumber = (int)numericUpDownRunNumber.Value;
+        gameData.CurrentGameNumber = (int)numericUpDownRunNumber.Value;
 
         //###################
         //SPECIALS BAAL FEATURES
-        Form1_0.Baal_0.KillBaal = checkBoxKillBaal.Checked;
-        Form1_0.Baal_0.SafeYoloStrat = checkBoxBaalSafeHealing.Checked;
-        Form1_0.Baal_0.LeaveIfMobsCountIsAbove = (int)numericUpDownBaalLeaveMobsCount.Value;
-        Form1_0.Baal_0.LeaveIfMobsIsPresent_ID.Clear();
-        Form1_0.Baal_0.LeaveIfMobsIsPresent_Count.Clear();
+        ((Baal)gameData.baal).KillBaal = checkBoxKillBaal.Checked;
+        ((Baal)gameData.baal).SafeYoloStrat = checkBoxBaalSafeHealing.Checked;
+        ((Baal)gameData.baal).LeaveIfMobsCountIsAbove = (int)numericUpDownBaalLeaveMobsCount.Value;
+        ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Clear();
+        ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count.Clear();
         for (int i = 0; i < listViewBaalLeaveOnMobs.Items.Count; i++)
         {
-            Form1_0.Baal_0.LeaveIfMobsIsPresent_ID.Add(uint.Parse(listViewBaalLeaveOnMobs.Items[i].SubItems[0].Text));
-            Form1_0.Baal_0.LeaveIfMobsIsPresent_Count.Add(int.Parse(listViewBaalLeaveOnMobs.Items[i].SubItems[1].Text));
+            ((Baal)gameData.baal).LeaveIfMobsIsPresent_ID.Add(uint.Parse(listViewBaalLeaveOnMobs.Items[i].SubItems[0].Text));
+            ((Baal)gameData.baal).LeaveIfMobsIsPresent_Count.Add(int.Parse(listViewBaalLeaveOnMobs.Items[i].SubItems[1].Text));
         }
 
-        Form1_0.BaalLeech_0.BaalLeechFight = checkBoxBaalLeechFightMobs.Checked;
+        gameData.baalLeech.BaalLeechFight = checkBoxBaalLeechFightMobs.Checked;
 
         //###################
         //SPECIALS CHAOS FEATURES
-        Form1_0.Chaos_0.FastChaos = checkBoxFastChaos.Checked;
+        ((Chaos)gameData.chaos).FastChaos = checkBoxFastChaos.Checked;
 
         //###################
         //SPECIALS OVERLAY FEATURES
-        Form1_0.overlayForm.ShowMobs = checkBoxOverlayShowMobs.Checked;
-        Form1_0.overlayForm.ShowWPs = checkBoxOverlayShowWP.Checked;
-        Form1_0.overlayForm.ShowGoodChests = checkBoxOverlayShowGoodChest.Checked;
-        Form1_0.overlayForm.ShowLogs = checkBoxOverlayShowLogs.Checked;
-        Form1_0.overlayForm.ShowBotInfos = checkBoxOverlayShowBotInfos.Checked;
-        Form1_0.overlayForm.ShowNPC = checkBoxOverlayShowNPC.Checked;
-        Form1_0.overlayForm.ShowPathFinding = checkBoxOverlayShowPath.Checked;
-        Form1_0.overlayForm.ShowExits = checkBoxOverlayShowExits.Checked;
-        Form1_0.overlayForm.ShowMapHackShowLines = checkBoxOverlayShowMH.Checked;
-        Form1_0.overlayForm.ShowUnitsScanCount = checkBoxOverlayShowUnitsCount.Checked;
+        gameData.overlayForm.ShowMobs = checkBoxOverlayShowMobs.Checked;
+        gameData.overlayForm.ShowWPs = checkBoxOverlayShowWP.Checked;
+        gameData.overlayForm.ShowGoodChests = checkBoxOverlayShowGoodChest.Checked;
+        gameData.overlayForm.ShowLogs = checkBoxOverlayShowLogs.Checked;
+        gameData.overlayForm.ShowBotInfos = checkBoxOverlayShowBotInfos.Checked;
+        gameData.overlayForm.ShowNPC = checkBoxOverlayShowNPC.Checked;
+        gameData.overlayForm.ShowPathFinding = checkBoxOverlayShowPath.Checked;
+        gameData.overlayForm.ShowExits = checkBoxOverlayShowExits.Checked;
+        gameData.overlayForm.ShowMapHackShowLines = checkBoxOverlayShowMH.Checked;
+        gameData.overlayForm.ShowUnitsScanCount = checkBoxOverlayShowUnitsCount.Checked;
         //###################
 
         if (comboBoxLobby.SelectedIndex == 1)
@@ -388,8 +388,8 @@ public partial class FormSettings : Form
 
         //###################
         //SHOP BOT
-        Form1_0.ShopBot_0.MaxShopCount = int.Parse(numericUpDownMaxShopCount.Value.ToString());
-        Form1_0.ShopBot_0.ShopBotTownAct = int.Parse(numericUpDownShopTownAct.Value.ToString());
+        ((ShopBot)gameData.shopBot).MaxShopCount = int.Parse(numericUpDownMaxShopCount.Value.ToString());
+        ((ShopBot)gameData.shopBot).ShopBotTownAct = int.Parse(numericUpDownShopTownAct.Value.ToString());
         //###################
     }
 
@@ -401,7 +401,7 @@ public partial class FormSettings : Form
     private void FormSettings_FormClosing(object sender, FormClosingEventArgs e)
     {
         SaveSettings();
-        Form1_0.SettingsLoader_0.SaveCurrentSettings();
+        gameData.settingsLoader.SaveCurrentSettings();
     }
 
     private void comboBoxLobby_SelectedIndexChanged(object sender, EventArgs e)
@@ -426,11 +426,11 @@ public partial class FormSettings : Form
 
     private void button2_Click(object sender, EventArgs e)
     {
-        //FormCharSettings FormCharSettings_0 = new FormCharSettings(Form1_0);
+        //FormCharSettings FormCharSettings_0 = new FormCharSettings(gameData);
         //FormCharSettings_0.ShowDialog();
 
         SaveSettings();
-        Form1_0.SettingsLoader_0.SaveCurrentSettings();
+        gameData.settingsLoader.SaveCurrentSettings();
     }
 
     private void listViewRunScripts_DoubleClick(object sender, EventArgs e)
@@ -440,7 +440,7 @@ public partial class FormSettings : Form
         listViewRunScripts.SelectedItems[0].Checked = !listViewRunScripts.SelectedItems[0].Checked;
         if (listViewRunScripts.SelectedItems[0].Text == "Baal")
         {
-            checkBoxKillBaal.Checked = Form1_0.Baal_0.KillBaal;
+            checkBoxKillBaal.Checked = ((Baal)gameData.baal).KillBaal;
             panelBaalFeature.Visible = true;
         }
         else if (listViewRunScripts.SelectedItems[0].Text == "Baal Leech")
@@ -467,7 +467,7 @@ public partial class FormSettings : Form
 
     private void buttonBaalApply_Click(object sender, EventArgs e)
     {
-        Form1_0.Baal_0.KillBaal = checkBoxKillBaal.Checked;
+        ((Baal)gameData.baal).KillBaal = checkBoxKillBaal.Checked;
         panelBaalFeature.Visible = false;
     }
 
@@ -496,7 +496,7 @@ public partial class FormSettings : Form
         DialogResult result = openFileDialog1.ShowDialog();
         if (result == DialogResult.OK)
         {
-            Form1_0.SettingsLoader_0.LoadThisFileSettings(openFileDialog1.FileName);
+            gameData.settingsLoader.LoadThisFileSettings(openFileDialog1.FileName);
             LoadSettings();
             Application.DoEvents();
         }
@@ -519,7 +519,7 @@ public partial class FormSettings : Form
 
     private void button5_Click(object sender, EventArgs e)
     {
-        FormAdvancedSettings FormAdvancedSettings_0 = new FormAdvancedSettings(Form1_0);
+        FormAdvancedSettings FormAdvancedSettings_0 = new FormAdvancedSettings(gameData.form);
         FormAdvancedSettings_0.ShowDialog();
     }
 

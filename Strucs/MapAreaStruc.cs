@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 public class MapAreaStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public List<ServerLevel> AllMapData = new List<ServerLevel>();
     public int CurrentObjectIndex = 0;
@@ -27,7 +27,6 @@ public class MapAreaStruc
 
     public void SetForm1(Form1 form1_1)
     {
-        Form1_0 = form1_1;
 
         _kooloMapPath = Application.StartupPath + @"\map.exe";
     }
@@ -63,7 +62,7 @@ public class MapAreaStruc
                     {
                         if (AllMapData[i].Objects[k].Type == "exit" && ObjectType == "exit")
                         {
-                            if (Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
+                            if (gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
                             {
                                 ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
                                 ThisPos.Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y;
@@ -73,7 +72,7 @@ public class MapAreaStruc
                         }
                         if (AllMapData[i].Objects[k].Type == "exit_area" && ObjectType == "exit_area")
                         {
-                            if (Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
+                            if (gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
                             {
                                 ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
                                 ThisPos.Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y;
@@ -83,8 +82,8 @@ public class MapAreaStruc
                         }
                         if (AllMapData[i].Objects[k].Type == "object" && ObjectType == "object")
                         {
-                            //Console.WriteLine(Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
-                            if (Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
+                            //Console.WriteLine(gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
+                            if (gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName)
                             {
                                 ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
                                 ThisPos.Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y;
@@ -106,7 +105,7 @@ public class MapAreaStruc
                 }
             }
 
-            //Form1_0.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
+            //gameData.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
 
         }
         catch { }
@@ -141,8 +140,8 @@ public class MapAreaStruc
                 {
                     if (AllMapData[i].Objects[k].Type == "exit" && ObjectType == "exit")
                     {
-                        //Console.WriteLine(Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)));
-                        if ((Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                        //Console.WriteLine(gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)));
+                        if ((gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                             || IgnoreName)
                         {
                             ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
@@ -153,7 +152,7 @@ public class MapAreaStruc
                     }
                     if (AllMapData[i].Objects[k].Type == "exit_area" && ObjectType == "exit_area")
                     {
-                        if ((Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                        if ((gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                             || IgnoreName)
                         {
                             ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
@@ -164,10 +163,10 @@ public class MapAreaStruc
                     }
                     if (AllMapData[i].Objects[k].Type == "object" && ObjectType == "object")
                     {
-                        //Console.WriteLine("Object: " + Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
+                        //Console.WriteLine("Object: " + gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
                         if (ObjectName == "WaypointPortal")
                         {
-                            if (Form1_0.ObjectsStruc_0.IsWaypoint(int.Parse(AllMapData[i].Objects[k].ID)))
+                            if (gameData.objectsStruc.IsWaypoint(int.Parse(AllMapData[i].Objects[k].ID)))
                             {
                                 ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
                                 ThisPos.Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y;
@@ -177,7 +176,7 @@ public class MapAreaStruc
                         }
                         else
                         {
-                            if ((Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                            if ((gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                             || IgnoreName)
                             {
                                 ThisPos.X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X;
@@ -203,7 +202,7 @@ public class MapAreaStruc
             }
             //}
 
-            //Form1_0.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
+            //gameData.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
 
         }
         catch { }
@@ -212,11 +211,11 @@ public class MapAreaStruc
 
     public void DebugMapData()
     {
-        Form1_0.ClearDebugMapData();
+        gameData.form.ClearDebugMapData();
         DebuggingMapData = true;
-        GetPositionOfAllObject("object", "", (int)Form1_0.PlayerScan_0.levelNo, new List<int>(), true);
-        GetPositionOfAllObject("exit", "", (int)Form1_0.PlayerScan_0.levelNo, new List<int>(), true);
-        GetPositionOfAllObject("npc", "", (int)Form1_0.PlayerScan_0.levelNo, new List<int>(), true);
+        GetPositionOfAllObject("object", "", (int)gameData.playerScan.levelNo, new List<int>(), true);
+        GetPositionOfAllObject("exit", "", (int)gameData.playerScan.levelNo, new List<int>(), true);
+        GetPositionOfAllObject("npc", "", (int)gameData.playerScan.levelNo, new List<int>(), true);
         DebuggingMapData = false;
     }
 
@@ -244,8 +243,8 @@ public class MapAreaStruc
                 {
                     if (AllMapData[i].Objects[k].Type == "exit" && ObjectType == "exit")
                     {
-                        //Console.WriteLine(Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)));
-                        if ((Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                        //Console.WriteLine(gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)));
+                        if ((gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                             || IgnoreName)
                         {
                             ThisPos.Add(new Position { X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X, Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y });
@@ -253,13 +252,13 @@ public class MapAreaStruc
 
                             if (DebuggingMapData)
                             {
-                                Form1_0.AppendTextDebugMapData("exit, ID:" + AllMapData[i].Objects[k].ID + "(" + Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
+                                gameData.form.AppendTextDebugMapData("exit, ID:" + AllMapData[i].Objects[k].ID + "(" + gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
                             }
                         }
                     }
                     if (AllMapData[i].Objects[k].Type == "exit_area" && ObjectType == "exit_area")
                     {
-                        if ((Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                        if ((gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                             || IgnoreName)
                         {
                             ThisPos.Add(new Position { X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X, Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y });
@@ -267,35 +266,35 @@ public class MapAreaStruc
 
                             if (DebuggingMapData)
                             {
-                                Form1_0.AppendTextDebugMapData("exit_area, ID:" + AllMapData[i].Objects[k].ID + "(" + Form1_0.Town_0.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
+                                gameData.form.AppendTextDebugMapData("exit_area, ID:" + AllMapData[i].Objects[k].ID + "(" + gameData.townStruc.getAreaName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
                             }
                         }
                     }
                     if (AllMapData[i].Objects[k].Type == "object" && ObjectType == "object")
                     {
-                        //Console.WriteLine("Object: " + Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
+                        //Console.WriteLine("Object: " + gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)));
                         if (ObjectName == "WaypointPortal")
                         {
-                            if (Form1_0.ObjectsStruc_0.IsWaypoint(int.Parse(AllMapData[i].Objects[k].ID)))
+                            if (gameData.objectsStruc.IsWaypoint(int.Parse(AllMapData[i].Objects[k].ID)))
                             {
                                 ThisPos.Add(new Position { X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X, Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y });
 
                                 if (DebuggingMapData)
                                 {
-                                    Form1_0.AppendTextDebugMapData("object-waypoint, ID:" + AllMapData[i].Objects[k].ID + "(" + Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
+                                    gameData.form.AppendTextDebugMapData("object-waypoint, ID:" + AllMapData[i].Objects[k].ID + "(" + gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
                                 }
                             }
                         }
                         else
                         {
-                            if ((Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
+                            if ((gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) == ObjectName && !IgnoreName)
                                 || IgnoreName)
                             {
                                 ThisPos.Add(new Position { X = AllMapData[i].Offset.X + AllMapData[i].Objects[k].X, Y = AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y });
 
                                 if (DebuggingMapData)
                                 {
-                                    Form1_0.AppendTextDebugMapData("object, ID:" + AllMapData[i].Objects[k].ID + "(" + Form1_0.ObjectsStruc_0.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
+                                    gameData.form.AppendTextDebugMapData("object, ID:" + AllMapData[i].Objects[k].ID + "(" + gameData.objectsStruc.getObjectName(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
                                 }
                             }
                         }
@@ -309,14 +308,14 @@ public class MapAreaStruc
 
                             if (DebuggingMapData)
                             {
-                                Form1_0.AppendTextDebugMapData("npc, ID:" + AllMapData[i].Objects[k].ID + "(" + (EnumsMobsNPC.MonsterType)(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
+                                gameData.form.AppendTextDebugMapData("npc, ID:" + AllMapData[i].Objects[k].ID + "(" + (EnumsMobsNPC.MonsterType)(int.Parse(AllMapData[i].Objects[k].ID)) + ") at:" + (AllMapData[i].Offset.X + AllMapData[i].Objects[k].X) + ", " + (AllMapData[i].Offset.Y + AllMapData[i].Objects[k].Y) + Environment.NewLine);
                             }
                         }
                     }
                 }
             }
 
-            //Form1_0.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
+            //gameData.method_1("Object: " + ExitName + " found at: "+ ThisPos.X + ", " + ThisPos.Y, Color.Red);
 
         }
         catch { }
@@ -358,11 +357,11 @@ public class MapAreaStruc
     public int GetPlayerAct()
     {
         int TownAct = 0;
-        if (Form1_0.PlayerScan_0.levelNo >= 1 && Form1_0.PlayerScan_0.levelNo < 40) TownAct = 1;
-        if (Form1_0.PlayerScan_0.levelNo >= 40 && Form1_0.PlayerScan_0.levelNo < 75) TownAct = 2;
-        if (Form1_0.PlayerScan_0.levelNo >= 75 && Form1_0.PlayerScan_0.levelNo < 103) TownAct = 3;
-        if (Form1_0.PlayerScan_0.levelNo >= 103 && Form1_0.PlayerScan_0.levelNo < 109) TownAct = 4;
-        if (Form1_0.PlayerScan_0.levelNo >= 109) TownAct = 5;
+        if (gameData.playerScan.levelNo >= 1 && gameData.playerScan.levelNo < 40) TownAct = 1;
+        if (gameData.playerScan.levelNo >= 40 && gameData.playerScan.levelNo < 75) TownAct = 2;
+        if (gameData.playerScan.levelNo >= 75 && gameData.playerScan.levelNo < 103) TownAct = 3;
+        if (gameData.playerScan.levelNo >= 103 && gameData.playerScan.levelNo < 109) TownAct = 4;
+        if (gameData.playerScan.levelNo >= 109) TownAct = 5;
 
         return TownAct;
     }
@@ -391,15 +390,15 @@ public class MapAreaStruc
 
     public void ScanMapStruc()
     {
-        _d2LoDPath = Form1_0.D2_LOD_113C_Path;
+        _d2LoDPath = gameData.D2_LOD_113C_Path;
 
-        Form1_0.method_1("Seed: " + Form1_0.PlayerScan_0.mapSeedValue.ToString(), Color.DarkBlue);
-        Form1_0.method_1("Difficulty: " + ((Difficulty)Form1_0.PlayerScan_0.difficulty).ToString(), Color.DarkBlue);
+        gameData.method_1("Seed: " + gameData.playerScan.mapSeedValue.ToString(), Color.DarkBlue);
+        gameData.method_1("Difficulty: " + ((Difficulty)gameData.playerScan.difficulty).ToString(), Color.DarkBlue);
 
         int tryes = 0;
         while (tryes < 3)
         {
-            GetMapData(Form1_0.PlayerScan_0.mapSeedValue.ToString(), (Difficulty)Form1_0.PlayerScan_0.difficulty);
+            GetMapData(gameData.playerScan.mapSeedValue.ToString(), (Difficulty)gameData.playerScan.difficulty);
             if (AllMapData.Count != 0)
             {
                 tryes = 15;
@@ -438,7 +437,7 @@ public class MapAreaStruc
             {
                 try
                 {
-                    //Form1_0.method_1(line, Color.Red);
+                    //gameData.method_1(line, Color.Red);
                     if (JsonConvert.DeserializeObject<ServerLevel>(line) is ServerLevel lvl && !string.IsNullOrEmpty(lvl.Type) && lvl.Map.Any())
                     {
                         lvls.Add(lvl);
@@ -451,7 +450,7 @@ public class MapAreaStruc
             process.WaitForExit();
 
 
-            string SavePathh = Form1_0.ThisEndPath + "DumpMap.txt";
+            string SavePathh = gameData.form.ThisEndPath + "DumpMap.txt";
             File.Create(SavePathh).Dispose();
             File.WriteAllLines(SavePathh, stdoutLines);
             MapDataLines = stdoutLines;
@@ -459,9 +458,9 @@ public class MapAreaStruc
 
             if (lvls.Count == 0)
             {
-                Form1_0.method_1("Couldn't get the map data from D2 LOD 1.13C!", Color.Red);
-                Form1_0.method_1("Check the file 'DumpMap.txt' for more infos", Color.Red);
-                Form1_0.method_1("Retrying...", Color.Red);
+                gameData.method_1("Couldn't get the map data from D2 LOD 1.13C!", Color.Red);
+                gameData.method_1("Check the file 'DumpMap.txt' for more infos", Color.Red);
+                gameData.method_1("Retrying...", Color.Red);
             }
 
             /*if (process.ExitCode != 0)
@@ -601,19 +600,19 @@ public class MapAreaStruc
         int Tryess = 0;
         while (level == null && Tryess < 5)
         {
-            Form1_0.MapAreaStruc_0.GetMapData(Form1_0.PlayerScan_0.mapSeedValue.ToString(), (Difficulty)Form1_0.PlayerScan_0.difficulty);
+            gameData.mapAreaStruc.GetMapData(gameData.playerScan.mapSeedValue.ToString(), (Difficulty)gameData.playerScan.difficulty);
             level = GetLevel(area);
             Tryess++;
         }
 
         if (level == null)
         {
-            Form1_0.method_1("ERROR Trying to get collision grid!", Color.Red);
+            gameData.method_1("ERROR Trying to get collision grid!", Color.Red);
             return new bool[0, 0];
         }
         if (level.Size == null)
         {
-            Form1_0.method_1("ERROR Trying to get collision grid!", Color.Red);
+            gameData.method_1("ERROR Trying to get collision grid!", Color.Red);
             return new bool[0, 0];
         }
 
@@ -768,11 +767,11 @@ public class MapAreaStruc
         //Burial Ground (Crypt Door)
         if (area == Enums.Area.BurialGrounds)
         {
-            Position ThisDoorPosition = Form1_0.MapAreaStruc_0.GetPositionOfObject("exit", Form1_0.Town_0.getAreaName((int)Enums.Area.Crypt), (int) Enums.Area.BurialGrounds, new List<int>() { });
+            Position ThisDoorPosition = gameData.mapAreaStruc.GetPositionOfObject("exit", gameData.townStruc.getAreaName((int)Enums.Area.Crypt), (int) Enums.Area.BurialGrounds, new List<int>() { });
             if (ThisDoorPosition.X > 0 && ThisDoorPosition.Y > 0)
             {
-                ThisDoorPosition.X -= Form1_0.MapAreaStruc_0.AllMapData[((int)(Enums.Area.BurialGrounds) - 1)].Offset.X;
-                ThisDoorPosition.Y -= Form1_0.MapAreaStruc_0.AllMapData[((int)(Enums.Area.BurialGrounds) - 1)].Offset.Y;
+                ThisDoorPosition.X -= gameData.mapAreaStruc.AllMapData[((int)(Enums.Area.BurialGrounds) - 1)].Offset.X;
+                ThisDoorPosition.Y -= gameData.mapAreaStruc.AllMapData[((int)(Enums.Area.BurialGrounds) - 1)].Offset.Y;
                 cg[ThisDoorPosition.X, ThisDoorPosition.Y] = true;
                 cg[ThisDoorPosition.X + 1, ThisDoorPosition.Y] = true;
                 cg[ThisDoorPosition.X - 1, ThisDoorPosition.Y] = true;
@@ -798,8 +797,8 @@ public class MapAreaStruc
             }
             ColisionMapTxt += Environment.NewLine;
         }
-        File.Create(Form1_0.ThisEndPath + "CollisionMap.txt").Dispose();
-        File.WriteAllText(Form1_0.ThisEndPath + "CollisionMap.txt", ColisionMapTxt);*/
+        File.Create(gameData.ThisEndPath + "CollisionMap.txt").Dispose();
+        File.WriteAllText(gameData.ThisEndPath + "CollisionMap.txt", ColisionMapTxt);*/
 
         return cg;
         //return cg.Select(r => r.ToArray()).ToArray();
@@ -808,8 +807,8 @@ public class MapAreaStruc
     public void DumpMap()
     {
         string AddedTxt = "";
-        if ((CharConfig.RunSummonerRush && !Form1_0.Summoner_0.ScriptDone)
-            || (CharConfig.RunSummonerScript && !Form1_0.SummonerRush_0.ScriptDone))
+        if ((CharConfig.RunSummonerRush && !((Summoner)gameData.summoner).ScriptDone)
+            || (CharConfig.RunSummonerScript && !((SummonerRush)gameData.summonerRush).ScriptDone))
         {
             AddedTxt = "NoPathSummoner";
 
@@ -825,12 +824,12 @@ public class MapAreaStruc
                 }
                 ColisionMapTxt += Environment.NewLine;
             }
-            File.Create(Form1_0.ThisEndPath + "CollisionMapSummoner.txt").Dispose();
-            File.WriteAllText(Form1_0.ThisEndPath + "CollisionMapSummoner.txt", ColisionMapTxt);
+            File.Create(gameData.form.ThisEndPath + "CollisionMapSummoner.txt").Dispose();
+            File.WriteAllText(gameData.form.ThisEndPath + "CollisionMapSummoner.txt", ColisionMapTxt);
         }
-        else AddedTxt += Form1_0.PreviousStatus.Replace("(", "").Replace(")", "").Replace("/", "").Replace("\\", "");
+        else AddedTxt += gameData.form.PreviousStatus.Replace("(", "").Replace(")", "").Replace("/", "").Replace("\\", "");
 
-        string SavePathh = Form1_0.ThisEndPath + "MapTest" + AddedTxt + ".txt";
+        string SavePathh = gameData.form.ThisEndPath + "MapTest" + AddedTxt + ".txt";
 
         File.Create(SavePathh).Dispose();
         File.WriteAllLines(SavePathh, MapDataLines);

@@ -6,17 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class MephistoRush
+public class MephistoRush : IBot
 {
-    Form1 Form1_0;
+    GameData gameData;
 
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
+    public bool ScriptDone { get; set; } = false;
 
     public void ResetVars()
     {
@@ -26,40 +21,41 @@ public class MephistoRush
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel2) CurrentStep = 1;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel3) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel2) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel3) CurrentStep = 2;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 3; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(3, 8);
+            gameData.townStruc.GoToWPArea(3, 8);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING MEPHISTO");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING MEPHISTO");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel2)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
                 else
@@ -67,8 +63,8 @@ public class MephistoRush
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -76,21 +72,21 @@ public class MephistoRush
             if (CurrentStep == 1)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.DuranceOfHateLevel3)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.DuranceOfHateLevel3)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.DuranceOfHateLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.DuranceOfHateLevel3);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel2)
                 {
                     CurrentStep--;
                     return;
@@ -98,9 +94,9 @@ public class MephistoRush
                 //####
 
                 //17568, 8069
-                if (Form1_0.Mover_0.MoveToLocation(17574, 8096))
+                if (gameData.mover.MoveToLocation(17574, 8096))
                 {
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
                     CurrentStep++;
                 }
             }
@@ -108,23 +104,23 @@ public class MephistoRush
             if (CurrentStep == 3)
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel2)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(10);
+                gameData.battle.DoBattleScript(10);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.DuranceOfHateLevel3)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.DuranceOfHateLevel3)
                 {
-                    if (Form1_0.Mover_0.MoveToLocation(17568, 8069))
+                    if (gameData.mover.MoveToLocation(17568, 8069))
                     {
                         CurrentStep++;
                     }
@@ -134,75 +130,75 @@ public class MephistoRush
             if (CurrentStep == 4)
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DuranceOfHateLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DuranceOfHateLevel2)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING MEPHISTO");
-                Form1_0.MobsStruc_0.DetectThisMob("getBossName", "Mephisto", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Mephisto", false, 200, new List<long>()))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING MEPHISTO");
+                gameData.mobsStruc.DetectThisMob("getBossName", "Mephisto", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getBossName", "Mephisto", false, 200, new List<long>()))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getBossName", "Mephisto", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getBossName", "Mephisto", new List<long>());
                     }
                     else
                     {
 
-                        if (Form1_0.Battle_0.EndBossBattle())
+                        if (gameData.battle.EndBossBattle())
                         {
-                            Form1_0.Town_0.FastTowning = false;
-                            Form1_0.Town_0.UseLastTP = false;
+                            gameData.townStruc.FastTowning = false;
+                            gameData.townStruc.UseLastTP = false;
                             ScriptDone = true;
 
-                            //Position ThisFinalPosition = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "portal", 102 - 1, new List<int>() { });
-                            //if (Form1_0.Mover_0.MoveToLocation(ThisFinalPosition.X, ThisFinalPosition.Y))
+                            //Position ThisFinalPosition = gameData.mapAreaStruc.GetPositionOfObject("object", "portal", 102 - 1, new List<int>() { });
+                            //if (gameData.mover.MoveToLocation(ThisFinalPosition.X, ThisFinalPosition.Y))
 
-                            /*while (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.DuranceOfHateLevel3)
+                            /*while (gameData.playerScan.levelNo == (int)Enums.Area.DuranceOfHateLevel3)
                             {
-                                if (Form1_0.Mover_0.MoveToLocation(17601, 8070))
+                                if (gameData.mover.MoveToLocation(17601, 8070))
                                 {
-                                    Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, 17601, 8070);
-                                    //Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
+                                    Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, 17601, 8070);
+                                    //Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisFinalPosition.X, ThisFinalPosition.Y);
 
-                                    Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                                    gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
 
-                                    Form1_0.PlayerScan_0.GetPositions();
+                                    gameData.playerScan.GetPositions();
                                 }
                             }
 
-                            Form1_0.WaitDelay(CharConfig.MephistoRedPortalEnterDelay);
+                            gameData.WaitDelay(CharConfig.MephistoRedPortalEnterDelay);
 
-                            Form1_0.Town_0.FastTowning = false;
-                            Form1_0.Town_0.UseLastTP = false;
+                            gameData.townStruc.FastTowning = false;
+                            gameData.townStruc.UseLastTP = false;
                             ScriptDone = true;*/
                             return;
-                            //Form1_0.LeaveGame(true);
+                            //gameData.LeaveGame(true);
                         }
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Mephisto not detected!", Color.Red);
+                    gameData.method_1("Mephisto not detected!", Color.Red);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Mephisto", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Mephisto", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Mephisto", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Mephisto", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
-                    //Form1_0.LeaveGame(true);
+                    //gameData.LeaveGame(true);
                 }
             }
         }

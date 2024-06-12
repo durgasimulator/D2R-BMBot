@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 public class Repair
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
     public bool ShouldRepair = false;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void RunRepairScript()
     {
@@ -20,8 +15,8 @@ public class Repair
         bool Repairing = true;
         while (Repairing && tries < 3)
         {
-            Form1_0.KeyMouse_0.MouseClicc(585, 775);  //clic full repair button
-            Form1_0.WaitDelay(40);
+            gameData.keyMouse.MouseClicc(585, 775);  //clic full repair button
+            gameData.WaitDelay(40);
             Repairing = GetShouldRepair();
             tries++;
         }
@@ -29,7 +24,7 @@ public class Repair
 
     public bool GetShouldRepair()
     {
-        Form1_0.ItemsStruc_0.GetItems(false);   //get inventory
+        gameData.itemsStruc.GetItems(false);   //get inventory
         return ShouldRepair;
     }
 
@@ -38,18 +33,18 @@ public class Repair
         int durability = 1;
         int Maxdurability = 1;
 
-        if (Form1_0.ItemsStruc_0.statCount > 0)
+        if (gameData.itemsStruc.statCount > 0)
         {
             //; get durability
-            //Form1_0.Mem_0.ReadRawMemory(Form1_0.ItemsStruc_0.statPtr, ref Form1_0.ItemsStruc_0.statBuffer, (int)(Form1_0.ItemsStruc_0.statCount * 10));
-            for (int i = 0; i < Form1_0.ItemsStruc_0.statCount; i++)
+            //gameData.mem.ReadRawMemory(gameData.itemsStruc.statPtr, ref gameData.itemsStruc.statBuffer, (int)(gameData.itemsStruc.statCount * 10));
+            for (int i = 0; i < gameData.itemsStruc.statCount; i++)
             {
                 int offset = i * 8;
-                //short statLayer = BitConverter.ToInt16(Form1_0.ItemsStruc_0.statBuffer, offset);
-                ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBuffer, offset + 0x2);
-                int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBuffer, offset + 0x4);
-                //ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBuffer, offset);
-                //int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBuffer, offset + 0x2);
+                //short statLayer = BitConverter.ToInt16(gameData.itemsStruc.statBuffer, offset);
+                ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBuffer, offset + 0x2);
+                int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBuffer, offset + 0x4);
+                //ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBuffer, offset);
+                //int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBuffer, offset + 0x2);
 
                 if (statEnum == (ushort)Enums.Attribute.Durability)
                 {
@@ -64,18 +59,18 @@ public class Repair
 
         if (durability == 1 && Maxdurability == 1)
         {
-            if (Form1_0.ItemsStruc_0.statExCount > 0)
+            if (gameData.itemsStruc.statExCount > 0)
             {
                 //; get durability
-                //Form1_0.Mem_0.ReadRawMemory(Form1_0.ItemsStruc_0.statExPtr, ref Form1_0.ItemsStruc_0.statBuffer, (int)(Form1_0.ItemsStruc_0.statExCount * 10));
-                for (int i = 0; i < Form1_0.ItemsStruc_0.statExCount; i++)
+                //gameData.mem.ReadRawMemory(gameData.itemsStruc.statExPtr, ref gameData.itemsStruc.statBuffer, (int)(gameData.itemsStruc.statExCount * 10));
+                for (int i = 0; i < gameData.itemsStruc.statExCount; i++)
                 {
                     int offset = i * 8;
-                    //short statLayer = BitConverter.ToInt16(Form1_0.ItemsStruc_0.statBufferEx, offset);
-                    ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBufferEx, offset + 0x2);
-                    int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBufferEx, offset + 0x4);
-                    //ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBufferEx, offset);
-                    //int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBufferEx, offset + 0x2);
+                    //short statLayer = BitConverter.ToInt16(gameData.itemsStruc.statBufferEx, offset);
+                    ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBufferEx, offset + 0x2);
+                    int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBufferEx, offset + 0x4);
+                    //ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBufferEx, offset);
+                    //int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBufferEx, offset + 0x2);
 
                     if (statEnum == (ushort)Enums.Attribute.Durability)
                     {

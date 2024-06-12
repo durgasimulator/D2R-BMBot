@@ -15,12 +15,8 @@ using Microsoft.CSharp.RuntimeBinder;
 
 public class ScriptsRunner
 {
-    Form1 Form1_0;
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
+
 
     public void ExcuteScripts_MethodFunction(object ThisClassInstance, string ThisClassName, string ThisMethodName, object[] ParametersList)
     {

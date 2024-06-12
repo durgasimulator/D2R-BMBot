@@ -6,18 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-public class Andariel
+public class Andariel : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public bool DetectedBoss = false;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -28,37 +22,38 @@ public class Andariel
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel2) CurrentStep = 1;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel3) CurrentStep = 2;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel4) CurrentStep = 3;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel2) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel3) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel4) CurrentStep = 3;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 1; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(1, 8);
+            gameData.townStruc.GoToWPArea(1, 8);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING ANDARIEL");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING ANDARIEL");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel2)
                 {
                     CurrentStep++;
                 }
@@ -67,8 +62,8 @@ public class Andariel
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -76,40 +71,40 @@ public class Andariel
             if (CurrentStep == 1)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.CatacombsLevel3)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.CatacombsLevel3)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CatacombsLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.CatacombsLevel3);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.CatacombsLevel4)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.CatacombsLevel4)
                 {
                     CurrentStep++;
                     return;
                 }
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel2)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CatacombsLevel4);
+                gameData.pathFinding.MoveToExit(Enums.Area.CatacombsLevel4);
                 CurrentStep++;
             }
 
             if (CurrentStep == 3)
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CatacombsLevel3)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.CatacombsLevel3)
                 {
                     CurrentStep--;
                     return;
@@ -118,7 +113,7 @@ public class Andariel
 
                 /*X: 22561,
                 Y: 9553,*/
-                if (Form1_0.Mover_0.MoveToLocation(22556, 9544))
+                if (gameData.mover.MoveToLocation(22556, 9544))
                 {
                     DetectedBoss = false;
                     CurrentStep++;
@@ -127,68 +122,68 @@ public class Andariel
 
             if (CurrentStep == 4)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING ANDARIEL");
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING ANDARIEL");
 
                 //#############
-                Form1_0.MobsStruc_0.DetectThisMob("getBossName", "Andariel", false, 200, new List<long>());
-                bool DetectedAndy = Form1_0.MobsStruc_0.GetMobs("getBossName", "Andariel", false, 200, new List<long>());
+                gameData.mobsStruc.DetectThisMob("getBossName", "Andariel", false, 200, new List<long>());
+                bool DetectedAndy = gameData.mobsStruc.GetMobs("getBossName", "Andariel", false, 200, new List<long>());
                 DateTime StartTime = DateTime.Now;
                 TimeSpan TimeSinceDetecting = DateTime.Now - StartTime;
                 while (!DetectedAndy && TimeSinceDetecting.TotalSeconds < 5)
                 {
-                    Form1_0.SetGameStatus("WAITING DETECTING ANDARIEL");
-                    DetectedAndy = Form1_0.MobsStruc_0.GetMobs("getBossName", "Andariel", false, 200, new List<long>());
+                    gameData.SetGameStatus("WAITING DETECTING ANDARIEL");
+                    DetectedAndy = gameData.mobsStruc.GetMobs("getBossName", "Andariel", false, 200, new List<long>());
                     TimeSinceDetecting = DateTime.Now - StartTime;
 
                     //cast attack during this waiting time
-                    Form1_0.Battle_0.SetSkills();
-                    Form1_0.Battle_0.CastSkillsNoMove();
-                    Form1_0.ItemsStruc_0.GetItems(true);      //#############
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.battle.SetSkills();
+                    gameData.battle.CastSkillsNoMove();
+                    gameData.itemsStruc.GetItems(true);      //#############
+                    gameData.potions.CheckIfWeUsePotion();
 
-                    if (!Form1_0.GameStruc_0.IsInGame() || !Form1_0.Running)
+                    if (!gameData.gameStruc.IsInGame() || !gameData.Running)
                     {
-                        Form1_0.overlayForm.ResetMoveToLocation();
+                        gameData.overlayForm.ResetMoveToLocation();
                         return;
                     }
                 }
                 //#############
 
-                if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Andariel", false, 200, new List<long>()))
+                if (gameData.mobsStruc.GetMobs("getBossName", "Andariel", false, 200, new List<long>()))
                 {
-                    Form1_0.SetGameStatus("KILLING ANDARIEL");
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    gameData.SetGameStatus("KILLING ANDARIEL");
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
                         DetectedBoss = true;
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getBossName", "Andariel", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getBossName", "Andariel", new List<long>());
                     }
                     else
                     {
                         if (!DetectedBoss)
                         {
-                            Form1_0.method_1("Andariel not detected!", Color.Red);
-                            Form1_0.Battle_0.DoBattleScript(15);
+                            gameData.method_1("Andariel not detected!", Color.Red);
+                            gameData.battle.DoBattleScript(15);
                         }
 
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Andariel not detected!", Color.Red);
+                    gameData.method_1("Andariel not detected!", Color.Red);
 
-                    Form1_0.Battle_0.DoBattleScript(15);
+                    gameData.battle.DoBattleScript(15);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Andariel", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Andariel", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Andariel", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Andariel", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                    if (gameData.battle.EndBossBattle()) ScriptDone = true;
                     return;
                 }
             }

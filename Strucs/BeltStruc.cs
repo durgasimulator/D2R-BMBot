@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 public class BeltStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public int[] BeltHaveItems = new int[16];
     public int[] BeltItemsTypes = new int[16];
@@ -30,11 +30,6 @@ public class BeltStruc
 
     public bool GrabBothRV = false;
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public int GetPotionQuantityInBelt(int ThisPotType)
     {
         int Qty1 = 0;
@@ -54,13 +49,13 @@ public class BeltStruc
         if (CharConfig.RunItemGrabScriptOnly) return false; //item grab only
 
         //####
-        if (Form1_0.InventoryStruc_0.HasInventoryItemName("Super Healing Potion"))
+        if (gameData.inventoryStruc.HasInventoryItemName("Super Healing Potion"))
         {
-            //Form1_0.method_1("FORCING HP POT QTY: " + HPQuantity, Color.Red);
+            //gameData.method_1("FORCING HP POT QTY: " + HPQuantity, Color.Red);
             ForceHPPotionQty = HPQuantity; //reset qty in belt
             MissingHPPot = false;
         }
-        if (Form1_0.InventoryStruc_0.HasInventoryItemName("Super Mana Potion"))
+        if (gameData.inventoryStruc.HasInventoryItemName("Super Mana Potion"))
         {
             ForceMANAPotionQty = ManyQuantity; //reset qty in belt
             MissingManaPot = false;
@@ -91,7 +86,7 @@ public class BeltStruc
 
     public void CheckForMissingPotions()
     {
-        Form1_0.ItemsStruc_0.GetItems(false);
+        gameData.itemsStruc.GetItems(false);
 
         MissingHPPot = false;
         MissingManaPot = false;
@@ -121,7 +116,7 @@ public class BeltStruc
             }
         }
 
-        //Form1_0.method_1("HP POT QTY: " + HPQuantity, Color.Red);
+        //gameData.method_1("HP POT QTY: " + HPQuantity, Color.Red);
 
         if (MissingHPPot)
         {
@@ -162,8 +157,8 @@ public class BeltStruc
         int BufferPotType = GetPotType();
         try
         {
-            BeltHaveItems[Form1_0.ItemsStruc_0.itemx] = 1;
-            BeltItemsTypes[Form1_0.ItemsStruc_0.itemx] = BufferPotType;
+            BeltHaveItems[gameData.itemsStruc.itemx] = 1;
+            BeltItemsTypes[gameData.itemsStruc.itemx] = BufferPotType;
         }
         catch
         {
@@ -172,7 +167,7 @@ public class BeltStruc
 
         bool UsedPotion = false;
         HasPotInBadSpot = false;
-        int BeltIndd = ConvertBeltIndexTo4Number(Form1_0.ItemsStruc_0.itemx);
+        int BeltIndd = ConvertBeltIndexTo4Number(gameData.itemsStruc.itemx);
         if (BeltIndd != 5)
         {
             int PotToHave = CharConfig.BeltPotTypeToHave[BeltIndd];
@@ -180,7 +175,7 @@ public class BeltStruc
             {
                 if (UsePotNotInSpot)
                 {
-                    Form1_0.Potions_0.PressPotionKey(BeltIndd, false); //use potion, not in right spot
+                    gameData.potions.PressPotionKey(BeltIndd, false); //use potion, not in right spot
                     UsedPotion = true;
                 }
                 else
@@ -201,7 +196,7 @@ public class BeltStruc
                 ManyQuantity++;
             }
         }
-        //Form1_0.method_1("belt pointer" + Form1_0.ItemsStruc_0.itemx + ": 0x" + Form1_0.ItemsStruc_0.ItemPointerLocation.ToString("X") + " (diff from player: 0x" + (Form1_0.PlayerScan_0.PlayerPointer - Form1_0.ItemsStruc_0.ItemPointerLocation).ToString("X") + ")");
+        //gameData.method_1("belt pointer" + gameData.itemsStruc.itemx + ": 0x" + gameData.itemsStruc.ItemPointerLocation.ToString("X") + " (diff from player: 0x" + (gameData.playerScan.PlayerPointer - gameData.itemsStruc.ItemPointerLocation).ToString("X") + ")");
     }
 
     public void ItemIsPotion()
@@ -211,9 +206,9 @@ public class BeltStruc
         IsItemRVPotion = false;
         IsItemFullRVPotion = false;
 
-        string ThisItemName = Form1_0.ItemsStruc_0.ItemNAAME.Replace(" ", "");
+        string ThisItemName = gameData.itemsStruc.ItemNAAME.Replace(" ", "");
 
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsPotions)
+        foreach (var ThisDir in gameData.itemsAlert.PickItemsPotions)
         {
             if (ThisItemName == Regex.Replace(ThisDir.Key.Replace(" ", ""), @"[\d-]", string.Empty) && ThisDir.Value)
             {
@@ -224,28 +219,28 @@ public class BeltStruc
             }
         }
 
-        /*if (Form1_0.ItemsStruc_0.ItemNAAME == "Super Healing Potion") IsItemHPPotion = true;
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Super Mana Potion") IsItemManaPotion = true;
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Rejuvenation Potion") IsItemRVPotion = true;
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Full Rejuvenation Potion") IsItemFullRVPotion = true;*/
+        /*if (gameData.itemsStruc.ItemNAAME == "Super Healing Potion") IsItemHPPotion = true;
+        if (gameData.itemsStruc.ItemNAAME == "Super Mana Potion") IsItemManaPotion = true;
+        if (gameData.itemsStruc.ItemNAAME == "Rejuvenation Potion") IsItemRVPotion = true;
+        if (gameData.itemsStruc.ItemNAAME == "Full Rejuvenation Potion") IsItemFullRVPotion = true;*/
     }
 
     public int GetPotType()
     {
-        if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Healing") ||
-            Form1_0.ItemsStruc_0.ItemNAAME == "Potion of Life")
+        if (gameData.itemsStruc.ItemNAAME.Contains("Healing") ||
+            gameData.itemsStruc.ItemNAAME == "Potion of Life")
         {
             return 0;
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Mana"))
+        if (gameData.itemsStruc.ItemNAAME.Contains("Mana"))
         {
             return 1;
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Rejuvenation Potion")
+        if (gameData.itemsStruc.ItemNAAME == "Rejuvenation Potion")
         {
             return 2;
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Full Rejuvenation Potion")
+        if (gameData.itemsStruc.ItemNAAME == "Full Rejuvenation Potion")
         {
             return 3;
         }

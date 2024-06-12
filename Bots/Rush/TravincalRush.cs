@@ -7,22 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class TravincalRush
+public class TravincalRush : IBot
 {
-    Form1 Form1_0;
+    GameData gameData;
 
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position OrbPos = new Position { X = 0, Y = 0 };
     public List<long> IgnoredCouncilMembers = new List<long>();
     public bool KilledAnyMember = false;
 
     public Position PortalPosition = new Position { X = 0, Y = 0 };
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -32,76 +27,77 @@ public class TravincalRush
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 3; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(3, 7);
+            gameData.townStruc.GoToWPArea(3, 7);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING TRAVINCAL");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING TRAVINCAL");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.Travincal)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.Travincal)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
-                    PortalPosition.X = Form1_0.PlayerScan_0.xPos + 85;
-                    PortalPosition.Y = Form1_0.PlayerScan_0.yPos - 139;
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
+                    PortalPosition.X = gameData.playerScan.xPos + 85;
+                    PortalPosition.Y = gameData.playerScan.yPos - 139;
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
             if (CurrentStep == 1)
             {
-                Form1_0.PathFinding_0.MoveToThisPos(PortalPosition);
+                gameData.pathFinding.MoveToThisPos(PortalPosition);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
-                Form1_0.SetGameStatus("Travincal clearing");
+                gameData.SetGameStatus("Travincal clearing");
 
-                if (!Form1_0.Battle_0.DoBattleScript(25))
+                if (!gameData.battle.DoBattleScript(25))
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(PortalPosition);
+                    gameData.pathFinding.MoveToThisPos(PortalPosition);
 
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
                     CurrentStep++;
                 }
             }
 
             if (CurrentStep == 3)
             {
-                Form1_0.SetGameStatus("Travincal waiting on leecher");
+                gameData.SetGameStatus("Travincal waiting on leecher");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.Travincal)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.Travincal)
                 {
                     CurrentStep++;
                 }
@@ -109,18 +105,18 @@ public class TravincalRush
 
             if (CurrentStep == 4)
             {
-                OrbPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "CompellingOrb", (int)Enums.Area.Travincal, new List<int>());
+                OrbPos = gameData.mapAreaStruc.GetPositionOfObject("object", "CompellingOrb", (int)Enums.Area.Travincal, new List<int>());
                 if (OrbPos.X != 0 && OrbPos.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(OrbPos);
+                    gameData.pathFinding.MoveToThisPos(OrbPos);
 
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.method_1("Kahlim Orb location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.method_1("Kahlim Orb location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
                 }
@@ -128,42 +124,42 @@ public class TravincalRush
 
             if (CurrentStep == 5)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING TRAVINCAL COUNCIL");
-                Form1_0.MobsStruc_0.DetectThisMob("getSuperUniqueName", "Council Member", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, IgnoredCouncilMembers))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING TRAVINCAL COUNCIL");
+                gameData.mobsStruc.DetectThisMob("getSuperUniqueName", "Council Member", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, IgnoredCouncilMembers))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Council Member", IgnoredCouncilMembers);
+                        gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Council Member", IgnoredCouncilMembers);
                     }
                     else
                     {
                         KilledAnyMember = true;
-                        IgnoredCouncilMembers.Add(Form1_0.MobsStruc_0.MobsPointerLocation);
+                        IgnoredCouncilMembers.Add(gameData.mobsStruc.MobsPointerLocation);
                     }
                 }
                 else
                 {
                     if (!KilledAnyMember)
                     {
-                        Form1_0.method_1("Council Members not detected!", Color.Red);
+                        gameData.method_1("Council Members not detected!", Color.Red);
 
                         //baal not detected...
-                        Form1_0.ItemsStruc_0.GetItems(true);
-                        if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
-                        Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                        if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
-                        Form1_0.Potions_0.CanUseSkillForRegen = true;
+                        gameData.itemsStruc.GetItems(true);
+                        if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
+                        gameData.itemsStruc.GrabAllItemsForGold();
+                        if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
+                        gameData.potions.CanUseSkillForRegen = true;
 
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.UseLastTP = false;
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.UseLastTP = false;
                         ScriptDone = true;
                         return;
                     }
                     else
                     {
-                        Form1_0.Town_0.SpawnTP();
+                        gameData.townStruc.SpawnTP();
                         CurrentStep++;
                     }
 
@@ -172,30 +168,30 @@ public class TravincalRush
 
             if (CurrentStep == 6)
             {
-                Form1_0.SetGameStatus("Travincal waiting on leecher #2");
+                gameData.SetGameStatus("Travincal waiting on leecher #2");
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.KurastDocks)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.KurastDocks)
                 {
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GetItems(true);
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                 }
             }

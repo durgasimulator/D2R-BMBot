@@ -14,7 +14,7 @@ using static System.Windows.Forms.AxHost;
 
 public class MercStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public long MercPointerLocation = 0;
     public byte[] Mercdatastruc = new byte[144];
@@ -41,12 +41,6 @@ public class MercStruc
     public byte[] statBuffer = new byte[] { };
 
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-
-    }
-
     public bool IsMerc(int MobNameID)
     {
         return MobNameID == (int)EnumsMobsNPC.MobsNPC.Guard || MobNameID == (int)EnumsMobsNPC.MobsNPC.Act5Hireling1Hand || MobNameID == (int)EnumsMobsNPC.MobsNPC.Act5Hireling2Hand || MobNameID == (int)EnumsMobsNPC.MobsNPC.IronWolf || MobNameID == (int)EnumsMobsNPC.MobsNPC.Rogue2;
@@ -58,26 +52,26 @@ public class MercStruc
         {
             MercAlive = true;
             txtFileNo = 0;
-            Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
+            gameData.patternsScan.scanForUnitsPointer("NPC");
 
             int MercCount = 1;
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 MercPointerLocation = ThisCurrentPointer.Key;
                 if (MercPointerLocation > 0)
                 {
                     Mercdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(MercPointerLocation, ref Mercdatastruc, 144);
+                    gameData.mem.ReadRawMemory(MercPointerLocation, ref Mercdatastruc, 144);
 
                     txtFileNo = BitConverter.ToUInt32(Mercdatastruc, 4);
                     pUnitData = BitConverter.ToInt64(Mercdatastruc, 0x10);
                     mode = BitConverter.ToUInt32(Mercdatastruc, 0x0c);
-                    ushort isUnique = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)pUnitData + 0x18);
+                    ushort isUnique = gameData.mem.ReadUInt16Raw((IntPtr)pUnitData + 0x18);
                     GetUnitPathData();
                     GetStatsAddr();
 
-                    //Console.WriteLine(Form1_0.NPCStruc_0.getNPC_ID((int) txtFileNo));
+                    //Console.WriteLine(gameData.npcStruc.getNPC_ID((int) txtFileNo));
                     //Console.WriteLine(txtFileNo.ToString() + ", isUnique:" + isUnique + ", isPlayerMinion:" + isPlayerMinion + ", mode:" + mode + ", pos:" + xPosFinal + ", " + yPosFinal);
 
                     //if (IsMerc((int) txtFileNo))
@@ -87,27 +81,27 @@ public class MercStruc
                         if (xPosFinal != 0 && yPosFinal != 0)
                         {
                             Int64 pUnitDataPtr = BitConverter.ToInt64(Mercdatastruc, 0x10);
-                            //uint dwOwnerId = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x0c));
+                            //uint dwOwnerId = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x0c));
                             //uint dwOwnerId = BitConverter.ToUInt32(Mercdatastruc, 8);
 
-                            if (Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x32)) != 0x0e && Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x33)) != 0x04)
+                            if (gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x32)) != 0x0e && gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x33)) != 0x04)
                                 //if (dwOwnerId == MercOwnerID && MercOwnerID != 0)
                                 //{
                                 //SetHPFromStats();
-                                /*string SavePathh = Form1_0.ThisEndPath + "DumpMercStruc" + MercCount;
+                                /*string SavePathh = gameData.ThisEndPath + "DumpMercStruc" + MercCount;
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, Mercdatastruc);*/
 
                                 /*byte[] buffff = new byte[144];
                                 long pStatsListExPtr = BitConverter.ToInt64(Mercdatastruc, 0x10);
-                                Form1_0.Mem_0.ReadRawMemory(pStatsListExPtr, ref buffff, 500);
+                                gameData.mem.ReadRawMemory(pStatsListExPtr, ref buffff, 500);
 
                                 //pStatsListExPtr = BitConverter.ToInt64(buffff, 8);
-                                //Form1_0.Mem_0.ReadRawMemory(pStatsListExPtr, ref buffff, 500);
+                                //gameData.mem.ReadRawMemory(pStatsListExPtr, ref buffff, 500);
                                 //uint dwOwnerId = BitConverter.ToUInt32(buffff, 0x0c);
                                 //uint flags = BitConverter.ToUInt32(buffff, 0x18);
 
-                                string SavePathh2 = Form1_0.ThisEndPath + "DumpMercStrucBuf" + MercCount;
+                                string SavePathh2 = gameData.ThisEndPath + "DumpMercStrucBuf" + MercCount;
                                 File.Create(SavePathh2).Dispose();
                                 File.WriteAllBytes(SavePathh2, buffff);*/
 
@@ -116,7 +110,7 @@ public class MercStruc
                                 //MercCount++;
 
                                 SetHPFromStats();
-                            Form1_0.Grid_SetInfos("Merc", MercHP.ToString() + "/" + MercMaxHP.ToString());
+                            gameData.form.Grid_SetInfos("Merc", MercHP.ToString() + "/" + MercMaxHP.ToString());
                             return true;
                             //}
                         }
@@ -126,10 +120,10 @@ public class MercStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetMercInfos()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetMercInfos()'", Color.OrangeRed);
         }
 
-        Form1_0.Grid_SetInfos("Merc", "Not alive/detected");
+        gameData.form.Grid_SetInfos("Merc", "Not alive/detected");
         MercAlive = false;
         return false;
     }
@@ -141,7 +135,7 @@ public class MercStruc
             MercHP = 32768;
             MercMaxHP = 32768;
 
-            Form1_0.Mem_0.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
+            gameData.mem.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
             for (int i = (int)this.statCount - 1; i >= 0; i--)
             {
                 int offset = i * 8;
@@ -182,16 +176,16 @@ public class MercStruc
         long pStatsListExPtr = BitConverter.ToInt64(Mercdatastruc, 0x88);
 
         /*pStatB = new byte[180];
-        Form1_0.Mem_0.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
+        gameData.mem.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
         statPtr = BitConverter.ToInt64(pStatB, 0x30);
         statCount = BitConverter.ToUInt32(pStatB, 0x38);
         statExPtr = BitConverter.ToInt64(pStatB, 0x88);
         statExCount = BitConverter.ToUInt32(pStatB, 0x90);*/
 
-        statPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
-        statCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
-        statExPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
-        statExCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
+        statPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
+        statCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
+        statExPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
+        statExCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
     }
 
     public void GetUnitPathData()
@@ -199,7 +193,7 @@ public class MercStruc
         pPathPtr = BitConverter.ToInt64(Mercdatastruc, 0x38);
         //pPath = new byte[144];
         pPath = new byte[0x08];
-        Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
 
         itemx = BitConverter.ToUInt16(pPath, 0x02);
         itemy = BitConverter.ToUInt16(pPath, 0x06);

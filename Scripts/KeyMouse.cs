@@ -13,8 +13,8 @@ using System.Reflection.Emit;
 
 public class KeyMouse
 {
-    Form1 Form1_0;
 
+    GameData gameData = GameData.Instance;
     public int ProcessingDelay = 1;
 
     private const int WH_KEYBOARD_LL = 13;
@@ -126,9 +126,9 @@ public class KeyMouse
     //###############################################
     //###############################################
 
-    public void SetForm1(Form1 form1_1)
+    public void Init()
     {
-        Form1_0 = form1_1;
+
 
         sim = new InputSimulator();
 
@@ -207,20 +207,20 @@ public class KeyMouse
         //Thread.Sleep(ProcessingDelay);
 
         MouseMoveTo_RealPos(ThX, ThY);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
         Thread.Sleep(1);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
         Thread.Sleep(ProcessingDelay);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
     public void MouseCliccRight_RealPos(int ThX, int ThY)
     {
         MouseMoveTo(ThX, ThY);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
         Thread.Sleep(1);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
         Thread.Sleep(ProcessingDelay);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
 
     public void MouseClicc(int ThX, int ThY)
@@ -228,68 +228,68 @@ public class KeyMouse
         //Thread.Sleep(ProcessingDelay);
 
         MouseMoveTo(ThX, ThY);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
         Thread.Sleep(1);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
         Thread.Sleep(ProcessingDelay);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
 
     public void MouseCliccRight(int ThX, int ThY)
     {
         MouseMoveTo(ThX, ThY);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
         Thread.Sleep(1);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
         Thread.Sleep(ProcessingDelay);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        SendMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
 
     /*public void MouseCliccAttackMove(int ThX, int ThY)
     {
         MouseMoveTo(ThX, ThY);
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }*/
 
     public void MouseCliccRightAttackMove(int ThX, int ThY)
     {
         MouseMoveTo_RealPos(ThX, ThY);
-        //PostMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
-        PostMessage((int)Form1_0.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
-        //PostMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        //PostMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_RBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        //PostMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
 
     public void PressKey(System.Windows.Forms.Keys ThisK)
     {
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
     }
 
     public void PressKey2(System.Windows.Forms.Keys ThisK)
     {
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
         Thread.Sleep(1);
-        //PostMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        //PostMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
     }
 
     public void PressKey3(System.Windows.Forms.Keys ThisK)
     {
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
     }
 
     public void PressKeyHold(System.Windows.Forms.Keys ThisK)
     {
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
     }
 
     public void ReleaseKey(System.Windows.Forms.Keys ThisK)
     {
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
         sim.Keyboard.KeyUp((WindowsInput.Native.VirtualKeyCode)ThisK);
     }
 
@@ -302,16 +302,16 @@ public class KeyMouse
         //press CTRL
         keybd_event(VK_CONTROL, 0, 0, 0);
         //PressKeyHold(Keys.LControlKey);
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)Keys.LControlKey, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)Keys.LControlKey, (IntPtr)0);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.CONTROL);
 
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
 
         //release CTRL
         keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
         //ReleaseKey(Keys.LControlKey);
-        SendMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)Keys.LControlKey, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)Keys.LControlKey, (IntPtr)0);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.CONTROL);
     }
 
@@ -322,8 +322,8 @@ public class KeyMouse
         PressKeyHold(Keys.LShiftKey);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT);
 
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONDOWN, 0x00000001, (IntPtr)0);
-        SendMessage((int)Form1_0.hWnd, WM_RBUTTONUP, 0x00000000, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_RBUTTONDOWN, 0x00000001, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_RBUTTONUP, 0x00000000, (IntPtr)0);
 
         ReleaseKey(Keys.LShiftKey);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.SHIFT);
@@ -337,9 +337,9 @@ public class KeyMouse
         PressKeyHold(Keys.LShiftKey);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT);
 
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
 
         ReleaseKey(Keys.LShiftKey);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.SHIFT);
@@ -353,12 +353,12 @@ public class KeyMouse
         PressKeyHold(Keys.LShiftKey);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT);
 
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
-        SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        //SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
-        //SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        //SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        //SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
 
         ReleaseKey(Keys.LShiftKey);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.SHIFT);
@@ -372,12 +372,12 @@ public class KeyMouse
         PressKeyHold(Keys.LShiftKey);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT);
 
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        //PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
-        //SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
-        //SendMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
-        //SendMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        //PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        //SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, (IntPtr)0);
+        //SendMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, (IntPtr)0);
+        //SendMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
 
         ReleaseKey(Keys.LShiftKey);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.SHIFT);
@@ -385,8 +385,8 @@ public class KeyMouse
 
     public void PressPotionKey(System.Windows.Forms.Keys ThisK)
     {
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
     }
 
     public void PressPotionKeyMerc(System.Windows.Forms.Keys ThisK)
@@ -394,8 +394,8 @@ public class KeyMouse
         PressKeyHold(Keys.LShiftKey);
         sim.Keyboard.KeyDown(WindowsInput.Native.VirtualKeyCode.SHIFT);
 
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
-        PostMessage((int)Form1_0.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYDOWN, (ushort)ThisK, (IntPtr)0);
+        PostMessage((int)gameData.hWnd, WM_SYSKEYUP, (ushort)ThisK, (IntPtr)0);
 
         ReleaseKey(Keys.LShiftKey);
         sim.Keyboard.KeyUp(WindowsInput.Native.VirtualKeyCode.SHIFT);
@@ -418,32 +418,32 @@ public class KeyMouse
 
     public void MouseClicHoldWithoutRelease()
     {
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
     }
 
     public void MouseClicHold()
     {
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONDOWN, 0x00000001, CreateLParam(150, 150));
     }
 
     public void MouseClicRelease()
     {
-        PostMessage((int)Form1_0.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
+        PostMessage((int)gameData.hWnd, WM_LBUTTONUP, 0x00000000, CreateLParam(150, 150));
     }
 
     public int CorrectXPos(int ThisPoss)
     {
-        double Percent = ((double)ThisPoss * 100.0) / (double)Form1_0.ScreenX;
-        int PosInGame = (int)((Percent * (double)Form1_0.D2Widht) / 100.0);
-        return Form1_0.ScreenXOffset + PosInGame;
+        double Percent = ((double)ThisPoss * 100.0) / (double)gameData.ScreenX;
+        int PosInGame = (int)((Percent * (double)gameData.D2Width) / 100.0);
+        return gameData.ScreenXOffset + PosInGame;
     }
 
     public int CorrectYPos(int ThisPoss)
     {
-        double Percent = ((double)ThisPoss * 100.0) / (double)Form1_0.ScreenY;
-        int PosInGame = (int)((Percent * (double)Form1_0.D2Height) / 100.0);
-        return Form1_0.ScreenYOffset + PosInGame;
+        double Percent = ((double)ThisPoss * 100.0) / (double)gameData.ScreenY;
+        int PosInGame = (int)((Percent * (double)gameData.D2Height) / 100.0);
+        return gameData.ScreenYOffset + PosInGame;
     }
 
 
@@ -478,11 +478,11 @@ public class KeyMouse
             int vkCode = Marshal.ReadInt32(lParam);
             if (vkCode == (int)CharConfig.StartStopKey) //numpad5
             {
-                Form1_0.button1_Click(null, null);
+                gameData.form.button1_Click(null, null);
             }
             else if (vkCode == (int)CharConfig.PauseResumeKey) //numpad6
             {
-                Form1_0.buttonPauseResume_Click(null, null);
+                gameData.form.buttonPauseResume_Click(null, null);
             }
             else if (vkCode == (int)CharConfig.KeyForceMovement)
             {

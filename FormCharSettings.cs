@@ -26,7 +26,7 @@ public partial class FormCharSettings : Form
         comboBoxAvoidImmune.SelectedIndex = 0;
 
         comboBoxItemsNames.Items.Clear();
-        for (int i = 0; i <= 658; i++) comboBoxItemsNames.Items.Add(Form1_0.ItemsNames_0.getItemBaseName(i));
+        for (int i = 0; i <= 658; i++) comboBoxItemsNames.Items.Add(GameData.Instance.itemsNames.getItemBaseName(i));
 
         panelGamble.Location = new Point(136, 73);
 
@@ -325,7 +325,7 @@ public partial class FormCharSettings : Form
     private void FormCharSettings_FormClosing(object sender, FormClosingEventArgs e)
     {
         SaveSettings();
-        Form1_0.SettingsLoader_0.SaveCharSettings();
+        GameData.Instance.settingsLoader.SaveCharSettings();
     }
 
     private void comboBoxType_SelectedIndexChanged(object sender, EventArgs e)
@@ -335,7 +335,7 @@ public partial class FormCharSettings : Form
             if (comboBoxType.SelectedIndex == 0) CharConfig.RunningOnChar = "PaladinHammer";
             if (comboBoxType.SelectedIndex == 1) CharConfig.RunningOnChar = "SorceressBlizzard";
 
-            Form1_0.SettingsLoader_0.ReloadCharSettings();
+            GameData.Instance.settingsLoader.ReloadCharSettings();
             LoadSettings();
         }
     }
@@ -343,7 +343,7 @@ public partial class FormCharSettings : Form
     private void button1_Click(object sender, EventArgs e)
     {
         SaveSettings();
-        Form1_0.SettingsLoader_0.SaveCharSettings();
+        GameData.Instance.settingsLoader.SaveCharSettings();
     }
 
     private void checkBoxGamble_CheckedChanged(object sender, EventArgs e)
@@ -367,7 +367,7 @@ public partial class FormCharSettings : Form
         DialogResult result = openFileDialog1.ShowDialog();
         if (result == DialogResult.OK)
         {
-            Form1_0.SettingsLoader_0.ReloadCharSettingsFromThisFile(openFileDialog1.FileName);
+            GameData.Instance.settingsLoader.ReloadCharSettingsFromThisFile(openFileDialog1.FileName);
             LoadSettings();
             Application.DoEvents();
         }
@@ -411,7 +411,7 @@ public partial class FormCharSettings : Form
     private void buttonSaveAsChar_Click(object sender, EventArgs e)
     {
         SaveSettings();
-        Form1_0.SettingsLoader_0.SaveCharSettings();
+        GameData.Instance.settingsLoader.SaveCharSettings();
 
         string Fname = "";
         if (CharConfig.RunningOnChar == "PaladinHammer") Fname = "PaladinHammer_" + CharConfig.PlayerCharName + ".txt";
@@ -422,8 +422,8 @@ public partial class FormCharSettings : Form
         if (result == DialogResult.OK)
         {
             File.Create(saveFileDialog1.FileName).Dispose();
-            if (CharConfig.RunningOnChar == "PaladinHammer") File.WriteAllBytes(saveFileDialog1.FileName, File.ReadAllBytes(Form1_0.SettingsLoader_0.File_PaladinHammer));
-            else if (CharConfig.RunningOnChar == "SorceressBlizzard") File.WriteAllBytes(saveFileDialog1.FileName, File.ReadAllBytes(Form1_0.SettingsLoader_0.File_SorceressBlizzard));
+            if (CharConfig.RunningOnChar == "PaladinHammer") File.WriteAllBytes(saveFileDialog1.FileName, File.ReadAllBytes(GameData.Instance.settingsLoader.File_PaladinHammer));
+            else if (CharConfig.RunningOnChar == "SorceressBlizzard") File.WriteAllBytes(saveFileDialog1.FileName, File.ReadAllBytes(GameData.Instance.settingsLoader.File_SorceressBlizzard));
         }
     }
 }

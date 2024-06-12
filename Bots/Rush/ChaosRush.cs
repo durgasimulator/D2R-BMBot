@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static MapAreaStruc;
 
-public class ChaosRush
+public class ChaosRush : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public bool DetectedBoss = false;
 
     public Position EntrancePos = new Position { X = 7796, Y = 5561 };
@@ -26,11 +25,6 @@ public class ChaosRush
 
     public int BufferPathFindingMoveSize = 0;
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public void ResetVars()
     {
         CurrentStep = 0;
@@ -43,43 +37,44 @@ public class ChaosRush
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.RiverOfFlame) CurrentStep = 1;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ChaosSanctuary) CurrentStep = 3;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.RiverOfFlame) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.ChaosSanctuary) CurrentStep = 3;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 4; //set to town act 4 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 4; //set to town act 4 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(4, 2);
+            gameData.townStruc.GoToWPArea(4, 2);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING CHAOS");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING CHAOS");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.RiverOfFlame)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.RiverOfFlame)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
-                else if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.ChaosSanctuary)
+                else if (gameData.playerScan.levelNo == (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep = 3;
                 }
@@ -88,8 +83,8 @@ public class ChaosRush
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -97,21 +92,21 @@ public class ChaosRush
             if (CurrentStep == 1)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                //Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.ChaosSanctuary);
-                //Form1_0.PathFinding_0.MoveToThisPos(EntrancePos);
+                //gameData.pathFinding.MoveToNextArea(Enums.Area.ChaosSanctuary);
+                //gameData.pathFinding.MoveToThisPos(EntrancePos);
                 //CurrentStep++;
 
                 Position MidPos = new Position { X = 7800, Y = 5761 };
-                if (Form1_0.Mover_0.MoveToLocation(MidPos.X, MidPos.Y))
+                if (gameData.mover.MoveToLocation(MidPos.X, MidPos.Y))
                 {
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
                     CurrentStep++;
                 }
             }
@@ -119,17 +114,17 @@ public class ChaosRush
             if (CurrentStep == 2)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                if (Form1_0.Mover_0.MoveToLocation(EntrancePos.X, EntrancePos.Y))
+                if (gameData.mover.MoveToLocation(EntrancePos.X, EntrancePos.Y))
                 {
-                    BufferPathFindingMoveSize = Form1_0.PathFinding_0.AcceptMoveOffset;
-                    Form1_0.PathFinding_0.AcceptMoveOffset = 15;
+                    BufferPathFindingMoveSize = gameData.pathFinding.AcceptMoveOffset;
+                    gameData.pathFinding.AcceptMoveOffset = 15;
 
                     CurrentStep++;
                 }
@@ -138,22 +133,22 @@ public class ChaosRush
 
             if (CurrentStep == 3)
             {
-                if (Form1_0.PlayerScan_0.levelNo != (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.levelNo != (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep--;
                     return;
                 }
 
-                Form1_0.SetGameStatus("Chaos waiting on leecher");
+                gameData.SetGameStatus("Chaos waiting on leecher");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(15);
+                gameData.battle.DoBattleScript(15);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep++;
                 }
@@ -161,24 +156,24 @@ public class ChaosRush
 
             if (CurrentStep == 4)
             {
-                if (Form1_0.PlayerScan_0.levelNo != (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.levelNo != (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep--;
                     return;
                 }
 
-                CurrentSealPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "DiabloSeal5", (int)Enums.Area.ChaosSanctuary, new List<int>());
+                CurrentSealPos = gameData.mapAreaStruc.GetPositionOfObject("object", "DiabloSeal5", (int)Enums.Area.ChaosSanctuary, new List<int>());
 
-                if (Form1_0.PlayerScan_0.xPosFinal >= (CurrentSealPos.X - 5)
-                    && Form1_0.PlayerScan_0.xPosFinal <= (CurrentSealPos.X + 5)
-                    && Form1_0.PlayerScan_0.yPosFinal >= (CurrentSealPos.Y - 5)
-                    && Form1_0.PlayerScan_0.yPosFinal <= (CurrentSealPos.Y + 5))
+                if (gameData.playerScan.xPosFinal >= (CurrentSealPos.X - 5)
+                    && gameData.playerScan.xPosFinal <= (CurrentSealPos.X + 5)
+                    && gameData.playerScan.yPosFinal >= (CurrentSealPos.Y - 5)
+                    && gameData.playerScan.yPosFinal <= (CurrentSealPos.Y + 5))
                 {
                     int InteractCount = 0;
                     while (InteractCount < 3)
                     {
-                        Form1_0.PathFinding_0.MoveToObject("DiabloSeal5");
-                        Form1_0.WaitDelay(10);
+                        gameData.pathFinding.MoveToObject("DiabloSeal5");
+                        gameData.WaitDelay(10);
                         InteractCount++;
                     }
 
@@ -191,20 +186,20 @@ public class ChaosRush
                     }
                     else
                     {
-                        Form1_0.SetGameStatus("WAITING VIZIER " + (TryCountWaitingUniqueBoss + 1) + "/3");
+                        gameData.SetGameStatus("WAITING VIZIER " + (TryCountWaitingUniqueBoss + 1) + "/3");
 
-                        bool UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>());
+                        bool UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>());
 
                         while (!UniqueDetected && (DateTime.Now - StartTimeUniqueBossWaiting).TotalSeconds < CharConfig.ChaosWaitingSealBossDelay)
                         {
-                            UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>());
+                            UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>());
 
-                            Form1_0.PlayerScan_0.GetPositions();
-                            Form1_0.overlayForm.UpdateOverlay();
-                            Form1_0.GameStruc_0.CheckChickenGameTime();
-                            Form1_0.ItemsStruc_0.GetItems(true);
-                            Form1_0.Potions_0.CheckIfWeUsePotion();
-                            Form1_0.Battle_0.DoBattleScript(10);
+                            gameData.playerScan.GetPositions();
+                            gameData.overlayForm.UpdateOverlay();
+                            gameData.gameStruc.CheckChickenGameTime();
+                            gameData.itemsStruc.GetItems(true);
+                            gameData.potions.CheckIfWeUsePotion();
+                            gameData.battle.DoBattleScript(10);
                             Application.DoEvents();
                         }
 
@@ -223,13 +218,13 @@ public class ChaosRush
                         }
                         else
                         {
-                            Form1_0.SetGameStatus("KILLING VIZIER");
+                            gameData.SetGameStatus("KILLING VIZIER");
 
-                            if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>()))
+                            if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Grand Vizier of Chaos", false, 200, new List<long>()))
                             {
-                                if (Form1_0.MobsStruc_0.MobsHP > 0)
+                                if (gameData.mobsStruc.MobsHP > 0)
                                 {
-                                    Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Grand Vizier of Chaos", new List<long>());
+                                    gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Grand Vizier of Chaos", new List<long>());
                                 }
                                 else
                                 {
@@ -242,24 +237,24 @@ public class ChaosRush
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToObject("DiabloSeal5", 4, true);
+                    gameData.pathFinding.MoveToObject("DiabloSeal5", 4, true);
                 }
             }
 
             if (CurrentStep == 5)
             {
-                CurrentSealPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "DiabloSeal4", (int)Enums.Area.ChaosSanctuary, new List<int>());
+                CurrentSealPos = gameData.mapAreaStruc.GetPositionOfObject("object", "DiabloSeal4", (int)Enums.Area.ChaosSanctuary, new List<int>());
 
-                if (Form1_0.PlayerScan_0.xPosFinal >= (CurrentSealPos.X - 5)
-                    && Form1_0.PlayerScan_0.xPosFinal <= (CurrentSealPos.X + 5)
-                    && Form1_0.PlayerScan_0.yPosFinal >= (CurrentSealPos.Y - 5)
-                    && Form1_0.PlayerScan_0.yPosFinal <= (CurrentSealPos.Y + 5))
+                if (gameData.playerScan.xPosFinal >= (CurrentSealPos.X - 5)
+                    && gameData.playerScan.xPosFinal <= (CurrentSealPos.X + 5)
+                    && gameData.playerScan.yPosFinal >= (CurrentSealPos.Y - 5)
+                    && gameData.playerScan.yPosFinal <= (CurrentSealPos.Y + 5))
                 {
                     int InteractCount = 0;
                     while (InteractCount < 3)
                     {
-                        Form1_0.PathFinding_0.MoveToObject("DiabloSeal4");
-                        Form1_0.WaitDelay(10);
+                        gameData.pathFinding.MoveToObject("DiabloSeal4");
+                        gameData.WaitDelay(10);
                         InteractCount++;
                     }
 
@@ -267,24 +262,24 @@ public class ChaosRush
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToObject("DiabloSeal4", 4, true);
+                    gameData.pathFinding.MoveToObject("DiabloSeal4", 4, true);
                 }
             }
 
             if (CurrentStep == 6)
             {
-                CurrentSealPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "DiabloSeal3", (int)Enums.Area.ChaosSanctuary, new List<int>());
+                CurrentSealPos = gameData.mapAreaStruc.GetPositionOfObject("object", "DiabloSeal3", (int)Enums.Area.ChaosSanctuary, new List<int>());
 
-                if (Form1_0.PlayerScan_0.xPosFinal >= (CurrentSealPos.X - 5)
-                    && Form1_0.PlayerScan_0.xPosFinal <= (CurrentSealPos.X + 5)
-                    && Form1_0.PlayerScan_0.yPosFinal >= (CurrentSealPos.Y - 5)
-                    && Form1_0.PlayerScan_0.yPosFinal <= (CurrentSealPos.Y + 5))
+                if (gameData.playerScan.xPosFinal >= (CurrentSealPos.X - 5)
+                    && gameData.playerScan.xPosFinal <= (CurrentSealPos.X + 5)
+                    && gameData.playerScan.yPosFinal >= (CurrentSealPos.Y - 5)
+                    && gameData.playerScan.yPosFinal <= (CurrentSealPos.Y + 5))
                 {
                     int InteractCount = 0;
                     while (InteractCount < 3)
                     {
-                        Form1_0.PathFinding_0.MoveToObject("DiabloSeal3");
-                        Form1_0.WaitDelay(10);
+                        gameData.pathFinding.MoveToObject("DiabloSeal3");
+                        gameData.WaitDelay(10);
                         InteractCount++;
                     }
 
@@ -297,20 +292,20 @@ public class ChaosRush
                     }
                     else
                     {
-                        Form1_0.SetGameStatus("WAITING LORD DE SEIS " + (TryCountWaitingUniqueBoss + 1) + "/3");
+                        gameData.SetGameStatus("WAITING LORD DE SEIS " + (TryCountWaitingUniqueBoss + 1) + "/3");
 
-                        bool UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>());
+                        bool UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>());
 
                         while (!UniqueDetected && (DateTime.Now - StartTimeUniqueBossWaiting).TotalSeconds < CharConfig.ChaosWaitingSealBossDelay)
                         {
-                            UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>());
+                            UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>());
 
-                            Form1_0.PlayerScan_0.GetPositions();
-                            Form1_0.overlayForm.UpdateOverlay();
-                            Form1_0.GameStruc_0.CheckChickenGameTime();
-                            Form1_0.ItemsStruc_0.GetItems(true);
-                            Form1_0.Potions_0.CheckIfWeUsePotion();
-                            Form1_0.Battle_0.DoBattleScript(10);
+                            gameData.playerScan.GetPositions();
+                            gameData.overlayForm.UpdateOverlay();
+                            gameData.gameStruc.CheckChickenGameTime();
+                            gameData.itemsStruc.GetItems(true);
+                            gameData.potions.CheckIfWeUsePotion();
+                            gameData.battle.DoBattleScript(10);
                             Application.DoEvents();
                         }
 
@@ -329,13 +324,13 @@ public class ChaosRush
                         }
                         else
                         {
-                            Form1_0.SetGameStatus("KILLING LORD DE SEIS");
+                            gameData.SetGameStatus("KILLING LORD DE SEIS");
 
-                            if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>()))
+                            if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Lord De Seis", false, 200, new List<long>()))
                             {
-                                if (Form1_0.MobsStruc_0.MobsHP > 0)
+                                if (gameData.mobsStruc.MobsHP > 0)
                                 {
-                                    Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Lord De Seis", new List<long>());
+                                    gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Lord De Seis", new List<long>());
                                 }
                                 else
                                 {
@@ -349,24 +344,24 @@ public class ChaosRush
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToObject("DiabloSeal3", 4, true);
+                    gameData.pathFinding.MoveToObject("DiabloSeal3", 4, true);
                 }
             }
 
             if (CurrentStep == 7)
             {
-                CurrentSealPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "DiabloSeal2", (int)Enums.Area.ChaosSanctuary, new List<int>());
+                CurrentSealPos = gameData.mapAreaStruc.GetPositionOfObject("object", "DiabloSeal2", (int)Enums.Area.ChaosSanctuary, new List<int>());
 
-                if (Form1_0.PlayerScan_0.xPosFinal >= (CurrentSealPos.X - 5)
-                    && Form1_0.PlayerScan_0.xPosFinal <= (CurrentSealPos.X + 5)
-                    && Form1_0.PlayerScan_0.yPosFinal >= (CurrentSealPos.Y - 5)
-                    && Form1_0.PlayerScan_0.yPosFinal <= (CurrentSealPos.Y + 5))
+                if (gameData.playerScan.xPosFinal >= (CurrentSealPos.X - 5)
+                    && gameData.playerScan.xPosFinal <= (CurrentSealPos.X + 5)
+                    && gameData.playerScan.yPosFinal >= (CurrentSealPos.Y - 5)
+                    && gameData.playerScan.yPosFinal <= (CurrentSealPos.Y + 5))
                 {
                     int InteractCount = 0;
                     while (InteractCount < 3)
                     {
-                        Form1_0.PathFinding_0.MoveToObject("DiabloSeal2");
-                        Form1_0.WaitDelay(10);
+                        gameData.pathFinding.MoveToObject("DiabloSeal2");
+                        gameData.WaitDelay(10);
                         InteractCount++;
                     }
 
@@ -374,26 +369,26 @@ public class ChaosRush
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToObject("DiabloSeal2", 4, true);
+                    gameData.pathFinding.MoveToObject("DiabloSeal2", 4, true);
                 }
 
-                Form1_0.Town_0.TPSpawned = false;
+                gameData.townStruc.TPSpawned = false;
             }
 
             if (CurrentStep == 8)
             {
-                CurrentSealPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "DiabloSeal1", (int)Enums.Area.ChaosSanctuary, new List<int>());
+                CurrentSealPos = gameData.mapAreaStruc.GetPositionOfObject("object", "DiabloSeal1", (int)Enums.Area.ChaosSanctuary, new List<int>());
 
-                if (Form1_0.PlayerScan_0.xPosFinal >= (CurrentSealPos.X - 5)
-                    && Form1_0.PlayerScan_0.xPosFinal <= (CurrentSealPos.X + 5)
-                    && Form1_0.PlayerScan_0.yPosFinal >= (CurrentSealPos.Y - 5)
-                    && Form1_0.PlayerScan_0.yPosFinal <= (CurrentSealPos.Y + 5))
+                if (gameData.playerScan.xPosFinal >= (CurrentSealPos.X - 5)
+                    && gameData.playerScan.xPosFinal <= (CurrentSealPos.X + 5)
+                    && gameData.playerScan.yPosFinal >= (CurrentSealPos.Y - 5)
+                    && gameData.playerScan.yPosFinal <= (CurrentSealPos.Y + 5))
                 {
                     int InteractCount = 0;
                     while (InteractCount < 3)
                     {
-                        Form1_0.PathFinding_0.MoveToObject("DiabloSeal1");
-                        Form1_0.WaitDelay(10);
+                        gameData.pathFinding.MoveToObject("DiabloSeal1");
+                        gameData.WaitDelay(10);
                         InteractCount++;
                     }
 
@@ -406,20 +401,20 @@ public class ChaosRush
                     }
                     else
                     {
-                        Form1_0.SetGameStatus("WAITING INFECTOR " + (TryCountWaitingUniqueBoss + 1) + "/3");
+                        gameData.SetGameStatus("WAITING INFECTOR " + (TryCountWaitingUniqueBoss + 1) + "/3");
 
-                        bool UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>());
+                        bool UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>());
 
                         while (!UniqueDetected && (DateTime.Now - StartTimeUniqueBossWaiting).TotalSeconds < CharConfig.ChaosWaitingSealBossDelay)
                         {
-                            UniqueDetected = Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>());
+                            UniqueDetected = gameData.mobsStruc.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>());
 
-                            Form1_0.PlayerScan_0.GetPositions();
-                            Form1_0.overlayForm.UpdateOverlay();
-                            Form1_0.GameStruc_0.CheckChickenGameTime();
-                            Form1_0.ItemsStruc_0.GetItems(true);
-                            Form1_0.Potions_0.CheckIfWeUsePotion();
-                            Form1_0.Battle_0.DoBattleScript(10);
+                            gameData.playerScan.GetPositions();
+                            gameData.overlayForm.UpdateOverlay();
+                            gameData.gameStruc.CheckChickenGameTime();
+                            gameData.itemsStruc.GetItems(true);
+                            gameData.potions.CheckIfWeUsePotion();
+                            gameData.battle.DoBattleScript(10);
                             Application.DoEvents();
                         }
 
@@ -438,13 +433,13 @@ public class ChaosRush
                         }
                         else
                         {
-                            Form1_0.SetGameStatus("KILLING INFECTOR");
+                            gameData.SetGameStatus("KILLING INFECTOR");
 
-                            if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>()))
+                            if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Infector of Souls", false, 200, new List<long>()))
                             {
-                                if (Form1_0.MobsStruc_0.MobsHP > 0)
+                                if (gameData.mobsStruc.MobsHP > 0)
                                 {
-                                    Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Infector of Souls", new List<long>());
+                                    gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Infector of Souls", new List<long>());
                                 }
                                 else
                                 {
@@ -458,22 +453,22 @@ public class ChaosRush
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToObject("DiabloSeal1", 4, true);
+                    gameData.pathFinding.MoveToObject("DiabloSeal1", 4, true);
                 }
             }
 
             if (CurrentStep == 9)
             {
-                Form1_0.SetGameStatus("Chaos waiting on leecher #2");
+                gameData.SetGameStatus("Chaos waiting on leecher #2");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(15);
+                gameData.battle.DoBattleScript(15);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.ChaosSanctuary)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.ChaosSanctuary)
                 {
                     CurrentStep++;
                 }
@@ -481,90 +476,90 @@ public class ChaosRush
 
             if (CurrentStep == 10)
             {
-                Form1_0.PathFinding_0.MoveToThisPos(DiabloSpawnPos);
+                gameData.pathFinding.MoveToThisPos(DiabloSpawnPos);
                 CurrentStep++;
             }
 
             if (CurrentStep == 11)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING DIABLO");
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING DIABLO");
 
                 //#############
-                Form1_0.MobsStruc_0.DetectThisMob("getBossName", "Diablo", false, 200, new List<long>());
-                bool DetectedDiablo = Form1_0.MobsStruc_0.GetMobs("getBossName", "Diablo", false, 200, new List<long>());
+                gameData.mobsStruc.DetectThisMob("getBossName", "Diablo", false, 200, new List<long>());
+                bool DetectedDiablo = gameData.mobsStruc.GetMobs("getBossName", "Diablo", false, 200, new List<long>());
                 DateTime StartTime = DateTime.Now;
                 TimeSpan TimeSinceDetecting = DateTime.Now - StartTime;
                 while (!DetectedDiablo && TimeSinceDetecting.TotalSeconds < 12)
                 {
-                    Form1_0.SetGameStatus("WAITING DETECTING DIABLO");
-                    DetectedDiablo = Form1_0.MobsStruc_0.GetMobs("getBossName", "Diablo", false, 200, new List<long>());
+                    gameData.SetGameStatus("WAITING DETECTING DIABLO");
+                    DetectedDiablo = gameData.mobsStruc.GetMobs("getBossName", "Diablo", false, 200, new List<long>());
                     TimeSinceDetecting = DateTime.Now - StartTime;
 
                     //cast attack during this waiting time
-                    /*Form1_0.Battle_0.SetSkills();
-                    Form1_0.Battle_0.CastSkills();*/
-                    Form1_0.ItemsStruc_0.GetItems(true);      //#############
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    /*gameData.battle.SetSkills();
+                    gameData.battle.CastSkills();*/
+                    gameData.itemsStruc.GetItems(true);      //#############
+                    gameData.potions.CheckIfWeUsePotion();
 
-                    if (!Form1_0.GameStruc_0.IsInGame() || !Form1_0.Running)
+                    if (!gameData.gameStruc.IsInGame() || !gameData.Running)
                     {
-                        Form1_0.overlayForm.ResetMoveToLocation();
+                        gameData.overlayForm.ResetMoveToLocation();
                         return;
                     }
                 }
 
                 if (TimeSinceDetecting.TotalSeconds >= 12)
                 {
-                    Form1_0.method_1("Waited too long for Diablo repoping the seals!", Color.Red);
+                    gameData.method_1("Waited too long for Diablo repoping the seals!", Color.Red);
                     CurrentStep = 4;
                     return;
                 }
                 //#############
 
-                if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Diablo", false, 200, new List<long>()))
+                if (gameData.mobsStruc.GetMobs("getBossName", "Diablo", false, 200, new List<long>()))
                 {
-                    Form1_0.SetGameStatus("KILLING DIABLO");
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    gameData.SetGameStatus("KILLING DIABLO");
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
                         DetectedBoss = true;
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getBossName", "Diablo", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getBossName", "Diablo", new List<long>());
                     }
                     else
                     {
                         if (!DetectedBoss)
                         {
-                            Form1_0.method_1("Diablo not detected!", Color.Red);
-                            Form1_0.Battle_0.DoBattleScript(15);
+                            gameData.method_1("Diablo not detected!", Color.Red);
+                            gameData.battle.DoBattleScript(15);
                         }
 
-                        if (Form1_0.Battle_0.EndBossBattle())
+                        if (gameData.battle.EndBossBattle())
                         {
                             ScriptDone = true;
                         }
                         return;
-                        //Form1_0.LeaveGame(true);
+                        //gameData.LeaveGame(true);
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Diablo not detected!", Color.Red);
+                    gameData.method_1("Diablo not detected!", Color.Red);
 
-                    Form1_0.Battle_0.DoBattleScript(15);
+                    gameData.battle.DoBattleScript(15);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Diablo", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Diablo", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Diablo", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Diablo", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    Form1_0.PathFinding_0.AcceptMoveOffset = BufferPathFindingMoveSize;
-                    Form1_0.Town_0.UseLastTP = false;
-                    Form1_0.Town_0.FastTowning = false;
+                    gameData.pathFinding.AcceptMoveOffset = BufferPathFindingMoveSize;
+                    gameData.townStruc.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
                     ScriptDone = true;
                     return;
-                    //Form1_0.LeaveGame(true);
+                    //gameData.LeaveGame(true);
                 }
             }
 

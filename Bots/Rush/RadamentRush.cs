@@ -6,19 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class RadamentRush
+public class RadamentRush : IBot
 {
-    Form1 Form1_0;
+    GameData gameData;
 
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position RadamentPosition = new Position { X = 0, Y = 0 };
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -28,40 +22,41 @@ public class RadamentRush
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.SewersLevel2Act2) CurrentStep = 1;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.SewersLevel3Act2) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel2Act2) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel3Act2) CurrentStep = 2;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 2; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 2; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(2, 1);
+            gameData.townStruc.GoToWPArea(2, 1);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING RADAMENT");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING RADAMENT");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.SewersLevel2Act2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel2Act2)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
                 else
@@ -69,8 +64,8 @@ public class RadamentRush
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -78,39 +73,39 @@ public class RadamentRush
             if (CurrentStep == 1)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.SewersLevel3Act2)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.SewersLevel3Act2)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.SewersLevel3Act2);
+                gameData.pathFinding.MoveToExit(Enums.Area.SewersLevel3Act2);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.SewersLevel2Act2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel2Act2)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                RadamentPosition = Form1_0.MapAreaStruc_0.GetPositionOfObject("npc", "Radament2", (int)Enums.Area.SewersLevel3Act2, new List<int>());
+                RadamentPosition = gameData.mapAreaStruc.GetPositionOfObject("npc", "Radament2", (int)Enums.Area.SewersLevel3Act2, new List<int>());
                 if (RadamentPosition.X != 0 && RadamentPosition.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(RadamentPosition);
+                    gameData.pathFinding.MoveToThisPos(RadamentPosition);
 
                     //repeat clic on tree
                     /*int tryyy = 0;
                     while (tryyy <= 25)
                     {
-                        Dictionary<string, int> itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, RadamentPosition.X, RadamentPosition.Y);
-                        Form1_0.KeyMouse_0.MouseClicc(itemScreenPos["x"], itemScreenPos["y"]);
-                        Form1_0.PlayerScan_0.GetPositions();
+                        Dictionary<string, int> itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, RadamentPosition.X, RadamentPosition.Y);
+                        gameData.keyMouse.MouseClicc(itemScreenPos["x"], itemScreenPos["y"]);
+                        gameData.playerScan.GetPositions();
                         tryyy++;
                     }*/
 
@@ -118,9 +113,9 @@ public class RadamentRush
                 }
                 else
                 {
-                    Form1_0.method_1("Radament location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.method_1("Radament location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
                 }
@@ -128,29 +123,29 @@ public class RadamentRush
 
             if (CurrentStep == 3)
             {
-                Form1_0.SetGameStatus("Radament clearing");
+                gameData.SetGameStatus("Radament clearing");
 
-                if (!Form1_0.Battle_0.DoBattleScript(25))
+                if (!gameData.battle.DoBattleScript(25))
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(RadamentPosition);
+                    gameData.pathFinding.MoveToThisPos(RadamentPosition);
 
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
                     CurrentStep++;
                 }
             }
 
             if (CurrentStep == 4)
             {
-                Form1_0.SetGameStatus("Radament waiting on leecher");
+                gameData.SetGameStatus("Radament waiting on leecher");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.SewersLevel3Act2)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.SewersLevel3Act2)
                 {
                     CurrentStep++;
                 }
@@ -158,17 +153,17 @@ public class RadamentRush
 
             if (CurrentStep == 5)
             {
-                Form1_0.SetGameStatus("Radament waiting on leecher #2");
+                gameData.SetGameStatus("Radament waiting on leecher #2");
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.LutGholein)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.LutGholein)
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                 }
             }

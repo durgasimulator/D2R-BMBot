@@ -5,21 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class ShopBot
+public class ShopBot : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public int MaxShopCount = -1;
     public int CurrentShopCount = 0;
     public int ShopBotTownAct = 5;
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -29,9 +22,10 @@ public class ShopBot
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = ShopBotTownAct;
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = ShopBotTownAct;
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
@@ -39,38 +33,38 @@ public class ShopBot
         
         if (CurrentStep == 0)
         {
-            Form1_0.SetGameStatus("DOING SHOPBOT");
-            Form1_0.Battle_0.CastDefense();
-            Form1_0.WaitDelay(15);
+            gameData.SetGameStatus("DOING SHOPBOT");
+            gameData.battle.CastDefense();
+            gameData.WaitDelay(15);
 
-            if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.Harrogath)
+            if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.Harrogath)
             {
                 CurrentStep++;
             }
             else
             {
-                Form1_0.Town_0.FastTowning = false;
-                Form1_0.Town_0.GoToTown();
+                gameData.townStruc.FastTowning = false;
+                gameData.townStruc.GoToTown();
             }
         }
 
         if (CurrentStep == 1)
         {
-            Form1_0.SetGameStatus("TOWN-SHOPBOT");
+            gameData.SetGameStatus("TOWN-SHOPBOT");
             //Console.WriteLine("town moving to shop");
-            Form1_0.Town_0.MoveToStore();
+            gameData.townStruc.MoveToStore();
             CurrentStep++;
         }
 
         if (CurrentStep == 2)
         {
-            Form1_0.Town_0.GoToWPArea(5, 1);
+            gameData.townStruc.GoToWPArea(5, 1);
             CurrentStep++;
         }
 
         if (CurrentStep == 2)
         {
-            Form1_0.Town_0.GoToWPArea(5, 0);
+            gameData.townStruc.GoToWPArea(5, 0);
 
             if (MaxShopCount > 0)
             {

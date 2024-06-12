@@ -167,8 +167,8 @@ public partial class OverlayForm : Form
             if (ShowGoodChests) SetAllGoodChestNearby();
             if (ShowMobs)
             {
-                if (!Form1_0.MobsStruc_0.DebuggingMobs) SetAllMonsterNearby();
-                if (Form1_0.MobsStruc_0.DebuggingMobs) SetAllMonsterNearbyDebug();
+                if (!GameData.Instance.mobsStruc.DebuggingMobs) SetAllMonsterNearby();
+                if (GameData.Instance.mobsStruc.DebuggingMobs) SetAllMonsterNearbyDebug();
             }
             if (ShowNPC) SetAllNPCNearby();
             if (ShowWPs) SetAllWPNearby();
@@ -181,7 +181,7 @@ public partial class OverlayForm : Form
             //stop scanning too much lags!!
             if (UpdatingDisplayTime.TotalMilliseconds > 180)
             {
-                Form1_0.method_1("Overlay creating too much slowdown, disabling Overlay!", Color.OrangeRed);
+                GameData.Instance.method_1("Overlay creating too much slowdown, disabling Overlay!", Color.OrangeRed);
                 ScanningOverlayItems = false;
             }
         }
@@ -203,7 +203,7 @@ public partial class OverlayForm : Form
     {
         GoodChestsPoints = new List<System.Drawing.Point>();
 
-        List<Position> AllChestPos = Form1_0.MapAreaStruc_0.GetPositionOfAllObject("object", "GoodChest", (int)Form1_0.PlayerScan_0.levelNo, new List<int>());
+        List<Position> AllChestPos = GameData.Instance.mapAreaStruc.GetPositionOfAllObject("object", "GoodChest", (int)GameData.Instance.playerScan.levelNo, new List<int>());
         foreach (var objectPos in AllChestPos)
         {
             GoodChestsPoints.Add(new System.Drawing.Point(objectPos.X, objectPos.Y));
@@ -214,7 +214,7 @@ public partial class OverlayForm : Form
     {
         WPPoints = new List<System.Drawing.Point>();
 
-        List<Position> AllPos = Form1_0.MapAreaStruc_0.GetPositionOfAllObject("object", "WaypointPortal", (int)Form1_0.PlayerScan_0.levelNo, new List<int>());
+        List<Position> AllPos = GameData.Instance.mapAreaStruc.GetPositionOfAllObject("object", "WaypointPortal", (int)GameData.Instance.playerScan.levelNo, new List<int>());
         foreach (var objectPos in AllPos)
         {
             WPPoints.Add(new System.Drawing.Point(objectPos.X, objectPos.Y));
@@ -226,26 +226,26 @@ public partial class OverlayForm : Form
         ExitPoints = new List<System.Drawing.Point>();
         ExitIDs = new List<int>();
 
-        List<Position> AllPos = Form1_0.MapAreaStruc_0.GetPositionOfAllObject("exit", "", (int)Form1_0.PlayerScan_0.levelNo, new List<int>(), true);
+        List<Position> AllPos = GameData.Instance.mapAreaStruc.GetPositionOfAllObject("exit", "", (int)GameData.Instance.playerScan.levelNo, new List<int>(), true);
         for (int i = 0; i < AllPos.Count; i++)
         {
             ExitPoints.Add(new System.Drawing.Point(AllPos[i].X, AllPos[i].Y));
-            ExitIDs.Add(Form1_0.MapAreaStruc_0.AllExitsIDs[i]);
+            ExitIDs.Add(GameData.Instance.mapAreaStruc.AllExitsIDs[i]);
         }
 
         //Set duriel tomb exit
-        Position OrificePos = Form1_0.MapAreaStruc_0.GetAreaOfObject("object", "HoradricOrifice", new List<int>(), 65, 72, true);
+        Position OrificePos = GameData.Instance.mapAreaStruc.GetAreaOfObject("object", "HoradricOrifice", new List<int>(), 65, 72, true);
         if (OrificePos.X != 0 && OrificePos.Y != 0)
         {
             //"id":71, "type":"exit", "x":214, "y":25, "isGoodExit":true}
-            //Form1_0.method_1("Moving to: " + ((Enums.Area)(Form1_0.MapAreaStruc_0.CurrentObjectAreaIndex + 1)), Color.Red);
-            Position ThisFinalPosition = Form1_0.MapAreaStruc_0.GetPositionOfObject("exit", Form1_0.Town_0.getAreaName((int)Form1_0.MapAreaStruc_0.CurrentObjectAreaIndex + 1), (int)Form1_0.PlayerScan_0.levelNo, new List<int>() { }, true);
+            //GameData.Instance.method_1("Moving to: " + ((Enums.Area)(GameData.Instance.mapAreaStruc.CurrentObjectAreaIndex + 1)), Color.Red);
+            Position ThisFinalPosition = GameData.Instance.mapAreaStruc.GetPositionOfObject("exit", GameData.Instance.townStruc.getAreaName((int)GameData.Instance.mapAreaStruc.CurrentObjectAreaIndex + 1), (int)GameData.Instance.playerScan.levelNo, new List<int>() { }, true);
             ExitPointDuriel.X = ThisFinalPosition.X;
             ExitPointDuriel.Y = ThisFinalPosition.Y;
         }
 
         //Set Summoner Pos
-        Position ThisFinalPositionArcane = Form1_0.MapAreaStruc_0.GetPositionOfObject("npc", "Summoner", (int)Enums.Area.ArcaneSanctuary, new List<int>() { }, true);
+        Position ThisFinalPositionArcane = GameData.Instance.mapAreaStruc.GetPositionOfObject("npc", "Summoner", (int)Enums.Area.ArcaneSanctuary, new List<int>() { }, true);
         ExitPointSummoner.X = ThisFinalPositionArcane.X;
         ExitPointSummoner.Y = ThisFinalPositionArcane.Y;
         if (ExitPointSummoner.X != 0 && ExitPointSummoner.Y != 0)
@@ -263,12 +263,12 @@ public partial class OverlayForm : Form
 
         try
         {
-            List<int[]> monsterPositions = Form1_0.MobsStruc_0.GetAllMobsNearby();
+            List<int[]> monsterPositions = GameData.Instance.mobsStruc.GetAllMobsNearby();
             for (int i = 0; i < monsterPositions.Count; i++)
             {
                 MobsPoints.Add(new System.Drawing.Point(monsterPositions[i][0], monsterPositions[i][1]));
-                MobsIDs.Add(Form1_0.MobsStruc_0.monsterIDs[i]);
-                MobsTypes.Add(Form1_0.MobsStruc_0.monsterTypes[i]);
+                MobsIDs.Add(GameData.Instance.mobsStruc.monsterIDs[i]);
+                MobsTypes.Add(GameData.Instance.mobsStruc.monsterTypes[i]);
             }
         }
         catch { }
@@ -281,11 +281,11 @@ public partial class OverlayForm : Form
 
         try
         {
-            List<int[]> AllPositions = Form1_0.NPCStruc_0.GetAllNPCNearby();
+            List<int[]> AllPositions = GameData.Instance.npcStruc.GetAllNPCNearby();
             for (int i = 0; i < AllPositions.Count; i++)
             {
                 NPCPoints.Add(new System.Drawing.Point(AllPositions[i][0], AllPositions[i][1]));
-                NPCIDs.Add(Form1_0.NPCStruc_0.NPC_IDs[i]);
+                NPCIDs.Add(GameData.Instance.npcStruc.NPC_IDs[i]);
             }
         }
         catch { }
@@ -300,12 +300,12 @@ public partial class OverlayForm : Form
 
         try
         {
-            List<int[]> monsterPositions = Form1_0.MobsStruc_0.GetAllMobsNearby();
+            List<int[]> monsterPositions = GameData.Instance.mobsStruc.GetAllMobsNearby();
             for (int i = 0; i < monsterPositions.Count; i++)
             {
                 MobsPoints.Add(new System.Drawing.Point(monsterPositions[i][0], monsterPositions[i][1]));
-                MobsIDs.Add(Form1_0.MobsStruc_0.monsterIDs[i]);
-                MobsTypes.Add(Form1_0.MobsStruc_0.monsterTypes[i]);
+                MobsIDs.Add(GameData.Instance.mobsStruc.monsterIDs[i]);
+                MobsTypes.Add(GameData.Instance.mobsStruc.monsterTypes[i]);
             }
         }
         catch { }
@@ -339,7 +339,7 @@ public partial class OverlayForm : Form
 
     public void UpdateOverlay()
     {
-        if (!Form1_0.Running)
+        if (!GameData.Instance.Running)
         {
             ClearAllOverlayWithoutUpdating();
         }
@@ -407,7 +407,7 @@ public partial class OverlayForm : Form
 
             //################################################
             //################################################
-            if (Form1_0.GameStruc_0.IsInGame() && Form1_0.HasPointers)
+            if (GameData.Instance.gameStruc.IsInGame() && GameData.Instance.HasPointers)
             {
                 if (ShowBotInfos)
                 {
@@ -416,12 +416,12 @@ public partial class OverlayForm : Form
                     int Qty2 = 0;
                     int Qty3 = 0;
                     int Qty4 = 0;
-                    for (int i = 0; i < Form1_0.BeltStruc_0.BeltHaveItems.Length; i++)
+                    for (int i = 0; i < GameData.Instance.beltStruc.BeltHaveItems.Length; i++)
                     {
-                        if ((i == 0 || i == 4 || i == 8 || i == 12) && Form1_0.BeltStruc_0.BeltHaveItems[i] > 0) Qty1++;
-                        if ((i == 1 || i == 5 || i == 9 || i == 13) && Form1_0.BeltStruc_0.BeltHaveItems[i] > 0) Qty2++;
-                        if ((i == 2 || i == 6 || i == 10 || i == 14) && Form1_0.BeltStruc_0.BeltHaveItems[i] > 0) Qty3++;
-                        if ((i == 3 || i == 7 || i == 11 || i == 15) && Form1_0.BeltStruc_0.BeltHaveItems[i] > 0) Qty4++;
+                        if ((i == 0 || i == 4 || i == 8 || i == 12) && GameData.Instance.beltStruc.BeltHaveItems[i] > 0) Qty1++;
+                        if ((i == 1 || i == 5 || i == 9 || i == 13) && GameData.Instance.beltStruc.BeltHaveItems[i] > 0) Qty2++;
+                        if ((i == 2 || i == 6 || i == 10 || i == 14) && GameData.Instance.beltStruc.BeltHaveItems[i] > 0) Qty3++;
+                        if ((i == 3 || i == 7 || i == 11 || i == 15) && GameData.Instance.beltStruc.BeltHaveItems[i] > 0) Qty4++;
                     }
                     DrawString(e, Qty1.ToString(), drawFontBold, drawBrushWhite, 1091, 1018, true);
                     DrawString(e, Qty2.ToString(), drawFontBold, drawBrushWhite, 1091 + 62, 1018, true);
@@ -429,43 +429,43 @@ public partial class OverlayForm : Form
                     DrawString(e, Qty4.ToString(), drawFontBold, drawBrushWhite, 1091 + (62 * 3), 1018, true);
 
                     //Print HP/Mana
-                    int Percent = (int)((Form1_0.PlayerScan_0.PlayerHP * 100.0) / Form1_0.PlayerScan_0.PlayerMaxHP);
-                    if (Form1_0.PlayerScan_0.PlayerHP == 0 && Form1_0.PlayerScan_0.PlayerMaxHP == 0) Percent = 0;
-                    string HPTxt = Form1_0.PlayerScan_0.PlayerHP.ToString() + "/" + Form1_0.PlayerScan_0.PlayerMaxHP.ToString() + " (" + Percent + "%)";
+                    int Percent = (int)((GameData.Instance.playerScan.PlayerHP * 100.0) / GameData.Instance.playerScan.PlayerMaxHP);
+                    if (GameData.Instance.playerScan.PlayerHP == 0 && GameData.Instance.playerScan.PlayerMaxHP == 0) Percent = 0;
+                    string HPTxt = GameData.Instance.playerScan.PlayerHP.ToString() + "/" + GameData.Instance.playerScan.PlayerMaxHP.ToString() + " (" + Percent + "%)";
                     SizeF ThisS2 = e.Graphics.MeasureString(HPTxt, drawFontBold);
                     FillRectangle(e, drawBrushDark, 560, 960, ThisS2.Width, 22, true);
                     DrawString(e, HPTxt, drawFontBold, drawBrushRed, 560, 960, true);
 
-                    int PercentMana = (int)((Form1_0.PlayerScan_0.PlayerMana * 100.0) / Form1_0.PlayerScan_0.PlayerMaxMana);
-                    if (Form1_0.PlayerScan_0.PlayerMana == 0 && Form1_0.PlayerScan_0.PlayerMaxMana == 0) PercentMana = 0;
-                    string ManaTxt = Form1_0.PlayerScan_0.PlayerMana.ToString() + "/" + Form1_0.PlayerScan_0.PlayerMaxMana.ToString() + " (" + PercentMana + "%)";
+                    int PercentMana = (int)((GameData.Instance.playerScan.PlayerMana * 100.0) / GameData.Instance.playerScan.PlayerMaxMana);
+                    if (GameData.Instance.playerScan.PlayerMana == 0 && GameData.Instance.playerScan.PlayerMaxMana == 0) PercentMana = 0;
+                    string ManaTxt = GameData.Instance.playerScan.PlayerMana.ToString() + "/" + GameData.Instance.playerScan.PlayerMaxMana.ToString() + " (" + PercentMana + "%)";
                     ThisS2 = e.Graphics.MeasureString(ManaTxt, drawFontBold);
                     FillRectangle(e, drawBrushDark, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 960, ThisS2.Width, 22, true);
                     DrawString(e, ManaTxt, drawFontBold, drawBrushBlue, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 960, true);
 
                     //Print Player Pos
-                    string CordsTxt = Form1_0.PlayerScan_0.xPosFinal.ToString() + ", " + Form1_0.PlayerScan_0.yPosFinal.ToString();
+                    string CordsTxt = GameData.Instance.playerScan.xPosFinal.ToString() + ", " + GameData.Instance.playerScan.yPosFinal.ToString();
                     ThisS2 = e.Graphics.MeasureString(CordsTxt, drawFontBold);
-                    //DrawString(e, CordsTxt, drawFontBold, drawBrushWhite, Form1_0.CenterX - (ThisS2.Width / 2), 960);
+                    //DrawString(e, CordsTxt, drawFontBold, drawBrushWhite, GameData.Instance.CenterX - (ThisS2.Width / 2), 960);
                     DrawString(e, CordsTxt, drawFontBold, drawBrushWhite, 990, 960, true);
 
                     //Print Infos
                     if (ShowMobs) DrawString(e, "Mobs:" + MobsPoints.Count, drawFontBold, drawBrushWhite, 790, 960, true);
-                    string MapTxt = "Map Level:" + Form1_0.PlayerScan_0.levelNo;
+                    string MapTxt = "Map Level:" + GameData.Instance.playerScan.levelNo;
                     ThisS2 = e.Graphics.MeasureString(MapTxt, drawFontBold);
                     DrawString(e, MapTxt, drawFontBold, drawBrushWhite, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 935, true);
 
                     //Print Items Grab/Battle Infos
                     if (!CharConfig.RunMapHackOnly && !CharConfig.RunMapHackPickitOnly && !CharConfig.RunItemGrabScriptOnly)
                     {
-                        if (Form1_0.ItemsStruc_0.IsGrabbingItemOnGround)
+                        if (GameData.Instance.itemsStruc.IsGrabbingItemOnGround)
                         {
-                            string ItemTxt = Form1_0.ItemsStruc_0.ItemNAAME + "(" + Form1_0.ItemsStruc_0.txtFileNo + "), Pos:" + Form1_0.ItemsStruc_0.itemx + ", " + Form1_0.ItemsStruc_0.itemy + " (tries:" + (Form1_0.ItemsStruc_0.TriesToPickItemCount + 1) + "/" + CharConfig.MaxItemGrabTries + ")";
+                            string ItemTxt = GameData.Instance.itemsStruc.ItemNAAME + "(" + GameData.Instance.itemsStruc.txtFileNo + "), Pos:" + GameData.Instance.itemsStruc.itemx + ", " + GameData.Instance.itemsStruc.itemy + " (tries:" + (GameData.Instance.itemsStruc.TriesToPickItemCount + 1) + "/" + CharConfig.MaxItemGrabTries + ")";
                             DrawString(e, ItemTxt, drawFontBold, drawBrushWhite, 560, 910, true);
                         }
-                        else if (Form1_0.Battle_0.DoingBattle || Form1_0.Battle_0.ClearingArea)
+                        else if (GameData.Instance.battle.DoingBattle || GameData.Instance.battle.ClearingArea)
                         {
-                            string MobsTxt = (EnumsMobsNPC.MonsterType)((int)Form1_0.MobsStruc_0.txtFileNo) + "(" + Form1_0.MobsStruc_0.txtFileNo + "), HP:" + Form1_0.MobsStruc_0.MobsHP + ", Pos:" + Form1_0.MobsStruc_0.xPosFinal + ", " + Form1_0.MobsStruc_0.yPosFinal;
+                            string MobsTxt = (EnumsMobsNPC.MonsterType)((int)GameData.Instance.mobsStruc.txtFileNo) + "(" + GameData.Instance.mobsStruc.txtFileNo + "), HP:" + GameData.Instance.mobsStruc.MobsHP + ", Pos:" + GameData.Instance.mobsStruc.xPosFinal + ", " + GameData.Instance.mobsStruc.yPosFinal;
                             DrawString(e, MobsTxt, drawFontBold, drawBrushWhite, 560, 910, true);
                         }
                     }
@@ -473,24 +473,24 @@ public partial class OverlayForm : Form
                     //Print Status
                     DrawString(e, "Status: " + Form1_0.CurrentStatus, drawFontBold, drawBrushWhite, 560, 935, true);
                     ThisS2 = e.Graphics.MeasureString(Form1_0.CurrentGameTime, drawFontBold);
-                    //DrawString(e, Form1_0.CurrentGameTime, drawFontBold, drawBrushYellow, Form1_0.CenterX, 935, true);
+                    //DrawString(e, GameData.Instance.CurrentGameTime, drawFontBold, drawBrushYellow, GameData.Instance.CenterX, 935, true);
                     DrawString(e, Form1_0.CurrentGameTime, drawFontBold, drawBrushYellow, 990, 935, true);
 
                     //Print mS Delay
-                    string ThisMSStr = "~" + Form1_0.Average_mS + "ms(" + Form1_0.mS.Replace("ms", "") + ")";
+                    string ThisMSStr = "~" + GameData.Instance.Average_mS + "ms(" + GameData.Instance.mS.Replace("ms", "") + ")";
                     DrawString(e, ThisMSStr, drawFontBold, drawBrushYellow, 1090, 910, true);
 
                     //Print FPS Delay
-                    string ThisFPSStr = "~" + Form1_0.Average_FPS.ToString("00") + "Fps(" + Form1_0.FPS.ToString("00") + ")";
+                    string ThisFPSStr = "~" + GameData.Instance.Average_FPS.ToString("00") + "Fps(" + GameData.Instance.FPS.ToString("00") + ")";
                     DrawString(e, ThisFPSStr, drawFontBold, drawBrushYellow, 1090, 935, true);
 
                     if (!CharConfig.RunMapHackOnly && !CharConfig.RunMapHackPickitOnly && !CharConfig.RunItemGrabScriptOnly)
                     {
-                        string OtherInfosTxt = Form1_0.TotalChickenCount + " ChickensByHP, " + Form1_0.TotalChickenByTimeCount + " ChickensByTime";
+                        string OtherInfosTxt = GameData.Instance.TotalChickenCount + " ChickensByHP, " + GameData.Instance.TotalChickenByTimeCount + " ChickensByTime";
                         ThisS2 = e.Graphics.MeasureString(OtherInfosTxt, drawFontBold);
                         DrawString(e, OtherInfosTxt, drawFontBold, drawBrushWhite, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 885, true);
 
-                        string OtherInfosTxt2 = Form1_0.CurrentGameNumberFullyDone.ToString() + " Done, " + Form1_0.TotalDeadCount + " Dead";
+                        string OtherInfosTxt2 = GameData.Instance.CurrentGameNumberFullyDone.ToString() + " Done, " + GameData.Instance.TotalDeadCount + " Dead";
                         ThisS2 = e.Graphics.MeasureString(OtherInfosTxt2, drawFontBold);
                         DrawString(e, OtherInfosTxt2, drawFontBold, drawBrushWhite, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 910, true);
                     }
@@ -499,58 +499,58 @@ public partial class OverlayForm : Form
                     if (CharConfig.UsingMerc && !CharConfig.RunMapHackOnly && !CharConfig.RunMapHackPickitOnly && !CharConfig.RunItemGrabScriptOnly)
                     {
                         string ThisMercTxt = "Merc not alive";
-                        if (Form1_0.MercStruc_0.MercAlive)
+                        if (GameData.Instance.mercStruc.MercAlive)
                         {
 
-                            int PercentMerc = (int)((Form1_0.MercStruc_0.MercHP * 100.0) / Form1_0.MercStruc_0.MercMaxHP);
-                            if (Form1_0.MercStruc_0.MercHP == 0 && Form1_0.MercStruc_0.MercMaxHP == 0) PercentMerc = 0;
-                            ThisMercTxt = "Merc:" + Form1_0.MercStruc_0.MercHP.ToString() + "/" + Form1_0.MercStruc_0.MercMaxHP.ToString() + " (" + PercentMerc + "%)";
+                            int PercentMerc = (int)((GameData.Instance.mercStruc.MercHP * 100.0) / GameData.Instance.mercStruc.MercMaxHP);
+                            if (GameData.Instance.mercStruc.MercHP == 0 && GameData.Instance.mercStruc.MercMaxHP == 0) PercentMerc = 0;
+                            ThisMercTxt = "Merc:" + GameData.Instance.mercStruc.MercHP.ToString() + "/" + GameData.Instance.mercStruc.MercMaxHP.ToString() + " (" + PercentMerc + "%)";
                         }
                         ThisS2 = e.Graphics.MeasureString(ThisMercTxt, drawFontBold);
                         DrawString(e, ThisMercTxt, drawFontBold, drawBrushGreen, 1360 - (ThisS2.Width * ScaleScreenSizeInverted), 860, true);
                     }
 
                     //Print Units Scanned Count
-                    if (ShowUnitsScanCount || (Form1_0.DebugMenuStyle > 0 && !ShowUnitsScanCount))
+                    if (ShowUnitsScanCount || (GameData.Instance.DebugMenuStyle > 0 && !ShowUnitsScanCount))
                     {
                         //Show values of the V3 Units Scan
-                        /*string UnitsStr = "Units Scan V3:" + Form1_0.PatternsScan_0.GetUnitsScannedCount(3).ToString();
-                        UnitsStr += " (Items:" + Form1_0.PatternsScan_0.ScannedItemsCount;
-                        UnitsStr += ", Player:" + Form1_0.PatternsScan_0.ScannedPlayerCount;
-                        UnitsStr += ", Objects:" + Form1_0.PatternsScan_0.ScannedObjectsCount;
-                        UnitsStr += ", NPC:" + Form1_0.PatternsScan_0.ScannedNPCCount;
+                        /*string UnitsStr = "Units Scan V3:" + GameData.Instance.patternsScan.GetUnitsScannedCount(3).ToString();
+                        UnitsStr += " (Items:" + GameData.Instance.patternsScan.ScannedItemsCount;
+                        UnitsStr += ", Player:" + GameData.Instance.patternsScan.ScannedPlayerCount;
+                        UnitsStr += ", Objects:" + GameData.Instance.patternsScan.ScannedObjectsCount;
+                        UnitsStr += ", NPC:" + GameData.Instance.patternsScan.ScannedNPCCount;
                         UnitsStr += ")";
                         DrawString(e, UnitsStr, drawFontBold10, drawBrushGreen, 560, 860, true);
 
                         //Show values of the V2 Units Scan
-                        string UnitsStr = "Units Scan V2:" + Form1_0.PatternsScan_0.GetUnitsScannedCount(2).ToString();
-                        UnitsStr += " (Items:" + Form1_0.PatternsScan_0.ScannedItemsCount;
-                        UnitsStr += ", Player:" + Form1_0.PatternsScan_0.ScannedPlayerCount;
-                        UnitsStr += ", Objects:" + Form1_0.PatternsScan_0.ScannedObjectsCount;
-                        UnitsStr += ", NPC:" + Form1_0.PatternsScan_0.ScannedNPCCount;
+                        string UnitsStr = "Units Scan V2:" + GameData.Instance.patternsScan.GetUnitsScannedCount(2).ToString();
+                        UnitsStr += " (Items:" + GameData.Instance.patternsScan.ScannedItemsCount;
+                        UnitsStr += ", Player:" + GameData.Instance.patternsScan.ScannedPlayerCount;
+                        UnitsStr += ", Objects:" + GameData.Instance.patternsScan.ScannedObjectsCount;
+                        UnitsStr += ", NPC:" + GameData.Instance.patternsScan.ScannedNPCCount;
                         UnitsStr += ")";
                         DrawString(e, UnitsStr, drawFontBold10, drawBrushGreen, 560, 835, true);*/
 
                         //Show values of the V1 Units Scan
-                        string UnitsStr = "Units Scan V1:" + Form1_0.PatternsScan_0.GetUnitsScannedCount(1).ToString();
-                        UnitsStr += " (Items:" + Form1_0.PatternsScan_0.ScannedItemsCount;
-                        UnitsStr += ", Player:" + Form1_0.PatternsScan_0.ScannedPlayerCount;
-                        UnitsStr += ", Objects:" + Form1_0.PatternsScan_0.ScannedObjectsCount;
-                        UnitsStr += ", NPC:" + Form1_0.PatternsScan_0.ScannedNPCCount;
+                        string UnitsStr = "Units Scan V1:" + GameData.Instance.patternsScan.GetUnitsScannedCount(1).ToString();
+                        UnitsStr += " (Items:" + GameData.Instance.patternsScan.ScannedItemsCount;
+                        UnitsStr += ", Player:" + GameData.Instance.patternsScan.ScannedPlayerCount;
+                        UnitsStr += ", Objects:" + GameData.Instance.patternsScan.ScannedObjectsCount;
+                        UnitsStr += ", NPC:" + GameData.Instance.patternsScan.ScannedNPCCount;
                         UnitsStr += ")";
                         DrawString(e, UnitsStr, drawFontBold10, drawBrushGreen, 560, 810, true);
                     }
 
                     //Print Pressed Keys
-                    /*string UnitsStr2 = "CTRL Key:" + Form1_0.KeyMouse_0.HoldingCTRL.ToString();
+                    /*string UnitsStr2 = "CTRL Key:" + GameData.Instance.keyMouse.HoldingCTRL.ToString();
                     DrawString(e, UnitsStr2, drawFontBold10, drawBrushGreen, 560, 860, true);
 
                     //Show values of the V2 Units Scan
-                    UnitsStr2 = "Shift Key:" + Form1_0.KeyMouse_0.HoldingShift.ToString();
+                    UnitsStr2 = "Shift Key:" + GameData.Instance.keyMouse.HoldingShift.ToString();
                     DrawString(e, UnitsStr2, drawFontBold10, drawBrushGreen, 560, 835, true);
 
                     //Show values of the V1 Units Scan
-                    UnitsStr2 = "ForceMove Key:" + Form1_0.KeyMouse_0.HoldingForceMove.ToString();
+                    UnitsStr2 = "ForceMove Key:" + GameData.Instance.keyMouse.HoldingForceMove.ToString();
                     DrawString(e, UnitsStr2, drawFontBold10, drawBrushGreen, 560, 810, true);*/
                 }
 
@@ -560,15 +560,15 @@ public partial class OverlayForm : Form
                     {
                         for (int i = 0; i < PathFindingPoints.Count - 1; i++)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, PathFindingPoints[i].X, PathFindingPoints[i].Y);
-                            Position itemScreenPosEnd = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, PathFindingPoints[i + 1].X, PathFindingPoints[i + 1].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, PathFindingPoints[i].X, PathFindingPoints[i].Y);
+                            Position itemScreenPosEnd = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, PathFindingPoints[i + 1].X, PathFindingPoints[i + 1].Y);
 
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             System.Drawing.Point EndPoint = new System.Drawing.Point(itemScreenPosEnd.X, itemScreenPosEnd.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             EndPoint = RescaleThisPoint(EndPoint);
 
-                            System.Drawing.Point MidPoint = new System.Drawing.Point(Form1_0.CenterX, Form1_0.CenterY);
+                            System.Drawing.Point MidPoint = new System.Drawing.Point(GameData.Instance.CenterX, GameData.Instance.CenterY);
 
                             //Console.WriteLine("line: " + StartPoint.X + ", " + StartPoint.Y + " to " + EndPoint.X + ", " + EndPoint.Y);
                             if (i == 0) DrawLine(e, redPen, MidPoint, StartPoint, false);
@@ -580,12 +580,12 @@ public partial class OverlayForm : Form
 
                         if (MoveToPoint.X != 0 && MoveToPoint.Y != 0)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, MoveToPoint.X, MoveToPoint.Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, MoveToPoint.X, MoveToPoint.Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             if (PathFindingPoints.Count == 0)
                             {
-                                System.Drawing.Point MidPoint = new System.Drawing.Point(Form1_0.CenterX, Form1_0.CenterY);
+                                System.Drawing.Point MidPoint = new System.Drawing.Point(GameData.Instance.CenterX, GameData.Instance.CenterY);
                                 DrawLine(e, redPen, MidPoint, StartPoint, false);
                             }
                             DrawCrossAtPoint(e, StartPoint, redPen, false);
@@ -604,7 +604,7 @@ public partial class OverlayForm : Form
                                 ThisBrushMobs = drawBrushOrange;
                             }
 
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, MobsPoints[i].X, MobsPoints[i].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, MobsPoints[i].X, MobsPoints[i].Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             DrawCrossAtPoint(e, StartPoint, ThisPenMobs, false);
@@ -619,7 +619,7 @@ public partial class OverlayForm : Form
                     {
                         for (int i = 0; i < NPCPoints.Count; i++)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, NPCPoints[i].X, NPCPoints[i].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, NPCPoints[i].X, NPCPoints[i].Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             DrawCrossAtPoint(e, StartPoint, purplePen, false);
@@ -634,14 +634,14 @@ public partial class OverlayForm : Form
                     {
                         for (int i = 0; i < GoodChestsPoints.Count; i++)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, GoodChestsPoints[i].X, GoodChestsPoints[i].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, GoodChestsPoints[i].X, GoodChestsPoints[i].Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             DrawCrossAtPoint(e, StartPoint, greenPen, false);
 
                             if ((CharConfig.RunMapHackOnly || CharConfig.RunMapHackPickitOnly) && ShowMapHackShowLines)
                             {
-                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(Form1_0.CenterX, Form1_0.CenterY);
+                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(GameData.Instance.CenterX, GameData.Instance.CenterY);
                                 PlayerPoint = RescaleThisPoint(PlayerPoint);
                                 DrawLine(e, greenPen, StartPoint, PlayerPoint, false);
                             }
@@ -652,14 +652,14 @@ public partial class OverlayForm : Form
                     {
                         for (int i = 0; i < WPPoints.Count; i++)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, WPPoints[i].X, WPPoints[i].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, WPPoints[i].X, WPPoints[i].Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             DrawCrossAtPoint(e, StartPoint, bluePen, false);
 
                             if ((CharConfig.RunMapHackOnly || CharConfig.RunMapHackPickitOnly) && ShowMapHackShowLines)
                             {
-                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(Form1_0.CenterX, Form1_0.CenterY);
+                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(GameData.Instance.CenterX, GameData.Instance.CenterY);
                                 PlayerPoint = RescaleThisPoint(PlayerPoint);
                                 DrawLine(e, bluePen, StartPoint, PlayerPoint, false);
                             }
@@ -684,23 +684,23 @@ public partial class OverlayForm : Form
                     {
                         for (int i = 0; i < ExitPoints.Count; i++)
                         {
-                            Position itemScreenPosStart = Form1_0.GameStruc_0.World2ScreenDisplay(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ExitPoints[i].X, ExitPoints[i].Y);
+                            Position itemScreenPosStart = GameData.Instance.gameStruc.World2ScreenDisplay(GameData.Instance.playerScan.xPosFinal, GameData.Instance.playerScan.yPosFinal, ExitPoints[i].X, ExitPoints[i].Y);
                             System.Drawing.Point StartPoint = new System.Drawing.Point(itemScreenPosStart.X, itemScreenPosStart.Y);
                             StartPoint = RescaleThisPoint(StartPoint);
                             DrawCrossAtPoint(e, StartPoint, cyanPen, false);
 
                             if ((CharConfig.RunMapHackOnly || CharConfig.RunMapHackPickitOnly) && ShowMapHackShowLines)
                             {
-                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(Form1_0.CenterX, Form1_0.CenterY);
+                                System.Drawing.Point PlayerPoint = new System.Drawing.Point(GameData.Instance.CenterX, GameData.Instance.CenterY);
                                 PlayerPoint = RescaleThisPoint(PlayerPoint);
 
-                                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CanyonOfTheMagi
+                                if ((Enums.Area)GameData.Instance.playerScan.levelNo == Enums.Area.CanyonOfTheMagi
                                     && ExitPointDuriel.X != 0 && ExitPointDuriel.Y != 0
                                     && ExitPoints[i].X == ExitPointDuriel.X && ExitPoints[i].Y == ExitPointDuriel.Y)
                                 {
                                     DrawLine(e, redPen, StartPoint, PlayerPoint, false);
                                 }
-                                else if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ArcaneSanctuary
+                                else if ((Enums.Area)GameData.Instance.playerScan.levelNo == Enums.Area.ArcaneSanctuary
                                     && ExitPointSummoner.X != 0 && ExitPointSummoner.Y != 0
                                     && ExitPoints[i].X == ExitPointSummoner.X && ExitPoints[i].Y == ExitPointSummoner.Y)
                                 {
@@ -708,16 +708,16 @@ public partial class OverlayForm : Form
                                 }
                                 else
                                 {
-                                    if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.CanyonOfTheMagi)
+                                    if ((Enums.Area)GameData.Instance.playerScan.levelNo == Enums.Area.CanyonOfTheMagi)
                                     {
                                         DrawLine(e, yellowPen, StartPoint, PlayerPoint, false);
                                     }
                                     else
                                     {
-                                        if (ExitIDs[i] > Form1_0.PlayerScan_0.levelNo)
+                                        if (ExitIDs[i] > GameData.Instance.playerScan.levelNo)
                                         {
 
-                                            if (ExitIDs[i] == Form1_0.PlayerScan_0.levelNo + 1)
+                                            if (ExitIDs[i] == GameData.Instance.playerScan.levelNo + 1)
                                             {
                                                 DrawLine(e, redPen, StartPoint, PlayerPoint, false);
                                             }
@@ -728,7 +728,7 @@ public partial class OverlayForm : Form
                                         }
                                         else
                                         {
-                                            if (ExitIDs[i] == Form1_0.PlayerScan_0.levelNo - 1)
+                                            if (ExitIDs[i] == GameData.Instance.playerScan.levelNo - 1)
                                             {
                                                 DrawLine(e, purplePen, StartPoint, PlayerPoint, false);
                                             }
@@ -849,8 +849,8 @@ public partial class OverlayForm : Form
     {
         if (FixPos)
         {
-            PosX = Form1_0.KeyMouse_0.CorrectXPos((int)PosX);
-            PosY = Form1_0.KeyMouse_0.CorrectYPos((int)PosY);
+            PosX = GameData.Instance.keyMouse.CorrectXPos((int)PosX);
+            PosY = GameData.Instance.keyMouse.CorrectYPos((int)PosY);
         }
         e.Graphics.DrawString(ThisTxt, ThisFont, ThisBrush, PosX, PosY);
     }
@@ -859,8 +859,8 @@ public partial class OverlayForm : Form
     {
         if (FixPos)
         {
-            PosX = Form1_0.KeyMouse_0.CorrectXPos((int)PosX);
-            PosY = Form1_0.KeyMouse_0.CorrectYPos((int)PosY);
+            PosX = GameData.Instance.keyMouse.CorrectXPos((int)PosX);
+            PosY = GameData.Instance.keyMouse.CorrectYPos((int)PosY);
         }
         int Remover = 0;
         if (ScaleScreenSize != 1) Remover = 1;
@@ -871,10 +871,10 @@ public partial class OverlayForm : Form
     {
         if (FixPos)
         {
-            StartP.X = Form1_0.KeyMouse_0.CorrectXPos(StartP.X);
-            StartP.Y = Form1_0.KeyMouse_0.CorrectYPos(StartP.Y);
-            EndP.X = Form1_0.KeyMouse_0.CorrectXPos(EndP.X);
-            EndP.Y = Form1_0.KeyMouse_0.CorrectYPos(EndP.Y);
+            StartP.X = GameData.Instance.keyMouse.CorrectXPos(StartP.X);
+            StartP.Y = GameData.Instance.keyMouse.CorrectYPos(StartP.Y);
+            EndP.X = GameData.Instance.keyMouse.CorrectXPos(EndP.X);
+            EndP.Y = GameData.Instance.keyMouse.CorrectYPos(EndP.Y);
         }
         e.Graphics.DrawLine(ThisPen, StartP, EndP);
     }
@@ -894,8 +894,8 @@ public partial class OverlayForm : Form
 
     public System.Drawing.Point RescaleThisPoint(System.Drawing.Point ThisssPoint)
     {
-        ThisssPoint.X = ((ThisssPoint.X - Form1_0.CenterX) / Scale) + Form1_0.CenterX;
-        ThisssPoint.Y = ((ThisssPoint.Y - Form1_0.CenterY) / Scale) + Form1_0.CenterY;
+        ThisssPoint.X = ((ThisssPoint.X - GameData.Instance.CenterX) / Scale) + GameData.Instance.CenterX;
+        ThisssPoint.Y = ((ThisssPoint.Y - GameData.Instance.CenterY) / Scale) + GameData.Instance.CenterY;
 
         return ThisssPoint;
     }

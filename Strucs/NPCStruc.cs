@@ -10,7 +10,7 @@ using static System.Diagnostics.DebuggableAttribute;
 
 public class NPCStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
     public long NPCPointerLocation = 0;
     public byte[] NPCdatastruc = new byte[144];
     public uint txtFileNo = 0;
@@ -24,30 +24,24 @@ public class NPCStruc
     public ushort xPosFinal_Overlay = 0;
     public ushort yPosFinal_Overlay = 0;
 
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public List<int> NPC_IDs = new List<int>();
 
     public List<int[]> GetAllNPCNearby()
     {
-        Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
+        gameData.patternsScan.scanForUnitsPointer("NPC");
 
         List<int[]> npcPositions2 = new List<int[]>();
         NPC_IDs = new List<int>();
 
         try
         {
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 NPCPointerLocation = ThisCurrentPointer.Key;
                 if (NPCPointerLocation > 0)
                 {
                     NPCdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(NPCPointerLocation, ref NPCdatastruc, 144);
+                    gameData.mem.ReadRawMemory(NPCPointerLocation, ref NPCdatastruc, 144);
 
                     uint txtFileNoO = BitConverter.ToUInt32(NPCdatastruc, 4);
                     GetUnitPathDataOverlay();
@@ -57,10 +51,10 @@ public class NPCStruc
                     {
                         /*if (DebuggingMobs)
                         {
-                            Form1_0.AppendTextDebugMobs("ID:" + txtFileNoO + "(" + Form1_0.NPCStruc_0.getNPC_ID((int)txtFileNoO) + ") at:" + xPosFinal + ", " + yPosFinal + " - HP:" + MobsHP + Environment.NewLine);
+                            gameData.AppendTextDebugMobs("ID:" + txtFileNoO + "(" + gameData.npcStruc.getNPC_ID((int)txtFileNoO) + ") at:" + xPosFinal + ", " + yPosFinal + " - HP:" + MobsHP + Environment.NewLine);
                         }*/
 
-                        //Console.WriteLine("found near mob " + Form1_0.NPCStruc_0.getNPC_ID((int)txtFileNoO) + " at: " + xPosFinal + ", " + yPosFinal + " HP:" + MobsHP);
+                        //Console.WriteLine("found near mob " + gameData.npcStruc.getNPC_ID((int)txtFileNoO) + " at: " + xPosFinal + ", " + yPosFinal + " HP:" + MobsHP);
 
                         if (xPosFinal_Overlay != 0 && yPosFinal_Overlay != 0)
                         {
@@ -73,7 +67,7 @@ public class NPCStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetAllNPCNearby()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetAllNPCNearby()'", Color.OrangeRed);
         }
 
         return npcPositions2;
@@ -84,7 +78,7 @@ public class NPCStruc
         pPathPtr = BitConverter.ToInt64(NPCdatastruc, 0x38);
         //pPath = new byte[144];
         pPath = new byte[0x08];
-        Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
 
         ushort itemx2 = BitConverter.ToUInt16(pPath, 0x02);
         ushort itemy2 = BitConverter.ToUInt16(pPath, 0x06);
@@ -101,15 +95,15 @@ public class NPCStruc
         try
         {
             txtFileNo = 0;
-            Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
+            gameData.patternsScan.scanForUnitsPointer("NPC");
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 NPCPointerLocation = ThisCurrentPointer.Key;
                 if (NPCPointerLocation > 0)
                 {
                     NPCdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(NPCPointerLocation, ref NPCdatastruc, 144);
+                    gameData.mem.ReadRawMemory(NPCPointerLocation, ref NPCdatastruc, 144);
 
                     txtFileNo = BitConverter.ToUInt32(NPCdatastruc, 4);
                     GetUnitPathData();
@@ -127,7 +121,7 @@ public class NPCStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetNPC()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetNPC()'", Color.OrangeRed);
         }
 
         return false;
@@ -138,7 +132,7 @@ public class NPCStruc
         pPathPtr = BitConverter.ToInt64(NPCdatastruc, 0x38);
         //pPath = new byte[144];
         pPath = new byte[0x08];
-        Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
 
         itemx = BitConverter.ToUInt16(pPath, 0x02);
         itemy = BitConverter.ToUInt16(pPath, 0x06);
@@ -149,7 +143,7 @@ public class NPCStruc
         xPosFinal = (ushort)(itemx + xPosOffsetPercent);
         yPosFinal = (ushort)(itemy + yPosOffsetPercent);
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpItempPathStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpItempPathStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, pPath);
     }

@@ -7,20 +7,13 @@ using System.Threading.Tasks;
 using static Enums;
 using static MapAreaStruc;
 
-public class Pit
+public class Pit : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public List<int> IgnoredChestList = new List<int>();
     public bool HasTakenAnyChest = false;
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -32,38 +25,39 @@ public class Pit
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.BlackMarsh) CurrentStep = 1;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.TamoeHighland) CurrentStep = 2;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.PitLevel1) CurrentStep = 3;
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.PitLevel2) CurrentStep = 4;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.BlackMarsh) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.TamoeHighland) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.PitLevel1) CurrentStep = 3;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.PitLevel2) CurrentStep = 4;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 1; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(1, 4);
+            gameData.townStruc.GoToWPArea(1, 4);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING CRYPT");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING CRYPT");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.BlackMarsh)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.BlackMarsh)
                 {
                     CurrentStep++;
                 }
@@ -72,67 +66,67 @@ public class Pit
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
 
             if (CurrentStep == 1)
             {
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.TamoeHighland)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.TamoeHighland)
                 {
                     CurrentStep++;
                     return;
                 }
 
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.TamoeHighland);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.TamoeHighland);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.PitLevel1)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.PitLevel1)
                 {
                     CurrentStep++;
                     return;
                 }
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.BlackMarsh)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.BlackMarsh)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.PitLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.PitLevel1);
                 CurrentStep++;
             }
 
             if (CurrentStep == 3) 
             {
                 //####
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.TamoeHighland)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.TamoeHighland)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                Form1_0.SetGameStatus("CLEARING PIT LVL1");
-                if ((Enums.Area)Form1_0.Battle_0.AreaIDFullyCleared != Enums.Area.PitLevel1)
+                gameData.SetGameStatus("CLEARING PIT LVL1");
+                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != Enums.Area.PitLevel1)
                 {
-                    Form1_0.Battle_0.ClearFullAreaOfMobs();
+                    gameData.battle.ClearFullAreaOfMobs();
 
-                    if (!Form1_0.Battle_0.ClearingArea)
+                    if (!gameData.battle.ClearingArea)
                     {
-                        Form1_0.PathFinding_0.MoveToExit(Enums.Area.PitLevel2);
+                        gameData.pathFinding.MoveToExit(Enums.Area.PitLevel2);
                         CurrentStep++;
                     }
                 }
                 else
                 {
-                    Form1_0.PathFinding_0.MoveToExit(Enums.Area.PitLevel2);
+                    gameData.pathFinding.MoveToExit(Enums.Area.PitLevel2);
                     CurrentStep++;
                 }
             }
@@ -140,30 +134,30 @@ public class Pit
             if (CurrentStep == 4)
             {
                 //####
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.PitLevel1)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.PitLevel1)
                 {
-                    Form1_0.PathFinding_0.MoveToExit(Enums.Area.PitLevel2);
+                    gameData.pathFinding.MoveToExit(Enums.Area.PitLevel2);
                     return;
                 }
                 //####
 
-                Form1_0.SetGameStatus("CLEARING PIT LVL2");
-                if ((Enums.Area)Form1_0.Battle_0.AreaIDFullyCleared != Enums.Area.PitLevel2)
+                gameData.SetGameStatus("CLEARING PIT LVL2");
+                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != Enums.Area.PitLevel2)
                 {
-                    Form1_0.Battle_0.ClearFullAreaOfMobs();
+                    gameData.battle.ClearFullAreaOfMobs();
 
-                    if (!Form1_0.Battle_0.ClearingArea)
+                    if (!gameData.battle.ClearingArea)
                     {
                         TakeChest((int)(Enums.Area.PitLevel2));
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.UseLastTP = false;
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.UseLastTP = false;
                         ScriptDone = true;
                     }
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                 }
             }
@@ -183,47 +177,47 @@ public class Pit
 
         //JungleMediumChestLeft ####
 
-        MapAreaStruc.Position ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
-        int ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+        MapAreaStruc.Position ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
+        int ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
         int Tryy = 0;
         while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
         {
-            if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+            if (!gameData.Running || !gameData.gameStruc.IsInGame())
             {
                 ScriptDone = true;
                 return;
             }
 
-            if (Form1_0.Mover_0.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
+            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
             {
                 HasTakenAnyChest = true;
 
-                Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
 
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
 
                 int tryy2 = 0;
-                while (Form1_0.ItemsStruc_0.GetItems(true) && tryy2 < 20)
+                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
                 {
-                    Form1_0.PlayerScan_0.GetPositions();
-                    Form1_0.ItemsStruc_0.GetItems(false);
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.playerScan.GetPositions();
+                    gameData.itemsStruc.GetItems(false);
+                    gameData.potions.CheckIfWeUsePotion();
                     tryy2++;
                 }
                 IgnoredChestList.Add(ChestObject);
             }
 
-            ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
-            ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
+            ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
 
             Tryy++;
         }
 
-        if (!HasTakenAnyChest) Form1_0.MapAreaStruc_0.DumpMap();
+        if (!HasTakenAnyChest) gameData.mapAreaStruc.DumpMap();
     }
 }

@@ -18,7 +18,7 @@ using static MapAreaStruc;
 
 public class ItemsStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public string quality = "";
     public bool identified = false;
@@ -85,26 +85,21 @@ public class ItemsStruc
 
     public bool AlreadyEmptyedInventory = false;
 
-    public void SetForm1(Form1 Form1_1)
-    {
-        Form1_0 = Form1_1;
-    }
-
     public void GetStatsAddr()
     {
         pStatsListExPtr = BitConverter.ToInt64(itemdatastruc, 0x88);
 
         /*pStatB = new byte[180];
-        Form1_0.Mem_0.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
+        gameData.mem.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
         statPtr = BitConverter.ToInt64(pStatB, 0x30);
         statCount = BitConverter.ToUInt32(pStatB, 0x38);
         statExPtr = BitConverter.ToInt64(pStatB, 0x88);
         statExCount = BitConverter.ToUInt32(pStatB, 0x90);*/
 
-        statPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
-        statCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
-        statExPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
-        statExCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
+        statPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
+        statCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
+        statExPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
+        statExCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
 
         //reset bad array size
         if (statCount > 50) statCount = 0;
@@ -113,7 +108,7 @@ public class ItemsStruc
         if (this.statCount > 0 && this.statCount < 100)
         {
             statBuffer = new byte[this.statCount * 10];
-            Form1_0.Mem_0.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
+            gameData.mem.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
         }
         else
         {
@@ -122,7 +117,7 @@ public class ItemsStruc
         if (this.statExCount > 0 && this.statExCount < 100)
         {
             statBufferEx = new byte[this.statExCount * 10];
-            Form1_0.Mem_0.ReadRawMemory(this.statExPtr, ref statBufferEx, (int)(this.statExCount * 10));
+            gameData.mem.ReadRawMemory(this.statExPtr, ref statBufferEx, (int)(this.statExCount * 10));
         }
         else
         {
@@ -131,7 +126,7 @@ public class ItemsStruc
 
         SetNumSockets();
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpItempStatStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpItempStatStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, statBuffer);
     }
@@ -141,29 +136,29 @@ public class ItemsStruc
         pUnitDataPtr = BitConverter.ToInt64(itemdatastruc, 0x10);
 
         pUnitData = new byte[0x56];
-        Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr, ref pUnitData, pUnitData.Length);
+        gameData.mem.ReadRawMemory(pUnitDataPtr, ref pUnitData, pUnitData.Length);
         /*itemQuality = BitConverter.ToUInt32(pUnitData, 0x00);
         setQuality((int)itemQuality);
         //uint SeedL = BitConverter.ToUInt32(pUnitData, 0x04);
         //uint SeedH = BitConverter.ToUInt32(pUnitData, 0x08);
         dwOwnerId = BitConverter.ToUInt32(pUnitData, 0x0c);
         flags = BitConverter.ToUInt32(pUnitData, 0x18);
-        Form1_0.ItemsFlags_0.calculateFlags(flags);
+        gameData.itemsFlags.calculateFlags(flags);
         //uint uniqueOrSetId = BitConverter.ToUInt32(pUnitData, 0x34);
         equiploc = pUnitData[0x55];*/
 
-        itemQuality = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x00));
+        itemQuality = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x00));
         setQuality((int)itemQuality);
-        //uint SeedL = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x04));
-        //uint SeedH = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x08));
-        dwOwnerId = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x0c));
-        flags = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x18));
-        Form1_0.ItemsFlags_0.calculateFlags(flags);
-        //uint uniqueOrSetId = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x34));
-        equiploc = Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x55));
-        itemLoc = Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x54));
+        //uint SeedL = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x04));
+        //uint SeedH = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x08));
+        dwOwnerId = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x0c));
+        flags = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x18));
+        gameData.itemsFlags.calculateFlags(flags);
+        //uint uniqueOrSetId = gameData.mem.ReadUInt32Raw((IntPtr)(pUnitDataPtr + 0x34));
+        equiploc = gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x55));
+        itemLoc = gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x54));
 
-        //byte Thb = Form1_0.Mem_0.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x04));
+        //byte Thb = gameData.mem.ReadByteRaw((IntPtr)(pUnitDataPtr + 0x04));
         //Console.WriteLine(ItemNAAME + ", class: " + Thb.ToString("X"));
 
         /*0 = INVPAGE_INVENTORY
@@ -186,7 +181,7 @@ public class ItemsStruc
         *	0C = lalt
         */
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpItempUnitDataStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpItempUnitDataStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, pUnitData);
     }
@@ -195,7 +190,7 @@ public class ItemsStruc
     {
         string AllFlags = "";
 
-        if (Form1_0.ItemsStruc_0.identified)
+        if (gameData.itemsStruc.identified)
         {
             if (AllFlags != "") AllFlags += " && ";
             AllFlags += "[Flag] == identified";
@@ -205,12 +200,12 @@ public class ItemsStruc
             if (AllFlags != "") AllFlags += " && ";
             AllFlags += "[Flag] == unidentified";
         }
-        if (Form1_0.ItemsStruc_0.isSocketed)
+        if (gameData.itemsStruc.isSocketed)
         {
             if (AllFlags != "") AllFlags += " && ";
             AllFlags += "[Flag] == socketed";
         }
-        if (Form1_0.ItemsStruc_0.ethereal)
+        if (gameData.itemsStruc.ethereal)
         {
             if (AllFlags != "") AllFlags += " && ";
             AllFlags += "[Flag] == ethereal";
@@ -223,13 +218,13 @@ public class ItemsStruc
     {
         pPathPtr = BitConverter.ToInt64(itemdatastruc, 0x38);
         //pPath = new byte[0x16];
-        //Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        //gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
         //itemx = BitConverter.ToUInt16(pPath, 0x10);
         //itemy = BitConverter.ToUInt16(pPath, 0x14);
-        itemx = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pPathPtr + 0x10));
-        itemy = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pPathPtr + 0x14));
+        itemx = gameData.mem.ReadUInt16Raw((IntPtr)(pPathPtr + 0x10));
+        itemy = gameData.mem.ReadUInt16Raw((IntPtr)(pPathPtr + 0x14));
 
-        /*string SavePathh = Form1_0.ThisEndPath + "DumpItempPathStruc";
+        /*string SavePathh = gameData.ThisEndPath + "DumpItempPathStruc";
         File.Create(SavePathh).Dispose();
         File.WriteAllBytes(SavePathh, pPath);*/
     }
@@ -240,9 +235,9 @@ public class ItemsStruc
         if (ItemPointerLocation > 0)
         {
             itemdatastruc = new byte[144];
-            Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+            gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
-            ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
+            ItemNAAME = gameData.itemsNames.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
             txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
             GetUnitData();
             GetUnitPathData();
@@ -254,27 +249,27 @@ public class ItemsStruc
     {
         try
         {
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            gameData.patternsScan.scanForUnitsPointer("item");
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
                     ItemsScanned++;
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
                     txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
                     GetUnitData();
                     GetUnitPathData();
                     GetStatsAddr();
 
-                    //Form1_0.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
+                    //gameData.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
                     //; itemLoc - 0 in inventory, 1 equipped, 2 in belt, 3 on ground, 4 cursor, 5 dropping, 6 socketed
                     if (itemdatastruc[0x0C] == 0)
                     {
-                        if (dwOwnerId != Form1_0.PlayerScan_0.unitId)
+                        if (dwOwnerId != gameData.playerScan.unitId)
                         {
                             if (equiploc <= 3)
                             {
@@ -290,7 +285,7 @@ public class ItemsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetShopItem()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetShopItem()'", Color.OrangeRed);
         }
 
         return false;
@@ -298,7 +293,7 @@ public class ItemsStruc
 
     public void DebugItems()
     {
-        Form1_0.ClearDebugItems();
+        gameData.form.ClearDebugItems();
 
         AllItemsOnCursor = new List<string>();
         AllItemsInInventory = new List<string>();
@@ -318,37 +313,37 @@ public class ItemsStruc
         DebuggingItems = false;
 
         string CurrentAllItemsText = "";
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 1) for (int i = 0; i < AllItemsOnCursor.Count; i++) CurrentAllItemsText += AllItemsOnCursor[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 2) for (int i = 0; i < AllItemsInInventory.Count; i++) CurrentAllItemsText += AllItemsInInventory[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 3) for (int i = 0; i < AllItemsInStash.Count; i++) CurrentAllItemsText += AllItemsInStash[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 4) for (int i = 0; i < AllItemsInSharedStash1.Count; i++) CurrentAllItemsText += AllItemsInSharedStash1[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 5) for (int i = 0; i < AllItemsInSharedStash2.Count; i++) CurrentAllItemsText += AllItemsInSharedStash2[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 6) for (int i = 0; i < AllItemsInSharedStash3.Count; i++) CurrentAllItemsText += AllItemsInSharedStash3[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 7) for (int i = 0; i < AllItemsIncube.Count; i++) CurrentAllItemsText += AllItemsIncube[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 8) for (int i = 0; i < AllItemsEquipped.Count; i++) CurrentAllItemsText += AllItemsEquipped[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 9) for (int i = 0; i < AllItemsInBelt.Count; i++) CurrentAllItemsText += AllItemsInBelt[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 10) for (int i = 0; i < AllItemsOnGround.Count; i++) CurrentAllItemsText += AllItemsOnGround[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 11) for (int i = 0; i < AllItemsInShop.Count; i++) CurrentAllItemsText += AllItemsInShop[i] + Environment.NewLine;
-        if (Form1_0.comboBoxItemsCategory.SelectedIndex == 0 || Form1_0.comboBoxItemsCategory.SelectedIndex == 12) for (int i = 0; i < AllItemsOthers.Count; i++) CurrentAllItemsText += AllItemsOthers[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 1) for (int i = 0; i < AllItemsOnCursor.Count; i++) CurrentAllItemsText += AllItemsOnCursor[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 2) for (int i = 0; i < AllItemsInInventory.Count; i++) CurrentAllItemsText += AllItemsInInventory[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 3) for (int i = 0; i < AllItemsInStash.Count; i++) CurrentAllItemsText += AllItemsInStash[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 4) for (int i = 0; i < AllItemsInSharedStash1.Count; i++) CurrentAllItemsText += AllItemsInSharedStash1[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 5) for (int i = 0; i < AllItemsInSharedStash2.Count; i++) CurrentAllItemsText += AllItemsInSharedStash2[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 6) for (int i = 0; i < AllItemsInSharedStash3.Count; i++) CurrentAllItemsText += AllItemsInSharedStash3[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 7) for (int i = 0; i < AllItemsIncube.Count; i++) CurrentAllItemsText += AllItemsIncube[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 8) for (int i = 0; i < AllItemsEquipped.Count; i++) CurrentAllItemsText += AllItemsEquipped[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 9) for (int i = 0; i < AllItemsInBelt.Count; i++) CurrentAllItemsText += AllItemsInBelt[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 10) for (int i = 0; i < AllItemsOnGround.Count; i++) CurrentAllItemsText += AllItemsOnGround[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 11) for (int i = 0; i < AllItemsInShop.Count; i++) CurrentAllItemsText += AllItemsInShop[i] + Environment.NewLine;
+        if (gameData.form.comboBoxItemsCategory.SelectedIndex == 0 || gameData.form.comboBoxItemsCategory.SelectedIndex == 12) for (int i = 0; i < AllItemsOthers.Count; i++) CurrentAllItemsText += AllItemsOthers[i] + Environment.NewLine;
 
         if (CurrentAllItemsText != AllItemsText && CurrentAllItemsText != "")
         {
             AllItemsText = CurrentAllItemsText;
-            Form1_0.AppendTextDebugItems(AllItemsText);
+            gameData.form.AppendTextDebugItems(AllItemsText);
         }
     }
 
     public string GetItemsStashInfosTxt()
     {
         string ThisInfos = ", StashItem:";
-        if (Form1_0.ItemsAlert_0.ShouldKeepItem()) ThisInfos += "true";
+        if (gameData.itemsAlert.ShouldKeepItem()) ThisInfos += "true";
         else ThisInfos += "false";
 
         ThisInfos += ", ItemToID:";
-        if (Form1_0.ItemsAlert_0.ShouldPickItem(false)) ThisInfos += "true";
+        if (gameData.itemsAlert.ShouldPickItem(false)) ThisInfos += "true";
         else ThisInfos += "false";
 
-        //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ", StashItem:" + InventoryHasStashItem[FullIndex] + ", ItemToID:" + InventoryHasItemToID[FullIndex] + ", UnidItem:" + InventoryHasUnidItem[FullIndex]);
+        //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ", StashItem:" + InventoryHasStashItem[FullIndex] + ", ItemToID:" + InventoryHasItemToID[FullIndex] + ", UnidItem:" + InventoryHasUnidItem[FullIndex]);
         return ThisInfos;
     }
 
@@ -380,19 +375,19 @@ public class ItemsStruc
     {
         try
         {
-            if (!Form1_0.GameStruc_0.IsInGame()) return false;
+            if (!gameData.gameStruc.IsInGame()) return false;
 
             //dead leave game
-            if (Form1_0.PlayerScan_0.PlayerDead || Form1_0.Potions_0.ForceLeave)
+            if (gameData.playerScan.PlayerDead || gameData.potions.ForceLeave)
             {
-                Form1_0.Potions_0.ForceLeave = true;
-                Form1_0.BaalLeech_0.SearchSameGamesAsLastOne = false;
-                Form1_0.LeaveGame(false);
-                Form1_0.IncreaseDeadCount();
+                gameData.potions.ForceLeave = true;
+                gameData.baalLeech.SearchSameGamesAsLastOne = false;
+                gameData.LeaveGame(false);
+                gameData.form.IncreaseDeadCount();
                 return false;
             }
 
-            //Form1_0.SetGameStatus("SCANING ITEMS");
+            //gameData.SetGameStatus("SCANING ITEMS");
             ItemsScanned = 0;
             ItemsOnGround = 0;
             ItemsEquiped = 0;
@@ -400,21 +395,21 @@ public class ItemsStruc
             ItemsInBelt = 0;
             if (!IsPickingItem)
             {
-                Form1_0.Repair_0.ShouldRepair = false;
-                Form1_0.BeltStruc_0.BeltHaveItems = new int[16];
-                Form1_0.BeltStruc_0.BeltItemsTypes = new int[16];
-                Form1_0.BeltStruc_0.HPQuantity = 0;
-                Form1_0.BeltStruc_0.ManyQuantity = 0;
-                Form1_0.InventoryStruc_0.ResetInventory();
-                Form1_0.PlayerScan_0.HPFromEquippedItems = 0;
-                Form1_0.PlayerScan_0.ManaFromEquippedItems = 0;
-                Form1_0.PlayerScan_0.VitalityFromEquippedItems = 0;
-                Form1_0.PlayerScan_0.EnergyFromEquippedItems = 0;
-                Form1_0.PlayerScan_0.HPPercentFromEquippedItems = 0;
-                Form1_0.PlayerScan_0.ManaPercentFromEquippedItems = 0;
-                Form1_0.StashStruc_0.ResetStashInventory();
-                Form1_0.Cubing_0.ResetCubeInventory();
-                Form1_0.InventoryStruc_0.HasIDTome = false;
+                gameData.repair.ShouldRepair = false;
+                gameData.beltStruc.BeltHaveItems = new int[16];
+                gameData.beltStruc.BeltItemsTypes = new int[16];
+                gameData.beltStruc.HPQuantity = 0;
+                gameData.beltStruc.ManyQuantity = 0;
+                gameData.inventoryStruc.ResetInventory();
+                gameData.playerScan.HPFromEquippedItems = 0;
+                gameData.playerScan.ManaFromEquippedItems = 0;
+                gameData.playerScan.VitalityFromEquippedItems = 0;
+                gameData.playerScan.EnergyFromEquippedItems = 0;
+                gameData.playerScan.HPPercentFromEquippedItems = 0;
+                gameData.playerScan.ManaPercentFromEquippedItems = 0;
+                gameData.stashStruc.ResetStashInventory();
+                gameData.cubing.ResetCubeInventory();
+                gameData.inventoryStruc.HasIDTome = false;
                 ItemOnCursor = false;
                 ItemOnCursorName = "";
             }
@@ -423,25 +418,25 @@ public class ItemsStruc
                 if (TriesToPickItemCount >= CharConfig.MaxItemGrabTries) return false;
             }
 
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
+            gameData.patternsScan.scanForUnitsPointer("item");
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
                     ItemsScanned++;
                     txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
                     uint ItemID = BitConverter.ToUInt32(itemdatastruc, 8);
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(txtFileNo);
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(txtFileNo);
                     GetUnitData();
                     GetUnitPathData();
                     GetStatsAddr();
 
-                    //Form1_0.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
+                    //gameData.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
                     //; itemLoc - 0 in inventory, 1 equipped, 2 in belt, 3 on ground, 4 cursor, 5 dropping, 6 socketed
 
                     if (itemdatastruc[0x0C] == 4)
@@ -450,7 +445,7 @@ public class ItemsStruc
                         {
                             if (ItemNAAME != "Horadric Cube")
                             {
-                                Form1_0.method_1("Added bad item 'OnCursor':" + ItemNAAME, Color.OrangeRed);
+                                gameData.method_1("Added bad item 'OnCursor':" + ItemNAAME, Color.OrangeRed);
                                 BadItemsOnCursorIDList.Add(ItemPointerLocation);
                             }
                         }
@@ -458,57 +453,57 @@ public class ItemsStruc
                         {
                             if (ItemNAAME == "Short Sword")
                             {
-                                Form1_0.method_1("Added bad item 'OnCursor':" + ItemNAAME, Color.OrangeRed);
+                                gameData.method_1("Added bad item 'OnCursor':" + ItemNAAME, Color.OrangeRed);
                                 BadItemsOnCursorIDList.Add(ItemPointerLocation);
                                 continue;
                             }
 
                             ItemOnCursor = true;
                             ItemOnCursorName = ItemNAAME;
-                            //Form1_0.method_1("cursor: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.BlueViolet);
+                            //gameData.method_1("cursor: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.BlueViolet);
 
                             if (DebuggingItems)
                             {
-                                AllItemsOnCursor.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - On Cursor - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsOnCursor.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - On Cursor - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
                     }
 
                     if (itemdatastruc[0x0C] == 0)
                     {
-                        if (dwOwnerId == Form1_0.PlayerScan_0.unitId && equiploc == 0)
+                        if (dwOwnerId == gameData.playerScan.unitId && equiploc == 0)
                         {
                             ItemsInInventory++;
 
-                            //Form1_0.method_1("inv: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.Red);
+                            //gameData.method_1("inv: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.Red);
                             if (!IsPickingItem)
                             {
-                                Form1_0.PlayerScan_0.GetHPAndManaOnThisEquippedItem();
-                                Form1_0.InventoryStruc_0.SetInventoryItem();
-                                Form1_0.InventoryStruc_0.SetHUDItem();
+                                gameData.playerScan.GetHPAndManaOnThisEquippedItem();
+                                gameData.inventoryStruc.SetInventoryItem();
+                                gameData.inventoryStruc.SetHUDItem();
                             }
 
                             if (DebuggingItems)
                             {
-                                AllItemsInInventory.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Inventory - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsInInventory.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Inventory - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
 
-                        else if (dwOwnerId == Form1_0.PlayerScan_0.unitId && equiploc == 4)
+                        else if (dwOwnerId == gameData.playerScan.unitId && equiploc == 4)
                         {
                             //here for items in stash
-                            //Form1_0.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.DarkGreen);
-                            Form1_0.StashStruc_0.AddStashItem(itemx, itemy, 1);
+                            //gameData.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.DarkGreen);
+                            gameData.stashStruc.AddStashItem(itemx, itemy, 1);
 
                             if (DebuggingItems)
                             {
-                                AllItemsInStash.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Stash - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsInStash.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Stash - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
-                        else if (dwOwnerId != Form1_0.PlayerScan_0.unitId && equiploc == 4)
+                        else if (dwOwnerId != gameData.playerScan.unitId && equiploc == 4)
                         {
                             //here for items in shared stash
-                            //Form1_0.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + dwOwnerId, Color.DarkGreen);
+                            //gameData.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + dwOwnerId, Color.DarkGreen);
                             SetSharedStashOwner();
                             if (dwOwnerId_Shared1 != 0 && dwOwnerId_Shared2 != 0 && dwOwnerId_Shared3 != 0)
                             {
@@ -516,93 +511,93 @@ public class ItemsStruc
                                 if (dwOwnerId == dwOwnerId_Shared1) StashNum = 2;
                                 if (dwOwnerId == dwOwnerId_Shared2) StashNum = 3;
                                 if (dwOwnerId == dwOwnerId_Shared3) StashNum = 4;
-                                Form1_0.StashStruc_0.AddStashItem(itemx, itemy, StashNum);
+                                gameData.stashStruc.AddStashItem(itemx, itemy, StashNum);
 
-                                if (dwOwnerId == dwOwnerId_Shared1 && DebuggingItems) AllItemsInSharedStash1.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash1 - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
-                                if (dwOwnerId == dwOwnerId_Shared2 && DebuggingItems) AllItemsInSharedStash2.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash2 - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
-                                if (dwOwnerId == dwOwnerId_Shared3 && DebuggingItems) AllItemsInSharedStash3.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash3 - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                if (dwOwnerId == dwOwnerId_Shared1 && DebuggingItems) AllItemsInSharedStash1.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash1 - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                if (dwOwnerId == dwOwnerId_Shared2 && DebuggingItems) AllItemsInSharedStash2.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash2 - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                if (dwOwnerId == dwOwnerId_Shared3 && DebuggingItems) AllItemsInSharedStash3.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shared Stash3 - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
-                        else if (dwOwnerId == Form1_0.PlayerScan_0.unitId && equiploc == 3)
+                        else if (dwOwnerId == gameData.playerScan.unitId && equiploc == 3)
                         {
                             //here for items in cube
-                            //Form1_0.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.DarkGreen);
-                            Form1_0.Cubing_0.AddCubeItem(itemx, itemy);
+                            //gameData.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.DarkGreen);
+                            gameData.cubing.AddCubeItem(itemx, itemy);
 
                             if (DebuggingItems)
                             {
-                                AllItemsIncube.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Cube - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsIncube.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Cube - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
-                        else if (dwOwnerId != Form1_0.PlayerScan_0.unitId && equiploc <= 3)
+                        else if (dwOwnerId != gameData.playerScan.unitId && equiploc <= 3)
                         {
                             //Shop Items
                             if (DebuggingItems)
                             {
-                                AllItemsInShop.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shop - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsInShop.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shop - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
-                        /*else if (dwOwnerId != Form1_0.PlayerScan_0.unitId && equiploc == 0)
+                        /*else if (dwOwnerId != gameData.playerScan.unitId && equiploc == 0)
                         {
                             //Shop Gamble Items
                             if (DebuggingItems)
                             {
-                                AllItemsInShop.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shop(Gamble) - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsInShop.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Shop(Gamble) - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }*/
                         else
                         {
-                            AllItemsOthers.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - Others - EquipLocation:" + equiploc + " - SelfOwner:" + (dwOwnerId == Form1_0.PlayerScan_0.unitId) + " - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                            AllItemsOthers.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - Others - EquipLocation:" + equiploc + " - SelfOwner:" + (dwOwnerId == gameData.playerScan.unitId) + " - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                         }
                     }
                     if (itemdatastruc[0x0C] == 1)
                     {
-                        if (dwOwnerId == Form1_0.PlayerScan_0.unitId && equiploc == 255)
+                        if (dwOwnerId == gameData.playerScan.unitId && equiploc == 255)
                         {
-                            //Form1_0.method_1("inv: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.Red);
+                            //gameData.method_1("inv: " + ItemNAAME + " - at: " + itemx + "," + itemy, Color.Red);
 
                             ItemsEquiped++;
                             if (!IsPickingItem)
                             {
-                                Form1_0.PlayerScan_0.GetHPAndManaOnThisEquippedItem();
-                                Form1_0.Repair_0.GetDurabilityOnThisEquippedItem();
+                                gameData.playerScan.GetHPAndManaOnThisEquippedItem();
+                                gameData.repair.GetDurabilityOnThisEquippedItem();
                             }
-                            //Form1_0.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + equiploc, Color.DarkGreen);
+                            //gameData.method_1("name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + equiploc, Color.DarkGreen);
 
                             if (DebuggingItems)
                             {
-                                AllItemsEquipped.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - Equipped - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsEquipped.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - Equipped - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
 
                             /*if (ItemNAAME == "Crusader Gauntlets")
                             {
-                                string SavePathh = Form1_0.ThisEndPath + "DumpItempUnitDataStruc";
+                                string SavePathh = gameData.ThisEndPath + "DumpItempUnitDataStruc";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, pUnitData);
                             }*/
                         }
                         else
                         {
-                            /*if (dwOwnerId != 0 && Form1_0.MercStruc_0.MercOwnerID == 0)
+                            /*if (dwOwnerId != 0 && gameData.mercStruc.MercOwnerID == 0)
                             {
-                                //Form1_0.MercStruc_0.MercOwnerID = ItemID;
-                                Form1_0.method_1("owner: " + dwOwnerId.ToString("X") + ", ID: " + ItemID.ToString("X") + ", name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + equiploc, Color.DarkGreen);
+                                //gameData.mercStruc.MercOwnerID = ItemID;
+                                gameData.method_1("owner: " + dwOwnerId.ToString("X") + ", ID: " + ItemID.ToString("X") + ", name: " + ItemNAAME + " - at: " + itemx + "," + itemy + " - " + equiploc, Color.DarkGreen);
                             }*/
                         }
                     }
                     if (itemdatastruc[0x0C] == 2)
                     {
-                        if (dwOwnerId == Form1_0.PlayerScan_0.unitId)
+                        if (dwOwnerId == gameData.playerScan.unitId)
                         {
                             ItemsInBelt++;
                             if (!IsPickingItem)
                             {
-                                Form1_0.BeltStruc_0.AddBeltItem(UsePotionNotInRightSpot);
+                                gameData.beltStruc.AddBeltItem(UsePotionNotInRightSpot);
                             }
 
                             if (DebuggingItems)
                             {
-                                AllItemsInBelt.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Belt - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                                AllItemsInBelt.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - In Belt - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                             }
                         }
                     }
@@ -611,10 +606,10 @@ public class ItemsStruc
                     {
                         ItemsOnGround++;
 
-                        //Form1_0.method_1_Items("Ground: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
+                        //gameData.method_1_Items("Ground: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
                         if (DebuggingItems)
                         {
-                            AllItemsOnGround.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - On Ground/Droping - " + Form1_0.ItemsAlert_0.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
+                            AllItemsOnGround.Add("ID:" + txtFileNo + "(" + ItemNAAME + ") at:" + itemx + ", " + itemy + " - On Ground/Droping - " + gameData.itemsAlert.GetItemTypeText() + " && " + GetQualityTextString() + " && " + GetAllFlagsFromItem() + " && " + GetAllValuesFromStats() + GetItemsStashInfosTxt());
                         }
 
                         if (!IsPickingItem) continue;
@@ -627,20 +622,20 @@ public class ItemsStruc
                             }
                         }
 
-                        Form1_0.UIScan_0.readUI();
-                        if (Form1_0.UIScan_0.leftMenu || Form1_0.UIScan_0.rightMenu || Form1_0.UIScan_0.fullMenu) continue;
+                        gameData.uiScan.readUI();
+                        if (gameData.uiScan.leftMenu || gameData.uiScan.rightMenu || gameData.uiScan.fullMenu) continue;
 
-                        if ((Form1_0.ItemsAlert_0.ShouldPickItem(false) || Form1_0.BeltStruc_0.ItemGrabPotion()))
+                        if ((gameData.itemsAlert.ShouldPickItem(false) || gameData.beltStruc.ItemGrabPotion()))
                         {
-                            /*string SavePathh = Form1_0.ThisEndPath + "DumpItempPathStruc";
+                            /*string SavePathh = gameData.ThisEndPath + "DumpItempPathStruc";
                             File.Create(SavePathh).Dispose();
                             File.WriteAllBytes(SavePathh, itemdatastruc);*/
 
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                             if (ShouldPickPos(itemScreenPos))
                             {
-                                int DiffXPlayer = itemx - Form1_0.PlayerScan_0.xPosFinal;
-                                int DiffYPlayer = itemy - Form1_0.PlayerScan_0.yPosFinal;
+                                int DiffXPlayer = itemx - gameData.playerScan.xPosFinal;
+                                int DiffYPlayer = itemy - gameData.playerScan.yPosFinal;
                                 if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                                 if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -654,11 +649,11 @@ public class ItemsStruc
                                 {
                                     if (DiffXPlayer > 4 || DiffYPlayer > 4)
                                     {
-                                        //Form1_0.Mover_0.MoveToLocation(itemx, itemy); //slow move
-                                        Form1_0.Mover_0.MoveToLocationAttack(itemx, itemy); //fast move
-                                        Form1_0.PlayerScan_0.GetPositions();
+                                        //gameData.mover.MoveToLocation(itemx, itemy); //slow move
+                                        gameData.mover.MoveToLocationAttack(itemx, itemy); //fast move
+                                        gameData.playerScan.GetPositions();
                                         GetUnitPathData();
-                                        itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                                        itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                                     }
                                 }
 
@@ -670,14 +665,14 @@ public class ItemsStruc
                                 {
                                     if (!BadItemsOnGroundPointerList.ContainsKey(ItemPointerLocation.ToString()))
                                     {
-                                        Form1_0.method_1("Added bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
+                                        gameData.method_1("Added bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
                                         BadItemsOnGroundPointerList.Add(ItemPointerLocation.ToString(), true);
                                         continue;
                                     }
                                 }
                                 if (BadItemsOnGroundPointerList.ContainsKey(ItemPointerLocation.ToString()))
                                 {
-                                    //Form1_0.method_1("Avoided bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
+                                    //gameData.method_1("Avoided bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
                                     continue;
                                 }
                                 //##############################################
@@ -685,16 +680,16 @@ public class ItemsStruc
 
                                 //####
                                 TriesToPickItemCount++;
-                                Form1_0.KeyMouse_0.PressKeyHold(CharConfig.KeyForceMovement);
-                                //Form1_0.KeyMouse_0.MouseMoveTo_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y); //clic twice??
-                                Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
+                                gameData.keyMouse.PressKeyHold(CharConfig.KeyForceMovement);
+                                //gameData.keyMouse.MouseMoveTo_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y); //clic twice??
+                                gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
 
                                 if (ItemNAAME != LastPick)
                                 {
                                     LastPick = ItemNAAME;
-                                    Form1_0.method_1_Items("Picked: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
+                                    gameData.form.method_1_Items("Picked: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
 
                                     //##############################################
                                     //##############################################
@@ -704,7 +699,7 @@ public class ItemsStruc
                                     {
                                         if (!BadItemsOnGroundPointerList.ContainsKey(ItemPointerLocation.ToString()))
                                         {
-                                            Form1_0.method_1("Added bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
+                                            gameData.method_1("Added bad item 'OnGround':" + ItemNAAME, Color.OrangeRed);
                                             BadItemsOnGroundPointerList.Add(ItemPointerLocation.ToString(), true);
                                             continue;
                                         }
@@ -712,29 +707,29 @@ public class ItemsStruc
                                     //##############################################
                                     //##############################################
 
-                                    Form1_0.BeltStruc_0.CheckForMissingPotions();
-                                    /*Form1_0.BeltStruc_0.ItemIsPotion();
-                                    if (Form1_0.BeltStruc_0.IsItemHPPotion
-                                        || Form1_0.BeltStruc_0.IsItemManaPotion
-                                        || Form1_0.BeltStruc_0.IsItemRVPotion
-                                        || Form1_0.BeltStruc_0.IsItemFullRVPotion)
+                                    gameData.beltStruc.CheckForMissingPotions();
+                                    /*gameData.beltStruc.ItemIsPotion();
+                                    if (gameData.beltStruc.IsItemHPPotion
+                                        || gameData.beltStruc.IsItemManaPotion
+                                        || gameData.beltStruc.IsItemRVPotion
+                                        || gameData.beltStruc.IsItemFullRVPotion)
                                     {
-                                        Form1_0.BeltStruc_0.CheckForMissingPotions();
+                                        gameData.beltStruc.CheckForMissingPotions();
                                     }*/
                                 }
 
                                 //after a lot of try picking item, inventory might be full, dump bad item to ground
                                 if (TriesToPickItemCount >= 7)
                                 {
-                                    Form1_0.InventoryStruc_0.DumpBadItemsOnGround();
+                                    gameData.inventoryStruc.DumpBadItemsOnGround();
                                 }
 
                                 //after a lot of try picking item, inventory might be full, go to town
                                 if (TriesToPickItemCount >= CharConfig.MaxItemGrabTries)
                                 {
-                                    Form1_0.InventoryStruc_0.DumpBadItemsOnGround();
+                                    gameData.inventoryStruc.DumpBadItemsOnGround();
                                     TriesToPickItemCount = CharConfig.MaxItemGrabTries;
-                                    Form1_0.Town_0.GoToTown();
+                                    gameData.townStruc.GoToTown();
                                     IsGrabbingItemOnGround = false;
                                     return false;
                                 }
@@ -746,7 +741,7 @@ public class ItemsStruc
                         {
                             if (!IsItemPickingPotion() && !AvoidItemsOnGroundPointerList.ContainsKey(ItemPointerLocation.ToString()))
                             {
-                                //Form1_0.method_1("Added avoid item 'OnGround':" + ItemNAAME, Color.OrangeRed);
+                                //gameData.method_1("Added avoid item 'OnGround':" + ItemNAAME, Color.OrangeRed);
                                 AvoidItemsOnGroundPointerList.Add(ItemPointerLocation.ToString(), true);
                             }
                         }
@@ -757,13 +752,13 @@ public class ItemsStruc
             if (IsPickingItem) TriesToPickItemCount = 0; //nothing to pick!
             if (IsPickingItem) IsGrabbingItemOnGround = false;
             if (IsPickingItem) AlreadyEmptyedInventory = false;
-            //Form1_0.method_1("-----", Color.Black);
+            //gameData.method_1("-----", Color.Black);
 
             return false;
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetItems()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetItems()'", Color.OrangeRed);
         }
         return false;
     }
@@ -772,56 +767,56 @@ public class ItemsStruc
     {
         try
         {
-            if (!Form1_0.GameStruc_0.IsInGame()) return false;
+            if (!gameData.gameStruc.IsInGame()) return false;
 
             //dead leave game
-            if (Form1_0.PlayerScan_0.PlayerDead || Form1_0.Potions_0.ForceLeave)
+            if (gameData.playerScan.PlayerDead || gameData.potions.ForceLeave)
             {
-                Form1_0.Potions_0.ForceLeave = true;
-                Form1_0.BaalLeech_0.SearchSameGamesAsLastOne = false;
-                Form1_0.LeaveGame(false);
-                Form1_0.IncreaseDeadCount();
+                gameData.potions.ForceLeave = true;
+                gameData.baalLeech.SearchSameGamesAsLastOne = false;
+                gameData.LeaveGame(false);
+                gameData.form.IncreaseDeadCount();
                 return false;
             }
 
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            gameData.patternsScan.scanForUnitsPointer("item");
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
                     ItemsScanned++;
                     txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
                     uint ItemID = BitConverter.ToUInt32(itemdatastruc, 8);
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(txtFileNo);
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(txtFileNo);
                     GetUnitData();
                     GetUnitPathData();
                     GetStatsAddr();
 
-                    //Form1_0.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
+                    //gameData.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
                     //; itemLoc - 0 in inventory, 1 equipped, 2 in belt, 3 on ground, 4 cursor, 5 dropping, 6 socketed
                     if (itemdatastruc[0x0C] == ItemLocation)
                     {
                         bool CanGo = true;
                         if (itemdatastruc[0x0C] == 0)
                         {
-                            if (dwOwnerId != 0 && dwOwnerId == Form1_0.PlayerScan_0.unitId && Thisequiploc == equiploc)
+                            if (dwOwnerId != 0 && dwOwnerId == gameData.playerScan.unitId && Thisequiploc == equiploc)
                             {
                                 if (!InventoryItem) CanGo = false;
                             }
                         }
 
-                        if (InventoryItem && dwOwnerId != Form1_0.PlayerScan_0.unitId) CanGo = false;
+                        if (InventoryItem && dwOwnerId != gameData.playerScan.unitId) CanGo = false;
                         if (Thisequiploc != equiploc) CanGo = false;
 
                         if (((ItemName != "" && ItemNAAME == ItemName) || ItemName == "") && CanGo)
                         {
                             if (itemx == PositionX && itemy == PositionY)
                             {
-                                //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME);
+                                //Console.WriteLine(gameData.itemsStruc.ItemNAAME);
                                 return true;
                             }
                         }
@@ -833,7 +828,7 @@ public class ItemsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetSpecificItem()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetSpecificItem()'", Color.OrangeRed);
         }
         return false;
     }
@@ -842,55 +837,55 @@ public class ItemsStruc
     {
         try
         {
-            if (!Form1_0.GameStruc_0.IsInGame()) return false;
+            if (!gameData.gameStruc.IsInGame()) return false;
 
             //dead leave game
-            if (Form1_0.PlayerScan_0.PlayerDead || Form1_0.Potions_0.ForceLeave)
+            if (gameData.playerScan.PlayerDead || gameData.potions.ForceLeave)
             {
-                Form1_0.Potions_0.ForceLeave = true;
-                Form1_0.BaalLeech_0.SearchSameGamesAsLastOne = false;
-                Form1_0.LeaveGame(false);
-                Form1_0.IncreaseDeadCount();
+                gameData.potions.ForceLeave = true;
+                gameData.baalLeech.SearchSameGamesAsLastOne = false;
+                gameData.LeaveGame(false);
+                gameData.form.IncreaseDeadCount();
                 return false;
             }
 
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            gameData.patternsScan.scanForUnitsPointer("item");
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
                     ItemsScanned++;
                     txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
                     uint ItemID = BitConverter.ToUInt32(itemdatastruc, 8);
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(txtFileNo);
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(txtFileNo);
                     GetUnitData();
                     GetUnitPathData();
                     GetStatsAddr();
 
-                    //Form1_0.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
+                    //gameData.method_1("ItemType: " + BitConverter.ToUInt32(itemdatastruc, 0).ToString() + ", TxtFileNo: " + BitConverter.ToUInt32(itemdatastruc, 4).ToString() + ", Name: " + ItemNAAME + ", Location: " + GetItemLocation(itemdatastruc[0x0C]));
                     //; itemLoc - 0 in inventory, 1 equipped, 2 in belt, 3 on ground, 4 cursor, 5 dropping, 6 socketed
                     if (itemdatastruc[0x0C] == 0)
                     {
-                        if (dwOwnerId != Form1_0.PlayerScan_0.unitId && equiploc <= 3)
+                        if (dwOwnerId != gameData.playerScan.unitId && equiploc <= 3)
                         {
-                            //if (Form1_0.ItemsAlert_0.ShouldPickItem(true))
-                            if (Form1_0.ItemsAlert_0.ShouldPickItem(false))
+                            //if (gameData.itemsAlert.ShouldPickItem(true))
+                            if (gameData.itemsAlert.ShouldPickItem(false))
                             {
-                                if (equiploc == 0) Form1_0.KeyMouse_0.MouseClicc(220, 200);   //clic shop1
-                                if (equiploc == 1) Form1_0.KeyMouse_0.MouseClicc(350, 200);   //clic shop2
-                                if (equiploc == 2) Form1_0.KeyMouse_0.MouseClicc(475, 200);   //clic shop3
-                                if (equiploc == 3) Form1_0.KeyMouse_0.MouseClicc(600, 200);   //clic shop4
-                                Form1_0.WaitDelay(15);
+                                if (equiploc == 0) gameData.keyMouse.MouseClicc(220, 200);   //clic shop1
+                                if (equiploc == 1) gameData.keyMouse.MouseClicc(350, 200);   //clic shop2
+                                if (equiploc == 2) gameData.keyMouse.MouseClicc(475, 200);   //clic shop3
+                                if (equiploc == 3) gameData.keyMouse.MouseClicc(600, 200);   //clic shop4
+                                gameData.WaitDelay(15);
 
-                                Dictionary<string, int> itemScreenPos = Form1_0.Shop_0.ConvertShopLocToScreenPos(Form1_0.ItemsStruc_0.itemx, Form1_0.ItemsStruc_0.itemy);
-                                Form1_0.KeyMouse_0.MouseCliccRight(itemScreenPos["x"], itemScreenPos["y"]);
-                                Form1_0.WaitDelay(15);
+                                Dictionary<string, int> itemScreenPos = gameData.shop.ConvertShopLocToScreenPos(gameData.itemsStruc.itemx, gameData.itemsStruc.itemy);
+                                gameData.keyMouse.MouseCliccRight(itemScreenPos["x"], itemScreenPos["y"]);
+                                gameData.WaitDelay(15);
 
-                                Form1_0.Town_0.Towning = true;
+                                gameData.townStruc.Towning = true;
                             }
                         }
                     }
@@ -901,7 +896,7 @@ public class ItemsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'ShopBotGetPurchaseItems()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'ShopBotGetPurchaseItems()'", Color.OrangeRed);
         }
         return false;
     }
@@ -910,8 +905,8 @@ public class ItemsStruc
     {
         bool IsItemPickingPotion = false;
 
-        string ThisItemName = Form1_0.ItemsStruc_0.ItemNAAME.Replace(" ", "");
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsPotions)
+        string ThisItemName = gameData.itemsStruc.ItemNAAME.Replace(" ", "");
+        foreach (var ThisDir in gameData.itemsAlert.PickItemsPotions)
         {
             if (ThisItemName == Regex.Replace(ThisDir.Key.Replace(" ", ""), @"[\d-]", string.Empty) && ThisDir.Value)
             {
@@ -949,30 +944,30 @@ public class ItemsStruc
     {
         try
         {
-            if (!Form1_0.GameStruc_0.IsInGame()) return false;
+            if (!gameData.gameStruc.IsInGame()) return false;
 
             //dead leave game
-            if (Form1_0.PlayerScan_0.PlayerDead || Form1_0.Potions_0.ForceLeave)
+            if (gameData.playerScan.PlayerDead || gameData.potions.ForceLeave)
             {
-                Form1_0.Potions_0.ForceLeave = true;
-                Form1_0.BaalLeech_0.SearchSameGamesAsLastOne = false;
-                Form1_0.LeaveGame(false);
-                Form1_0.IncreaseDeadCount();
+                gameData.potions.ForceLeave = true;
+                gameData.baalLeech.SearchSameGamesAsLastOne = false;
+                gameData.LeaveGame(false);
+                gameData.form.IncreaseDeadCount();
                 return false;
             }
 
-            Form1_0.PlayerScan_0.GetPositions();
+            gameData.playerScan.GetPositions();
 
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            gameData.patternsScan.scanForUnitsPointer("item");
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
 
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
                     txtFileNo = BitConverter.ToUInt32(itemdatastruc, 4);
                     GetUnitData();
                     GetUnitPathData();
@@ -981,14 +976,14 @@ public class ItemsStruc
                     //; on ground, dropping
                     if (itemdatastruc[0x0C] == 3 || itemdatastruc[0x0C] == 5)
                     {
-                        Form1_0.UIScan_0.readUI();
-                        if (ItemNAAME == ThisItemName && (!Form1_0.UIScan_0.leftMenu && !Form1_0.UIScan_0.rightMenu && !Form1_0.UIScan_0.fullMenu))
+                        gameData.uiScan.readUI();
+                        if (ItemNAAME == ThisItemName && (!gameData.uiScan.leftMenu && !gameData.uiScan.rightMenu && !gameData.uiScan.fullMenu))
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                             if (ShouldPickPos(itemScreenPos))
                             {
-                                int DiffXPlayer = itemx - Form1_0.PlayerScan_0.xPosFinal;
-                                int DiffYPlayer = itemy - Form1_0.PlayerScan_0.yPosFinal;
+                                int DiffXPlayer = itemx - gameData.playerScan.xPosFinal;
+                                int DiffYPlayer = itemy - gameData.playerScan.yPosFinal;
                                 if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                                 if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -1003,29 +998,29 @@ public class ItemsStruc
 
                                     if (DiffXPlayer > 4 || DiffYPlayer > 4)
                                     {
-                                        Form1_0.Mover_0.MoveToLocation(itemx, itemy);
-                                        Form1_0.PlayerScan_0.GetPositions();
+                                        gameData.mover.MoveToLocation(itemx, itemy);
+                                        gameData.playerScan.GetPositions();
                                         GetUnitPathData();
-                                        itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                                        itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                                     }
                                 }
                                 //####
 
                                 TriesToPickItemCount++;
-                                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
 
                                 if (ItemNAAME != LastPick)
                                 {
                                     LastPick = ItemNAAME;
-                                    Form1_0.method_1_Items("Picked: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
+                                    gameData.form.method_1_Items("Picked: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
                                 }
 
                                 //after a lot of try picking item, inventory might be full, go to town
                                 if (TriesToPickItemCount >= CharConfig.MaxItemGrabTries)
                                 {
                                     TriesToPickItemCount = 0;
-                                    Form1_0.Town_0.GoToTown();
+                                    gameData.townStruc.GoToTown();
                                     return false;
                                 }
                                 return true;
@@ -1041,7 +1036,7 @@ public class ItemsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'PickThisItem()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'PickThisItem()'", Color.OrangeRed);
         }
 
         return false;
@@ -1071,14 +1066,14 @@ public class ItemsStruc
         int TryGrabCount = 0;
         int ItemsGrabbed = 0;
 
-        if (Form1_0.ItemsStruc_0.ItemsEquiped <= 2) return;
+        if (gameData.itemsStruc.ItemsEquiped <= 2) return;
 
-        Form1_0.method_1("Grabbing all items for gold", Color.BlueViolet);
-        Form1_0.WaitDelay(5);
+        gameData.method_1("Grabbing all items for gold", Color.BlueViolet);
+        gameData.WaitDelay(5);
 
         while (true)
         {
-            Form1_0.PlayerScan_0.GetPositions();
+            gameData.playerScan.GetPositions();
             if (!GrabItemsForGold())
             {
                 break;
@@ -1112,16 +1107,16 @@ public class ItemsStruc
     {
         try
         {
-            Form1_0.PatternsScan_0.scanForUnitsPointer("item");
+            gameData.patternsScan.scanForUnitsPointer("item");
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllItemsPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllItemsPointers)
             {
                 ItemPointerLocation = ThisCurrentPointer.Key;
                 if (ItemPointerLocation > 0)
                 {
                     itemdatastruc = new byte[144];
-                    Form1_0.Mem_0.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
-                    ItemNAAME = Form1_0.ItemsNames_0.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
+                    gameData.mem.ReadRawMemory(ItemPointerLocation, ref itemdatastruc, 144);
+                    ItemNAAME = gameData.itemsNames.getItemBaseName(BitConverter.ToUInt32(itemdatastruc, 4));
                     GetUnitData();
                     GetUnitPathData();
                     GetStatsAddr();
@@ -1129,15 +1124,15 @@ public class ItemsStruc
                     //; on ground, dropping
                     if (itemdatastruc[0x0C] == 3 || itemdatastruc[0x0C] == 5)
                     {
-                        Form1_0.UIScan_0.readUI();
-                        if (!Form1_0.UIScan_0.leftMenu && !Form1_0.UIScan_0.rightMenu && !Form1_0.UIScan_0.fullMenu)
+                        gameData.uiScan.readUI();
+                        if (!gameData.uiScan.leftMenu && !gameData.uiScan.rightMenu && !gameData.uiScan.fullMenu)
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                             if (ShouldPickPos(itemScreenPos))
                             {
                                 //####
-                                int DiffXPlayer = itemx - Form1_0.PlayerScan_0.xPosFinal;
-                                int DiffYPlayer = itemy - Form1_0.PlayerScan_0.yPosFinal;
+                                int DiffXPlayer = itemx - gameData.playerScan.xPosFinal;
+                                int DiffYPlayer = itemy - gameData.playerScan.yPosFinal;
                                 if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                                 if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -1149,19 +1144,19 @@ public class ItemsStruc
                                 if (DiffXPlayer > 4
                                     || DiffYPlayer > 4)
                                 {
-                                    Form1_0.Mover_0.MoveToLocation(itemx, itemy);
-                                    Form1_0.PlayerScan_0.GetPositions();
+                                    gameData.mover.MoveToLocation(itemx, itemy);
+                                    gameData.playerScan.GetPositions();
                                     GetUnitPathData();
-                                    itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, itemx, itemy);
+                                    itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, itemx, itemy);
                                 }
                                 //####
 
-                                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
 
                                 if (ItemNAAME != LastPick)
                                 {
                                     LastPick = ItemNAAME;
-                                    Form1_0.method_1("Grabbed for gold: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
+                                    gameData.method_1("Grabbed for gold: " + ItemNAAME, GetColorFromQuality((int)itemQuality));
                                 }
                                 return true;
                             }
@@ -1172,7 +1167,7 @@ public class ItemsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GrabItemsForGold()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GrabItemsForGold()'", Color.OrangeRed);
         }
 
         return false;
@@ -1180,7 +1175,7 @@ public class ItemsStruc
 
     public bool ShouldPickPos(Position itemScreenPos)
     {
-        if (CharConfig.UseTeleport && !Form1_0.Town_0.GetInTown())
+        if (CharConfig.UseTeleport && !gameData.townStruc.GetInTown())
         {
             if (itemScreenPos.X > 0 && itemScreenPos.Y > 0) return true;
             return false;
@@ -1188,8 +1183,8 @@ public class ItemsStruc
         }
         else
         {
-            if (itemScreenPos.X > 0 && itemScreenPos.X < Form1_0.ScreenX
-                && itemScreenPos.Y > 0 && itemScreenPos.Y < (Form1_0.ScreenY - Form1_0.ScreenYMenu))
+            if (itemScreenPos.X > 0 && itemScreenPos.X < gameData.ScreenX
+                && itemScreenPos.Y > 0 && itemScreenPos.Y < (gameData.ScreenY - gameData.ScreenYMenu))
             {
                 return true;
             }
@@ -1229,7 +1224,7 @@ public class ItemsStruc
                 if (AllStats != "") AllStats += " && ";
                 if (GetCustomStatsName(statEnum, statLayer) != "") AllStats += "[" + ((Enums.Attribute)statEnum) + "-" + GetCustomStatsName(statEnum, statLayer) + "] == " + statValue;
                 else AllStats += "[" + ((Enums.Attribute)statEnum) + "] == " + statValue;
-                //Form1_0.method_1("Item: " + ItemNAAME + ", Stat (" + ((Enums.Attribute) statEnum) + "):" + statValue, Color.Red);
+                //gameData.method_1("Item: " + ItemNAAME + ", Stat (" + ((Enums.Attribute) statEnum) + "):" + statValue, Color.Red);
             }
         }
 
@@ -1253,7 +1248,7 @@ public class ItemsStruc
                 if (AllStats != "") AllStats += " && ";
                 if (GetCustomStatsName(statEnum, statLayer) != "") AllStats += "[" + ((Enums.Attribute)statEnum) + "-" + GetCustomStatsName(statEnum, statLayer) + "] == " + statValue;
                 else AllStats += "[" + ((Enums.Attribute)statEnum) + "] == " + statValue;
-                //Form1_0.method_1("Item: " + ItemNAAME + ", Stat (" + ((Enums.Attribute)statEnum) + "):" + statValue, Color.Red);
+                //gameData.method_1("Item: " + ItemNAAME + ", Stat (" + ((Enums.Attribute)statEnum) + "):" + statValue, Color.Red);
             }
         }
 
@@ -1493,7 +1488,7 @@ public class ItemsStruc
         }
         else
         {
-            Form1_0.method_1("Error Stat '" + StatName + "' doesn't exist!", Color.Red);
+            gameData.method_1("Error Stat '" + StatName + "' doesn't exist!", Color.Red);
         }
 
         return 0; //no identical stats found, return true by default
@@ -1560,7 +1555,7 @@ public class ItemsStruc
         }
         else
         {
-            Form1_0.method_1("Error Stat '" + StatName + "' doesn't exist!", Color.Red);
+            gameData.method_1("Error Stat '" + StatName + "' doesn't exist!", Color.Red);
         }
 
         return false; //no identical stats found, return true by default

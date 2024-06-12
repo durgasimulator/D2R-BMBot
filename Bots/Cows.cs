@@ -6,23 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class Cows
+public class Cows : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position TristramPos = new Position { X = 0, Y = 0 };
 
     public bool HasWirtsLeg = false;
     public bool HadWirtsLeg = false;
 
     public bool HadTomeOfPortal = false;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -37,39 +31,40 @@ public class Cows
     {
         if (HadTomeOfPortal)
         {
-            if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.MooMooFarm) CurrentStep = 1;
+            if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.MooMooFarm) CurrentStep = 1;
         }
         else
         {
-            if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.StonyField) CurrentStep = 1;
-            if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.Tristram) CurrentStep = 3;
+            if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.StonyField) CurrentStep = 1;
+            if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.Tristram) CurrentStep = 3;
         }
     }
 
     public void RunScriptTristam()
     {
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        gameData = GameData.Instance;
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(1, 2);
+            gameData.townStruc.GoToWPArea(1, 2);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING TRISTRAM");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING TRISTRAM");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.StonyField)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.StonyField)
                 {
                     CurrentStep++;
                 }
@@ -78,26 +73,26 @@ public class Cows
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
 
             if (CurrentStep == 1)
             {
-                TristramPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "CairnStoneAlpha", (int)Enums.Area.StonyField, new List<int>());
+                TristramPos = gameData.mapAreaStruc.GetPositionOfObject("object", "CairnStoneAlpha", (int)Enums.Area.StonyField, new List<int>());
                 if (TristramPos.X != 0 && TristramPos.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(TristramPos);
+                    gameData.pathFinding.MoveToThisPos(TristramPos);
 
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.method_1("Tristram location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.method_1("Tristram location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
                 }
@@ -105,21 +100,21 @@ public class Cows
 
             if (CurrentStep == 2)
             {
-                Form1_0.SetGameStatus("Tristram waiting for Tristram portal");
+                gameData.SetGameStatus("Tristram waiting for Tristram portal");
 
-                Form1_0.Battle_0.DoBattleScript(5);
+                gameData.battle.DoBattleScript(5);
 
-                if (Form1_0.ObjectsStruc_0.GetObjects("PermanentTownPortal", true, new List<uint>(), 60))
+                if (gameData.objectsStruc.GetObjects("PermanentTownPortal", true, new List<uint>(), 60))
                 {
-                    Form1_0.Mover_0.MoveToLocation(Form1_0.ObjectsStruc_0.itemx, Form1_0.ObjectsStruc_0.itemy);
+                    gameData.mover.MoveToLocation(gameData.objectsStruc.itemx, gameData.objectsStruc.itemy);
 
-                    Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, Form1_0.ObjectsStruc_0.itemx, Form1_0.ObjectsStruc_0.itemy);
+                    Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, gameData.objectsStruc.itemx, gameData.objectsStruc.itemy);
 
-                    Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                    Form1_0.WaitDelay(20);
+                    gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                    gameData.WaitDelay(20);
                 }
 
-                if (Form1_0.PlayerScan_0.levelNo == (int)Enums.Area.Tristram)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.Tristram)
                 {
                     CurrentStep++;
                 }
@@ -127,30 +122,30 @@ public class Cows
 
             if (CurrentStep == 3)
             {
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.StonyField)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.StonyField)
                 {
                     CurrentStep--;
                     return;
                 }
 
-                Form1_0.SetGameStatus("Doing Tristram");
+                gameData.SetGameStatus("Doing Tristram");
 
-                Form1_0.PathFinding_0.MoveToObject("WirtCorpse");
+                gameData.pathFinding.MoveToObject("WirtCorpse");
 
-                if (Form1_0.ObjectsStruc_0.GetObjects("WirtCorpse", true, new List<uint>()))
+                if (gameData.objectsStruc.GetObjects("WirtCorpse", true, new List<uint>()))
                 {
-                    if (Form1_0.Mover_0.MoveToLocation(Form1_0.ObjectsStruc_0.itemx, Form1_0.ObjectsStruc_0.itemy))
+                    if (gameData.mover.MoveToLocation(gameData.objectsStruc.itemx, gameData.objectsStruc.itemy))
                     {
-                        Form1_0.InventoryStruc_0.DumpBadItemsOnGround();
+                        gameData.inventoryStruc.DumpBadItemsOnGround();
 
                         //repeat clic on WirtCorpse
                         int tryyy = 0;
                         while (tryyy <= 7)
                         {
-                            Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, Form1_0.ObjectsStruc_0.itemx, Form1_0.ObjectsStruc_0.itemy);
+                            Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, gameData.objectsStruc.itemx, gameData.objectsStruc.itemy);
 
-                            Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                            Form1_0.WaitDelay(4);
+                            gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                            gameData.WaitDelay(4);
                             tryyy++;
                         }
 
@@ -162,23 +157,23 @@ public class Cows
             if (CurrentStep == 4)
             {
                 //take leg
-                HasWirtsLeg = Form1_0.InventoryStruc_0.HasInventoryItemName("Wirt's Leg");
+                HasWirtsLeg = gameData.inventoryStruc.HasInventoryItemName("Wirt's Leg");
                 DateTime TimeSinceTakingLeg = DateTime.Now;
                 while (!HasWirtsLeg && (DateTime.Now - TimeSinceTakingLeg).TotalSeconds < 2)
                 {
-                    Form1_0.ItemsStruc_0.PickThisItem("Wirt's Leg");
-                    Form1_0.ItemsStruc_0.GetItems(false); //get inventory
-                    HasWirtsLeg = Form1_0.InventoryStruc_0.HasInventoryItemName("Wirt's Leg");
+                    gameData.itemsStruc.PickThisItem("Wirt's Leg");
+                    gameData.itemsStruc.GetItems(false); //get inventory
+                    HasWirtsLeg = gameData.inventoryStruc.HasInventoryItemName("Wirt's Leg");
                 }
 
                 if (HasWirtsLeg)
                 {
                     HadWirtsLeg = true;
                     CurrentStep = 0; //go to next script for cow
-                    Form1_0.Town_0.UseLastTP = false;
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.Towning = true;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.Towning = true;
+                    gameData.townStruc.GoToTown();
                 }
                 else
                 {
@@ -190,39 +185,39 @@ public class Cows
 
     public void RunScriptCow()
     {
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO SHOP");
+            gameData.SetGameStatus("GO TO SHOP");
             CurrentStep = 0;
 
-            bool HasTownPortal = Form1_0.InventoryStruc_0.HasInventoryItemName("Tome of Town Portal", true);
+            bool HasTownPortal = gameData.inventoryStruc.HasInventoryItemName("Tome of Town Portal", true);
             if (!HasTownPortal && !HadTomeOfPortal)
             {
                 //buy tome of portal in store
-                Form1_0.Shop_0.ShopForTomeOfPortal = true;
-                Form1_0.Town_0.MoveToStore();
+                gameData.shop.ShopForTomeOfPortal = true;
+                gameData.townStruc.MoveToStore();
             }
             else
             {
                 HadTomeOfPortal = true;
 
-                if (Form1_0.ObjectsStruc_0.GetObjects("PermanentTownPortal", true, new List<uint>()))
+                if (gameData.objectsStruc.GetObjects("PermanentTownPortal", true, new List<uint>()))
                 {
-                    Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, Form1_0.ObjectsStruc_0.itemx, Form1_0.ObjectsStruc_0.itemy);
+                    Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, gameData.objectsStruc.itemx, gameData.objectsStruc.itemy);
 
-                    Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                    Form1_0.WaitDelay(100);
+                    gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                    gameData.WaitDelay(100);
                 }
                 else
                 {
                     //move to stash to create portal by cubing it
-                    Form1_0.Town_0.MoveToStash(true);
+                    gameData.townStruc.MoveToStash(true);
                 }
             }
         }
@@ -230,11 +225,11 @@ public class Cows
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING COWS");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING COWS");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.MooMooFarm)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.MooMooFarm)
                 {
                     CurrentStep++;
                 }
@@ -244,29 +239,29 @@ public class Cows
                     //Console.WriteLine("step shoul be 0: " + CurrentStep);
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
 
             if (CurrentStep == 1)
             {
-                if ((Enums.Area)Form1_0.Battle_0.AreaIDFullyCleared != Enums.Area.MooMooFarm)
+                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != Enums.Area.MooMooFarm)
                 {
-                    Form1_0.Battle_0.ClearFullAreaOfMobs();
+                    gameData.battle.ClearFullAreaOfMobs();
 
-                    if (!Form1_0.Battle_0.ClearingArea)
+                    if (!gameData.battle.ClearingArea)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.UseLastTP = false;
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.UseLastTP = false;
                         ScriptDone = true;
                     }
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                 }
             }
@@ -275,23 +270,24 @@ public class Cows
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 1; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        Form1_0.ItemsStruc_0.GetItems(false); //get inventory
-        HasWirtsLeg = Form1_0.InventoryStruc_0.HasInventoryItemName("Wirt's Leg", true);
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.MooMooFarm) HasWirtsLeg = true;
+        gameData.itemsStruc.GetItems(false); //get inventory
+        HasWirtsLeg = gameData.inventoryStruc.HasInventoryItemName("Wirt's Leg", true);
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.MooMooFarm) HasWirtsLeg = true;
 
         if (HasWirtsLeg) HadWirtsLeg = true;
 
         if (HasWirtsLeg || HadWirtsLeg)
         {
-            if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.Tristram) RunScriptTristam();
+            if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.Tristram) RunScriptTristam();
             else RunScriptCow();
         }
         else

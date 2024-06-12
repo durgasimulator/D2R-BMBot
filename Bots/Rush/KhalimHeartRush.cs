@@ -6,21 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class Act3Sewers : IBot
+public class KhalimHeartRush : IBot
 {
     GameData gameData;
+
     public int CurrentStep = 0;
-    public List<int> IgnoredChestList = new List<int>();
     public bool ScriptDone { get; set; } = false;
-    public bool HasTakenAnyChest = false;
     public Position ChestPos = new Position { X = 0, Y = 0 };
 
 
     public void ResetVars()
     {
         CurrentStep = 0;
-        IgnoredChestList = new List<int>();
         ScriptDone = false;
+    }
+
+    public void DetectCurrentStep()
+    {
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.KurastBazaar) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel1Act3) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SewersLevel2Act3) CurrentStep = 3;
     }
 
     public void RunScript()
@@ -45,28 +50,29 @@ public class Act3Sewers : IBot
         {
             if (CurrentStep == 0)
             {
-                gameData.SetGameStatus("DOING A3 SEWERS");
-                gameData.battle.CastDefense();
-                gameData.WaitDelay(15);
+                gameData.SetGameStatus("DOING KAHLIM HEART");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
                 if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.KurastBazaar)
                 {
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
                 else
                 {
-                    gameData.townStruc.FastTowning = false;
-                    gameData.townStruc.GoToTown();
+                    DetectCurrentStep();
+                    if (CurrentStep == 0)
+                    {
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
+                    }
                 }
             }
 
             if (CurrentStep == 1)
-            {
-                TakeChest(Enums.Area.KurastBazaar);
-                CurrentStep++;
-            }
-
-            if (CurrentStep == 2)
             {
                 //####
                 if (gameData.playerScan.levelNo == (int)Enums.Area.SewersLevel1Act3)
@@ -80,25 +86,7 @@ public class Act3Sewers : IBot
                 CurrentStep++;
             }
 
-            if (CurrentStep == 3)
-            {
-                //####
-                if (gameData.playerScan.levelNo == (int)Enums.Area.SewersLevel2Act3)
-                {
-                    CurrentStep++;
-                    return;
-                }
-                if (gameData.playerScan.levelNo != (int)Enums.Area.SewersLevel1Act3)
-                {
-                    CurrentStep--;
-                    return;
-                }
-                //####
-                TakeChest(Enums.Area.SewersLevel1Act3);
-                CurrentStep++;
-            }
-
-            if (CurrentStep == 4)
+            if (CurrentStep == 2)
             {
                 //####
                 if (gameData.playerScan.levelNo == (int)Enums.Area.SewersLevel2Act3)
@@ -151,7 +139,7 @@ public class Act3Sewers : IBot
                 CurrentStep++;
             }
 
-            if (CurrentStep == 5)
+            if (CurrentStep == 3)
             {
                 //####
                 if (gameData.playerScan.levelNo != (int)Enums.Area.SewersLevel2Act3)
@@ -160,74 +148,81 @@ public class Act3Sewers : IBot
                     return;
                 }
                 //####
-                TakeChest(Enums.Area.SewersLevel2Act3);
-                CurrentStep++;
+
+                ChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "KhalimChest1", (int)Enums.Area.SewersLevel2Act3, new List<int>());
+                if (ChestPos.X != 0 && ChestPos.Y != 0)
+                {
+                    gameData.pathFinding.MoveToThisPos(ChestPos);
+
+                    //repeat clic on chest
+                    int tryyy = 0;
+                    while (tryyy <= 25)
+                    {
+                        Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ChestPos.X, ChestPos.Y);
+
+                        gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                        gameData.playerScan.GetPositions();
+                        tryyy++;
+                    }
+
+                    CurrentStep++;
+                }
+                else
+                {
+                    gameData.method_1("Kahlim Heart Chest location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
+                    ScriptDone = true;
+                    return;
+                }
+            }
+
+            if (CurrentStep == 4)
+            {
+                if (!gameData.battle.DoBattleScript(10))
+                {
+                    Position ThisTPPos = new Position { X = ChestPos.X - 10, Y = ChestPos.Y + 5 };
+                    gameData.pathFinding.MoveToThisPos(ThisTPPos);
+
+                    gameData.townStruc.TPSpawned = false;
+
+                    CurrentStep++;
+                }
+            }
+
+            if (CurrentStep == 5)
+            {
+                gameData.SetGameStatus("Kahlim Heart waiting on leecher");
+
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
+
+                gameData.battle.DoBattleScript(10);
+
+                //get leecher infos
+                gameData.playerScan.GetLeechPositions();
+
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.SewersLevel2Act3)
+                {
+                    CurrentStep++;
+                }
             }
 
             if (CurrentStep == 6)
             {
-                gameData.townStruc.Towning = true;
-                gameData.townStruc.FastTowning = false;
-                gameData.townStruc.UseLastTP = false;
-                ScriptDone = true;
-            }
-        }
-    }
+                gameData.SetGameStatus("Kahlim Heart waiting on leecher #2");
 
-    public void TakeChest(Enums.Area ThisArea)
-    {
-        //JungleStashObject2
-        //JungleStashObject3
-        //GoodChest
-        //NotSoGoodChest
-        //DeadVillager1
-        //DeadVillager2
-        //NotSoGoodChest
-        //HollowLog
+                gameData.battle.DoBattleScript(10);
 
-        //JungleMediumChestLeft ####
+                //get leecher infos
+                gameData.playerScan.GetLeechPositions();
 
-        MapAreaStruc.Position ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", (int)ThisArea, IgnoredChestList);
-        int ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
-        int Tryy = 0;
-        while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
-        {
-            if (!gameData.Running || !gameData.gameStruc.IsInGame())
-            {
-                ScriptDone = true;
-                return;
-            }
-
-            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
-            {
-                HasTakenAnyChest = true;
-
-                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
-
-                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                gameData.WaitDelay(10);
-                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                gameData.WaitDelay(10);
-                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                gameData.WaitDelay(10);
-
-                int tryy2 = 0;
-                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.KurastDocks)
                 {
-                    gameData.playerScan.GetPositions();
-                    gameData.itemsStruc.GetItems(false);
-                    gameData.potions.CheckIfWeUsePotion();
-                    tryy2++;
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
+                    ScriptDone = true;
                 }
-                IgnoredChestList.Add(ChestObject);
             }
-
-            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", (int)ThisArea, IgnoredChestList);
-            ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
-
-            Tryy++;
         }
-
-        if (!HasTakenAnyChest) gameData.mapAreaStruc.DumpMap();
     }
 }

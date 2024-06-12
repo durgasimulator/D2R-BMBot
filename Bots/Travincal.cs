@@ -6,21 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class Travincal
+public class Travincal : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position OrbPos = new Position { X = 0, Y = 0 };
     public List<long> IgnoredCouncilMembers = new List<long>();
     public bool KilledAnyMember = false;
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -30,54 +23,55 @@ public class Travincal
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 5; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 5; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(3, 7);
+            gameData.townStruc.GoToWPArea(3, 7);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING TRAVINCAL");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING TRAVINCAL");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.Travincal)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.Travincal)
                 {
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
             if (CurrentStep == 1)
             {
-                OrbPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "CompellingOrb", (int)Enums.Area.Travincal, new List<int>());
+                OrbPos = gameData.mapAreaStruc.GetPositionOfObject("object", "CompellingOrb", (int)Enums.Area.Travincal, new List<int>());
                 if (OrbPos.X != 0 && OrbPos.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(OrbPos);
+                    gameData.pathFinding.MoveToThisPos(OrbPos);
 
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.method_1("Kahlim Orb location not detected!", Color.Red);
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.UseLastTP = false;
+                    gameData.method_1("Kahlim Orb location not detected!", Color.Red);
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
                     return;
                 }
@@ -85,40 +79,40 @@ public class Travincal
 
             if (CurrentStep == 2)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING TRAVINCAL COUNCIL");
-                Form1_0.MobsStruc_0.DetectThisMob("getSuperUniqueName", "Council Member", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, IgnoredCouncilMembers))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING TRAVINCAL COUNCIL");
+                gameData.mobsStruc.DetectThisMob("getSuperUniqueName", "Council Member", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, IgnoredCouncilMembers))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Council Member", IgnoredCouncilMembers);
+                        gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Council Member", IgnoredCouncilMembers);
                     }
                     else
                     {
                         KilledAnyMember = true;
-                        IgnoredCouncilMembers.Add(Form1_0.MobsStruc_0.MobsPointerLocation);
+                        IgnoredCouncilMembers.Add(gameData.mobsStruc.MobsPointerLocation);
                     }
                 }
                 else
                 {
                     if (!KilledAnyMember)
                     {
-                        Form1_0.method_1("Council Members not detected!", Color.Red);
+                        gameData.method_1("Council Members not detected!", Color.Red);
 
                         //baal not detected...
-                        Form1_0.ItemsStruc_0.GetItems(true);
-                        if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
-                        Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                        if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
-                        Form1_0.Potions_0.CanUseSkillForRegen = true;
+                        gameData.itemsStruc.GetItems(true);
+                        if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
+                        gameData.itemsStruc.GrabAllItemsForGold();
+                        if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Council Member", false, 200, new List<long>())) return; //redetect baal?
+                        gameData.potions.CanUseSkillForRegen = true;
 
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
                     else
                     {
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
 

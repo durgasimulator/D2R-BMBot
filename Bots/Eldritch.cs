@@ -5,18 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class Eldritch
+public class Eldritch : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
+    public bool ScriptDone { get; set; } = false;
 
     public void ResetVars()
     {
@@ -26,35 +19,36 @@ public class Eldritch
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.FrigidHighlands) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.FrigidHighlands) CurrentStep = 1;
     }
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 5; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 5; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(5, 1);
+            gameData.townStruc.GoToWPArea(5, 1);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING ELDRITCH");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING ELDRITCH");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.FrigidHighlands)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.FrigidHighlands)
                 {
                     CurrentStep++;
                 }
@@ -63,47 +57,47 @@ public class Eldritch
                     DetectCurrentStep();
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
 
             if (CurrentStep == 1)
             {
-                Form1_0.PathFinding_0.MoveToNPC("Eldritch");
+                gameData.pathFinding.MoveToNPC("Eldritch");
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING ELDRITCH");
-                Form1_0.MobsStruc_0.DetectThisMob("getSuperUniqueName", "Eldritch", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>()))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING ELDRITCH");
+                gameData.mobsStruc.DetectThisMob("getSuperUniqueName", "Eldritch", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>()))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getSuperUniqueName", "Eldritch", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getSuperUniqueName", "Eldritch", new List<long>());
                     }
                     else
                     {
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Eldritch not detected!", Color.Red);
+                    gameData.method_1("Eldritch not detected!", Color.Red);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getSuperUniqueName", "Eldritch", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                    if (gameData.battle.EndBossBattle()) ScriptDone = true;
                     return;
                 }
             }

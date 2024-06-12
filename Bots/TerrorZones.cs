@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using static MapAreaStruc;
 using static Enums;
 
-public class TerrorZones
+public class TerrorZones : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
 
     public List<Area> TerrorZonesAreas = new List<Area>();
     public int CurrentTerrorZonesIndex = 0;
@@ -23,10 +22,6 @@ public class TerrorZones
     public bool DoneChestsStep = false;
 
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -41,305 +36,306 @@ public class TerrorZones
 
     public void RunScript()
     {
-        if (TerrorZonesAreas.Count == 0) TerrorZonesAreas = Form1_0.GameStruc_0.GetTerrorZones();
+        gameData = GameData.Instance;
+        if (TerrorZonesAreas.Count == 0) TerrorZonesAreas = gameData.gameStruc.GetTerrorZones();
         if (TerrorZonesAreas.Count == 0)
         {
-            Form1_0.method_1("No Terror Zones Detected!", Color.Red);
+            gameData.method_1("No Terror Zones Detected!", Color.Red);
             ScriptDone = true;
             return;
         }
 
-        Form1_0.Town_0.ScriptTownAct = Form1_0.AreaScript_0.GetActFromArea(TerrorZonesAreas[CurrentTerrorZonesIndex]); //set to town act 5 when running this script
+        gameData.townStruc.ScriptTownAct = gameData.areaScript.GetActFromArea(TerrorZonesAreas[CurrentTerrorZonesIndex]); //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
             DoneChestsStep = false;
 
             //Console.WriteLine(TerrorZonesAreas[CurrentTerrorZonesIndex]);
 
-            if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BloodMoor) Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BloodMoor);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SewersLevel1Act2) Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.SewersLevel1Act2);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.OuterSteppes) Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.OuterSteppes);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BloodyFoothills) Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BloodyFoothills);
+            if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BloodMoor) gameData.pathFinding.MoveToNextArea(Enums.Area.BloodMoor);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SewersLevel1Act2) gameData.pathFinding.MoveToNextArea(Enums.Area.SewersLevel1Act2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.OuterSteppes) gameData.pathFinding.MoveToNextArea(Enums.Area.OuterSteppes);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BloodyFoothills) gameData.pathFinding.MoveToNextArea(Enums.Area.BloodyFoothills);
             //######################
             //ACT 1
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DenOfEvil)
             {
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BloodMoor);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.DenOfEvil);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.BloodMoor);
+                gameData.pathFinding.MoveToExit(Enums.Area.DenOfEvil);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ColdPlains) Form1_0.Town_0.GoToWPArea(1, 1);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ColdPlains) gameData.townStruc.GoToWPArea(1, 1);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CaveLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(1, 1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CaveLevel1);
+                gameData.townStruc.GoToWPArea(1, 1);
+                gameData.pathFinding.MoveToExit(Enums.Area.CaveLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CaveLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(1, 1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CaveLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CaveLevel2);
+                gameData.townStruc.GoToWPArea(1, 1);
+                gameData.pathFinding.MoveToExit(Enums.Area.CaveLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.CaveLevel2);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.StonyField) Form1_0.Town_0.GoToWPArea(1, 2);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DarkWood) Form1_0.Town_0.GoToWPArea(1, 3);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.StonyField) gameData.townStruc.GoToWPArea(1, 2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DarkWood) gameData.townStruc.GoToWPArea(1, 3);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.UndergroundPassageLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(1, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.UndergroundPassageLevel1);
+                gameData.townStruc.GoToWPArea(1, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.UndergroundPassageLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.UndergroundPassageLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(1, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.UndergroundPassageLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.UndergroundPassageLevel2);
+                gameData.townStruc.GoToWPArea(1, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.UndergroundPassageLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.UndergroundPassageLevel2);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BlackMarsh) Form1_0.Town_0.GoToWPArea(1, 4);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BlackMarsh) gameData.townStruc.GoToWPArea(1, 4);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HoleLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.HoleLevel1);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.HoleLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HoleLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.HoleLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.HoleLevel2);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.HoleLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.HoleLevel2);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ForgottenTower)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TowerCellarLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel1);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TowerCellarLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel2);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel2);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TowerCellarLevel3)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel3);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel2);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel3);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TowerCellarLevel4)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel4);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel2);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel4);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TowerCellarLevel5)
             {
-                Form1_0.Town_0.GoToWPArea(1, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ForgottenTower);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.TowerCellarLevel5);
+                gameData.townStruc.GoToWPArea(1, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.ForgottenTower);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel2);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel4);
+                gameData.pathFinding.MoveToExit(Enums.Area.TowerCellarLevel5);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.Barracks)
             {
-                Form1_0.Town_0.GoToWPArea(1, 5);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.Barracks);
+                gameData.townStruc.GoToWPArea(1, 5);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.Barracks);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.JailLevel1) Form1_0.Town_0.GoToWPArea(1, 6);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.JailLevel1) gameData.townStruc.GoToWPArea(1, 6);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.JailLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(1, 6);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.JailLevel2);
+                gameData.townStruc.GoToWPArea(1, 6);
+                gameData.pathFinding.MoveToExit(Enums.Area.JailLevel2);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.JailLevel3)
             {
-                Form1_0.Town_0.GoToWPArea(1, 6);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.JailLevel2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.JailLevel3);
+                gameData.townStruc.GoToWPArea(1, 6);
+                gameData.pathFinding.MoveToExit(Enums.Area.JailLevel2);
+                gameData.pathFinding.MoveToExit(Enums.Area.JailLevel3);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.Cathedral)
             {
-                Form1_0.Town_0.GoToWPArea(1, 7);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.Cathedral);
+                gameData.townStruc.GoToWPArea(1, 7);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.Cathedral);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.InnerCloister) Form1_0.Town_0.GoToWPArea(1, 7);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.InnerCloister) gameData.townStruc.GoToWPArea(1, 7);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CatacombsLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(1, 7);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.Cathedral);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.CatacombsLevel1);
+                gameData.townStruc.GoToWPArea(1, 7);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.Cathedral);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.CatacombsLevel1);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CatacombsLevel2) Form1_0.Town_0.GoToWPArea(1, 8);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CatacombsLevel2) gameData.townStruc.GoToWPArea(1, 8);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CatacombsLevel3)
             {
-                Form1_0.Town_0.GoToWPArea(1, 8);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CatacombsLevel3);
+                gameData.townStruc.GoToWPArea(1, 8);
+                gameData.pathFinding.MoveToExit(Enums.Area.CatacombsLevel3);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CatacombsLevel4)
             {
-                Form1_0.Town_0.GoToWPArea(1, 8);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CatacombsLevel3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.CatacombsLevel4);
+                gameData.townStruc.GoToWPArea(1, 8);
+                gameData.pathFinding.MoveToExit(Enums.Area.CatacombsLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.CatacombsLevel4);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.BurialGrounds)
             {
-                Form1_0.Town_0.GoToWPArea(1, 1);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BurialGrounds);
+                gameData.townStruc.GoToWPArea(1, 1);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.BurialGrounds);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.Crypt)
             {
-                Form1_0.Town_0.GoToWPArea(1, 1);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BurialGrounds);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.Crypt);
+                gameData.townStruc.GoToWPArea(1, 1);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.BurialGrounds);
+                gameData.pathFinding.MoveToExit(Enums.Area.Crypt);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.Mausoleum)
             {
-                Form1_0.Town_0.GoToWPArea(1, 1);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.BurialGrounds);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.Mausoleum);
+                gameData.townStruc.GoToWPArea(1, 1);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.BurialGrounds);
+                gameData.pathFinding.MoveToExit(Enums.Area.Mausoleum);
             }
             //######################
             //ACT 2
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SewersLevel2Act2) Form1_0.Town_0.GoToWPArea(2, 1);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SewersLevel2Act2) gameData.townStruc.GoToWPArea(2, 1);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SewersLevel3Act2)
             {
-                Form1_0.Town_0.GoToWPArea(2, 1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.SewersLevel3Act2);
+                gameData.townStruc.GoToWPArea(2, 1);
+                gameData.pathFinding.MoveToExit(Enums.Area.SewersLevel3Act2);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DryHills) Form1_0.Town_0.GoToWPArea(2, 2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DryHills) gameData.townStruc.GoToWPArea(2, 2);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HallsOfTheDeadLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(2, 2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.HallsOfTheDeadLevel1);
+                gameData.townStruc.GoToWPArea(2, 2);
+                gameData.pathFinding.MoveToExit(Enums.Area.HallsOfTheDeadLevel1);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HallsOfTheDeadLevel2) Form1_0.Town_0.GoToWPArea(2, 3);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HallsOfTheDeadLevel2) gameData.townStruc.GoToWPArea(2, 3);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.HallsOfTheDeadLevel3)
             {
-                Form1_0.Town_0.GoToWPArea(2, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.HallsOfTheDeadLevel3);
+                gameData.townStruc.GoToWPArea(2, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.HallsOfTheDeadLevel3);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FarOasis) Form1_0.Town_0.GoToWPArea(2, 4);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.LostCity) Form1_0.Town_0.GoToWPArea(2, 5);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FarOasis) gameData.townStruc.GoToWPArea(2, 4);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.LostCity) gameData.townStruc.GoToWPArea(2, 5);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ValleyOfSnakes)
             {
-                Form1_0.Town_0.GoToWPArea(2, 5);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.ValleyOfSnakes);
+                gameData.townStruc.GoToWPArea(2, 5);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.ValleyOfSnakes);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ClawViperTempleLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(2, 5);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.ValleyOfSnakes);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ClawViperTempleLevel1);
+                gameData.townStruc.GoToWPArea(2, 5);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.ValleyOfSnakes);
+                gameData.pathFinding.MoveToExit(Enums.Area.ClawViperTempleLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ClawViperTempleLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(2, 5);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.ValleyOfSnakes);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ClawViperTempleLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.ClawViperTempleLevel2);
+                gameData.townStruc.GoToWPArea(2, 5);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.ValleyOfSnakes);
+                gameData.pathFinding.MoveToExit(Enums.Area.ClawViperTempleLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.ClawViperTempleLevel2);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ArcaneSanctuary) Form1_0.Town_0.GoToWPArea(2, 7);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ArcaneSanctuary) gameData.townStruc.GoToWPArea(2, 7);
             //######################
             //ACT 3
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SpiderForest) Form1_0.Town_0.GoToWPArea(3, 1);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SpiderForest) gameData.townStruc.GoToWPArea(3, 1);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.SpiderCavern)
             {
-                Form1_0.Town_0.GoToWPArea(3, 1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.SpiderCavern);
+                gameData.townStruc.GoToWPArea(3, 1);
+                gameData.pathFinding.MoveToExit(Enums.Area.SpiderCavern);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.GreatMarsh) Form1_0.Town_0.GoToWPArea(3, 2);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerJungle) Form1_0.Town_0.GoToWPArea(3, 3);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.GreatMarsh) gameData.townStruc.GoToWPArea(3, 2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerJungle) gameData.townStruc.GoToWPArea(3, 3);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerDungeonLevel1)
             {
-                Form1_0.Town_0.GoToWPArea(3, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel1);
+                gameData.townStruc.GoToWPArea(3, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel1);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerDungeonLevel2)
             {
-                Form1_0.Town_0.GoToWPArea(3, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel2);
+                gameData.townStruc.GoToWPArea(3, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel2);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerDungeonLevel3)
             {
-                Form1_0.Town_0.GoToWPArea(3, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FlayerDungeonLevel3);
+                gameData.townStruc.GoToWPArea(3, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel1);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel2);
+                gameData.pathFinding.MoveToExit(Enums.Area.FlayerDungeonLevel3);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerJungle) Form1_0.Town_0.GoToWPArea(3, 5);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.KurastBazaar) Form1_0.Town_0.GoToWPArea(3, 5);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FlayerJungle) gameData.townStruc.GoToWPArea(3, 5);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.KurastBazaar) gameData.townStruc.GoToWPArea(3, 5);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.RuinedTemple)
             {
-                Form1_0.Town_0.GoToWPArea(3, 5);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.RuinedTemple);
+                gameData.townStruc.GoToWPArea(3, 5);
+                gameData.pathFinding.MoveToExit(Enums.Area.RuinedTemple);
             }
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DisusedFane)
             {
-                Form1_0.Town_0.GoToWPArea(3, 5);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.RuinedTemple);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.DisusedFane);
+                gameData.townStruc.GoToWPArea(3, 5);
+                gameData.pathFinding.MoveToExit(Enums.Area.RuinedTemple);
+                gameData.pathFinding.MoveToExit(Enums.Area.DisusedFane);
             }
             //######################
             //ACT 4
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.PlainsOfDespair)
             {
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.OuterSteppes);
-                Form1_0.PathFinding_0.MoveToNextArea(Enums.Area.PlainsOfDespair);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.OuterSteppes);
+                gameData.pathFinding.MoveToNextArea(Enums.Area.PlainsOfDespair);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.RiverOfFlame) Form1_0.Town_0.GoToWPArea(4, 2);
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CityOfTheDamned) Form1_0.Town_0.GoToWPArea(4, 1);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.RiverOfFlame) gameData.townStruc.GoToWPArea(4, 2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CityOfTheDamned) gameData.townStruc.GoToWPArea(4, 1);
 
             //######################
             //ACT 5
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FrigidHighlands) Form1_0.Town_0.GoToWPArea(5, 1);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FrigidHighlands) gameData.townStruc.GoToWPArea(5, 1);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.AbAddon)
             {
-                Form1_0.Town_0.GoToWPArea(5, 1);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.AbAddon);
+                gameData.townStruc.GoToWPArea(5, 1);
+                gameData.pathFinding.MoveToExit(Enums.Area.AbAddon);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.GlacialTrail) Form1_0.Town_0.GoToWPArea(5, 4);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.GlacialTrail) gameData.townStruc.GoToWPArea(5, 4);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.DrifterCavern)
             {
-                Form1_0.Town_0.GoToWPArea(5, 4);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.DrifterCavern);
+                gameData.townStruc.GoToWPArea(5, 4);
+                gameData.pathFinding.MoveToExit(Enums.Area.DrifterCavern);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CrystallinePassage) Form1_0.Town_0.GoToWPArea(5, 3);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.CrystallinePassage) gameData.townStruc.GoToWPArea(5, 3);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.FrozenRiver)
             {
-                Form1_0.Town_0.GoToWPArea(5, 3);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.FrozenRiver);
+                gameData.townStruc.GoToWPArea(5, 3);
+                gameData.pathFinding.MoveToExit(Enums.Area.FrozenRiver);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ArreatPlateau) Form1_0.Town_0.GoToWPArea(5, 2);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.ArreatPlateau) gameData.townStruc.GoToWPArea(5, 2);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.PitOfAcheron)
             {
-                Form1_0.Town_0.GoToWPArea(5, 2);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.PitOfAcheron);
+                gameData.townStruc.GoToWPArea(5, 2);
+                gameData.pathFinding.MoveToExit(Enums.Area.PitOfAcheron);
             }
-            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TheAncientsWay) Form1_0.Town_0.GoToWPArea(5, 7);
+            else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.TheAncientsWay) gameData.townStruc.GoToWPArea(5, 7);
             else if (TerrorZonesAreas[CurrentTerrorZonesIndex] == Area.IcyCellar)
             {
-                //Form1_0.Town_0.GoToWPArea(5, 6);
-                Form1_0.Town_0.GoToWPArea(5, 7);
-                Form1_0.PathFinding_0.MoveToExit(Enums.Area.IcyCellar);
+                //gameData.townStruc.GoToWPArea(5, 6);
+                gameData.townStruc.GoToWPArea(5, 7);
+                gameData.pathFinding.MoveToExit(Enums.Area.IcyCellar);
             }
 
         }
@@ -347,11 +343,11 @@ public class TerrorZones
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING TERROR ZONES");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING TERROR ZONES");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == TerrorZonesAreas[CurrentTerrorZonesIndex])
+                if ((Enums.Area)gameData.playerScan.levelNo == TerrorZonesAreas[CurrentTerrorZonesIndex])
                 {
                     CurrentStep++;
                 }
@@ -359,8 +355,8 @@ public class TerrorZones
                 {
                     if (CurrentStep == 0)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
                     }
                 }
             }
@@ -369,28 +365,28 @@ public class TerrorZones
             {
                 if (!DoneChestsStep)
                 {
-                    TakeChest((int) Form1_0.PlayerScan_0.levelNo);
+                    TakeChest((int) gameData.playerScan.levelNo);
                     DoneChestsStep = true;
                 }
-                if ((Enums.Area)Form1_0.Battle_0.AreaIDFullyCleared != TerrorZonesAreas[CurrentTerrorZonesIndex])
+                if ((Enums.Area)gameData.battle.AreaIDFullyCleared != TerrorZonesAreas[CurrentTerrorZonesIndex])
                 {
-                    Form1_0.Battle_0.ClearFullAreaOfMobs();
+                    gameData.battle.ClearFullAreaOfMobs();
 
-                    if (!Form1_0.Battle_0.ClearingArea)
+                    if (!gameData.battle.ClearingArea)
                     {
                         CurrentTerrorZonesIndex++;
                         if (CurrentTerrorZonesIndex > TerrorZonesAreas.Count - 1)
                         {
-                            Form1_0.Town_0.FastTowning = false;
-                            Form1_0.Town_0.UseLastTP = false;
+                            gameData.townStruc.FastTowning = false;
+                            gameData.townStruc.UseLastTP = false;
                             ScriptDone = true;
                         }
                         else
                         {
                             CurrentStep = 0;
-                            Form1_0.Town_0.FastTowning = false;
-                            Form1_0.Town_0.GoToTown();
-                            //Form1_0.PathFinding_0.MoveToExit(TerrorZonesAreas[CurrentTerrorZonesIndex], 4, true);
+                            gameData.townStruc.FastTowning = false;
+                            gameData.townStruc.GoToTown();
+                            //gameData.pathFinding.MoveToExit(TerrorZonesAreas[CurrentTerrorZonesIndex], 4, true);
                         }
                     }
                 }
@@ -399,16 +395,16 @@ public class TerrorZones
                     CurrentTerrorZonesIndex++;
                     if (CurrentTerrorZonesIndex > TerrorZonesAreas.Count - 1)
                     {
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.UseLastTP = false;
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.UseLastTP = false;
                         ScriptDone = true;
                     }
                     else
                     {
                         CurrentStep = 0;
-                        Form1_0.Town_0.FastTowning = false;
-                        Form1_0.Town_0.GoToTown();
-                        //Form1_0.PathFinding_0.MoveToExit(TerrorZonesAreas[CurrentTerrorZonesIndex], 4, true);
+                        gameData.townStruc.FastTowning = false;
+                        gameData.townStruc.GoToTown();
+                        //gameData.pathFinding.MoveToExit(TerrorZonesAreas[CurrentTerrorZonesIndex], 4, true);
                     }
                 }
             }
@@ -430,48 +426,48 @@ public class TerrorZones
 
         //JungleMediumChestLeft ####
 
-        MapAreaStruc.Position ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
-        int ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+        MapAreaStruc.Position ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
+        int ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
         int Tryy = 0;
         while (ThisChestPos.X != 0 && ThisChestPos.Y != 0 && Tryy < 30)
         {
-            if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+            if (!gameData.Running || !gameData.gameStruc.IsInGame())
             {
                 ScriptDone = true;
                 return;
             }
 
-            if (Form1_0.Mover_0.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
+            if (gameData.mover.MoveToLocation(ThisChestPos.X, ThisChestPos.Y))
             {
                 HasTakenAnyChest = true;
 
-                Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
+                Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, ThisChestPos.X, ThisChestPos.Y);
 
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
-                Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
-                Form1_0.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
+                gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y - 15);
+                gameData.WaitDelay(10);
 
                 int tryy2 = 0;
-                while (Form1_0.ItemsStruc_0.GetItems(true) && tryy2 < 20)
+                while (gameData.itemsStruc.GetItems(true) && tryy2 < 20)
                 {
-                    Form1_0.PlayerScan_0.GetPositions();
-                    Form1_0.ItemsStruc_0.GetItems(false);
-                    Form1_0.Potions_0.CheckIfWeUsePotion();
+                    gameData.playerScan.GetPositions();
+                    gameData.itemsStruc.GetItems(false);
+                    gameData.potions.CheckIfWeUsePotion();
                     tryy2++;
                 }
                 IgnoredChestList.Add(ChestObject);
             }
 
-            ThisChestPos = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
-            ChestObject = Form1_0.MapAreaStruc_0.CurrentObjectIndex;
+            ThisChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "GoodChest", ThisAreaa, IgnoredChestList);
+            ChestObject = gameData.mapAreaStruc.CurrentObjectIndex;
 
             Tryy++;
         }
 
-        if (!HasTakenAnyChest) Form1_0.MapAreaStruc_0.DumpMap();
+        if (!HasTakenAnyChest) gameData.mapAreaStruc.DumpMap();
     }
 
 

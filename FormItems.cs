@@ -104,11 +104,11 @@ public partial class FormItems : Form
         comboBoxName.Items.Clear();
         if (comboBoxNameOrType.SelectedIndex == 0)
         {
-            for (int i = 0; i <= 658; i++) comboBoxName.Items.Add(Form1_0.ItemsNames_0.getItemBaseName(i));
+            for (int i = 0; i <= 658; i++) comboBoxName.Items.Add(GameData.Instance.itemsNames.getItemBaseName(i));
         }
         else
         {
-            foreach(var ThisDir in Form1_0.ItemsAlert_0.typeMapping)
+            foreach(var ThisDir in GameData.Instance.itemsAlert.typeMapping)
             {
                 comboBoxName.Items.Add(ThisDir.Key);
             }
@@ -118,7 +118,7 @@ public partial class FormItems : Form
 
     public void LoadSettings()
     {
-        Form1_0.SettingsLoader_0.LoadThisFileSettings(Form1_0.SettingsLoader_0.File_ItemsSettings);
+        GameData.Instance.settingsLoader.LoadThisFileSettings(GameData.Instance.settingsLoader.File_ItemsSettings);
 
         listViewUnique.Items.Clear();
         listViewKeys.Items.Clear();
@@ -133,7 +133,7 @@ public partial class FormItems : Form
 
         listViewCubingRecipes.Items.Clear();
 
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsRunesKeyGems)
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsRunesKeyGems)
         {
             if (ThisDir.Key.Contains("Keyof")
                 || ThisDir.Key.Contains("Essence")
@@ -146,7 +146,7 @@ public partial class FormItems : Form
                 arr[0] = ThisDir.Key;
                 arr[1] = "";
 
-                int ThisQty = Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
+                int ThisQty = GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
                 if (ThisQty > 0) arr[1] = ThisQty.ToString();
 
                 ListViewItem item = new ListViewItem(arr);
@@ -165,7 +165,7 @@ public partial class FormItems : Form
                 arr[0] = ThisDir.Key;
                 arr[1] = "";
 
-                int ThisQty = Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
+                int ThisQty = GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
                 if (ThisQty > 0) arr[1] = ThisQty.ToString();
 
                 ListViewItem item = new ListViewItem(arr);
@@ -179,7 +179,7 @@ public partial class FormItems : Form
                 arr[0] = ThisDir.Key;
                 arr[1] = "";
 
-                int ThisQty = Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
+                int ThisQty = GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key];
                 if (ThisQty > 0) arr[1] = ThisQty.ToString();
 
                 ListViewItem item = new ListViewItem(arr);
@@ -188,7 +188,7 @@ public partial class FormItems : Form
             }
         }
 
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsPotions)
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsPotions)
         {
             string[] arr = new string[2];
             arr[0] = Regex.Replace(ThisDir.Key, @"[\d-]", string.Empty);
@@ -201,7 +201,7 @@ public partial class FormItems : Form
 
         //###########################
         //###########################
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsNormal_ByName)
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsNormal_ByName)
         {
             string FullItemStr = "[Name] == ";
             string[] arr = new string[6];
@@ -209,28 +209,28 @@ public partial class FormItems : Form
             arr[1] = "";
             arr[2] = "";
             arr[3] = "";
-            arr[4] = Form1_0.ItemsAlert_0.PickItemsNormal_ByNameDesc[ThisDir.Key];
+            arr[4] = GameData.Instance.itemsAlert.PickItemsNormal_ByNameDesc[ThisDir.Key];
             arr[5] = ThisDir.Key;
             FullItemStr += arr[0];
             string ThisQ = "";
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality.ContainsKey(ThisDir.Key))
             {
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 1) ThisQ = "inferior";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 2) ThisQ = "normal";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 3) ThisQ = "superior";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 4) ThisQ = "magic";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 5) ThisQ = "set";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 6) ThisQ = "rare";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 7) ThisQ = "unique";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 8) ThisQ = "crafted";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Quality[ThisDir.Key] == 9) ThisQ = "tempered";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 1) ThisQ = "inferior";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 2) ThisQ = "normal";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 3) ThisQ = "superior";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 4) ThisQ = "magic";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 5) ThisQ = "set";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 6) ThisQ = "rare";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 7) ThisQ = "unique";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 8) ThisQ = "crafted";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Quality[ThisDir.Key] == 9) ThisQ = "tempered";
                 arr[2] = ThisQ;
                 FullItemStr += " && [Quality] == " + ThisQ;
             }
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Flags.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Flags.ContainsKey(ThisDir.Key))
             {
                 string FlagsTxt = "";
-                foreach (var ThisList in Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Flags[ThisDir.Key])
+                foreach (var ThisList in GameData.Instance.itemsAlert.PickItemsNormal_ByName_Flags[ThisDir.Key])
                 {
                     if (FlagsTxt != "") FlagsTxt += ", ";
                     FlagsTxt += ThisList.Value;
@@ -241,17 +241,17 @@ public partial class FormItems : Form
 
                 arr[1] = FlagsTxt;
             }
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Stats.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByName_Stats.ContainsKey(ThisDir.Key))
             {
-                foreach (var Stat in Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Stats[ThisDir.Key])
+                foreach (var Stat in GameData.Instance.itemsAlert.PickItemsNormal_ByName_Stats[ThisDir.Key])
                 {
                     if (arr[3] != "") arr[3] += ",";
-                    arr[3] += Stat.Key + Form1_0.ItemsAlert_0.PickItemsNormal_ByName_Operators[ThisDir.Key][Stat.Key] + Stat.Value;
+                    arr[3] += Stat.Key + GameData.Instance.itemsAlert.PickItemsNormal_ByName_Operators[ThisDir.Key][Stat.Key] + Stat.Value;
                 }
             }
 
             //Get the Category
-            string[] AllItemsSettingsLines = File.ReadAllLines(Form1_0.SettingsLoader_0.File_ItemsSettings);
+            string[] AllItemsSettingsLines = File.ReadAllLines(GameData.Instance.settingsLoader.File_ItemsSettings);
             bool FoundCategory = false;
             string CurrentCategory = "";
             for (int i = 0; i < AllItemsSettingsLines.Length; i++)
@@ -396,7 +396,7 @@ public partial class FormItems : Form
         }
         //###########################
         //###########################
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsNormal_ByType)
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsNormal_ByType)
         {
             string FullItemStr = "[Type] == ";
             string[] arr = new string[6];
@@ -404,29 +404,29 @@ public partial class FormItems : Form
             arr[1] = "";
             arr[2] = "";
             arr[3] = "";
-            arr[4] = Form1_0.ItemsAlert_0.PickItemsNormal_ByTypeDesc[ThisDir.Key];
+            arr[4] = GameData.Instance.itemsAlert.PickItemsNormal_ByTypeDesc[ThisDir.Key];
             arr[5] = ThisDir.Key;
             FullItemStr += arr[0];
             string ThisQ = "";
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality.ContainsKey(ThisDir.Key))
             {
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 1) ThisQ = "inferior";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 2) ThisQ = "normal";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 3) ThisQ = "superior";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 4) ThisQ = "magic";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 5) ThisQ = "set";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 6) ThisQ = "rare";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 7) ThisQ = "unique";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 8) ThisQ = "crafted";
-                if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Quality[ThisDir.Key] == 9) ThisQ = "tempered";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 1) ThisQ = "inferior";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 2) ThisQ = "normal";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 3) ThisQ = "superior";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 4) ThisQ = "magic";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 5) ThisQ = "set";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 6) ThisQ = "rare";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 7) ThisQ = "unique";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 8) ThisQ = "crafted";
+                if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Quality[ThisDir.Key] == 9) ThisQ = "tempered";
                 arr[2] = ThisQ;
 
                 FullItemStr += " && [Quality] == " + ThisQ;
             }
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Flags.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Flags.ContainsKey(ThisDir.Key))
             {
                 string FlagsTxt = "";
-                foreach (var ThisList in Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Flags[ThisDir.Key])
+                foreach (var ThisList in GameData.Instance.itemsAlert.PickItemsNormal_ByType_Flags[ThisDir.Key])
                 {
                     if (FlagsTxt != "") FlagsTxt += ", ";
                     FlagsTxt += ThisList.Value;
@@ -437,17 +437,17 @@ public partial class FormItems : Form
 
                 arr[1] = FlagsTxt;
             }
-            if (Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Stats.ContainsKey(ThisDir.Key))
+            if (GameData.Instance.itemsAlert.PickItemsNormal_ByType_Stats.ContainsKey(ThisDir.Key))
             {
-                foreach (var Stat in Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Stats[ThisDir.Key])
+                foreach (var Stat in GameData.Instance.itemsAlert.PickItemsNormal_ByType_Stats[ThisDir.Key])
                 {
                     if (arr[3] != "") arr[3] += ",";
-                    arr[3] += Stat.Key + Form1_0.ItemsAlert_0.PickItemsNormal_ByType_Operators[ThisDir.Key][Stat.Key] + Stat.Value;
+                    arr[3] += Stat.Key + GameData.Instance.itemsAlert.PickItemsNormal_ByType_Operators[ThisDir.Key][Stat.Key] + Stat.Value;
                 }
             }
 
             //Get the Category
-            string[] AllItemsSettingsLines = File.ReadAllLines(Form1_0.SettingsLoader_0.File_ItemsSettings);
+            string[] AllItemsSettingsLines = File.ReadAllLines(GameData.Instance.settingsLoader.File_ItemsSettings);
             bool FoundCategory = false;
             string CurrentCategory = "";
             for (int i = 0; i < AllItemsSettingsLines.Length; i++)
@@ -593,14 +593,14 @@ public partial class FormItems : Form
         //###########################
         //###########################
 
-        for (int i = 0; i < Form1_0.Cubing_0.CubingRecipes.Count; i++)
+        for (int i = 0; i < GameData.Instance.cubing.CubingRecipes.Count; i++)
         {
             string[] arr = new string[1];
-            arr[0] = Form1_0.Cubing_0.CubingRecipes[i];
+            arr[0] = GameData.Instance.cubing.CubingRecipes[i];
             ListViewItem item = new ListViewItem(arr);
 
             listViewCubingRecipes.Items.Add(item);
-            listViewCubingRecipes.Items[listViewCubingRecipes.Items.Count - 1].Checked = Form1_0.Cubing_0.CubingRecipesEnabled[i];
+            listViewCubingRecipes.Items[listViewCubingRecipes.Items.Count - 1].Checked = GameData.Instance.cubing.CubingRecipesEnabled[i];
         }
     }
 
@@ -608,7 +608,7 @@ public partial class FormItems : Form
     {
         for (int i = 0; i < listViewKeys.Items.Count; i++)
         {
-            foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsRunesKeyGems)
+            foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsRunesKeyGems)
             {
                 if (ThisDir.Key.Contains("Keyof")
                     || ThisDir.Key.Contains("Essence")
@@ -619,10 +619,10 @@ public partial class FormItems : Form
                 {
                     if (ThisDir.Key == listViewKeys.Items[i].SubItems[0].Text.ToString())
                     {
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems[ThisDir.Key] = listViewKeys.Items[i].Checked;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems[ThisDir.Key] = listViewKeys.Items[i].Checked;
                         int ThisQty = 0;
                         if (listViewKeys.Items[i].SubItems[1].Text != "") ThisQty = int.Parse(listViewKeys.Items[i].SubItems[1].Text);
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
                         break;
                     }
                 }
@@ -631,7 +631,7 @@ public partial class FormItems : Form
 
         for (int i = 0; i < listViewGems.Items.Count; i++)
         {
-            foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsRunesKeyGems)
+            foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsRunesKeyGems)
             {
                 if (ThisDir.Key.Contains("Topaz")
                     || ThisDir.Key.Contains("Amethyst")
@@ -642,10 +642,10 @@ public partial class FormItems : Form
                 {
                     if (ThisDir.Key == listViewGems.Items[i].SubItems[0].Text.ToString())
                     {
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems[ThisDir.Key] = listViewGems.Items[i].Checked;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems[ThisDir.Key] = listViewGems.Items[i].Checked;
                         int ThisQty = 0;
                         if (listViewGems.Items[i].SubItems[1].Text != "") ThisQty = int.Parse(listViewGems.Items[i].SubItems[1].Text);
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
                         break;
                     }
                 }
@@ -654,16 +654,16 @@ public partial class FormItems : Form
 
         for (int i = 0; i < listViewRunes.Items.Count; i++)
         {
-            foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsRunesKeyGems)
+            foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsRunesKeyGems)
             {
                 if (ThisDir.Key.Contains("Rune"))
                 {
                     if (ThisDir.Key == listViewRunes.Items[i].SubItems[0].Text.ToString())
                     {
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems[ThisDir.Key] = listViewRunes.Items[i].Checked;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems[ThisDir.Key] = listViewRunes.Items[i].Checked;
                         int ThisQty = 0;
                         if (listViewRunes.Items[i].SubItems[1].Text != "") ThisQty = int.Parse(listViewRunes.Items[i].SubItems[1].Text);
-                        Form1_0.ItemsAlert_0.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
+                        GameData.Instance.itemsAlert.PickItemsRunesKeyGems_Quantity[ThisDir.Key] = ThisQty;
                         break;
                     }
                 }
@@ -672,11 +672,11 @@ public partial class FormItems : Form
 
         for (int i = 0; i < listViewPotions.Items.Count; i++)
         {
-            foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsPotions)
+            foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsPotions)
             {
                 if (ThisDir.Key == listViewPotions.Items[i].SubItems[0].Text.ToString())
                 {
-                    Form1_0.ItemsAlert_0.PickItemsPotions[ThisDir.Key] = listViewPotions.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsPotions[ThisDir.Key] = listViewPotions.Items[i].Checked;
                     break;
                 }
             }
@@ -684,102 +684,102 @@ public partial class FormItems : Form
 
         //###########################
         //###########################
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsNormal_ByName.ToList())
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsNormal_ByName.ToList())
         {
             for (int i = 0; i < listViewUnique.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewUnique.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewUnique.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewUnique.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewSet.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewSet.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewSet.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewSet.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewNormal.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewNormal.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewNormal.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewNormal.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewNormal.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewNormal.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewNormal.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewNormal.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewSuperior.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewSuperior.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewSuperior.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewSuperior.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewRare.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewRare.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewRare.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewRare.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewMagic.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewMagic.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByName[ThisDir.Key] = listViewMagic.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByName[ThisDir.Key] = listViewMagic.Items[i].Checked;
                 }
             }
         }
         //###########################
         //###########################
-        foreach (var ThisDir in Form1_0.ItemsAlert_0.PickItemsNormal_ByType.ToList())
+        foreach (var ThisDir in GameData.Instance.itemsAlert.PickItemsNormal_ByType.ToList())
         {
             for (int i = 0; i < listViewUnique.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewUnique.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewUnique.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewUnique.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewSet.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewSet.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewSet.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewSet.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewNormal.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewNormal.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewNormal.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewNormal.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewSuperior.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewSuperior.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewSuperior.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewSuperior.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewRare.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewRare.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewRare.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewRare.Items[i].Checked;
                 }
             }
             for (int i = 0; i < listViewMagic.Items.Count; i++)
             {
                 if (ThisDir.Key == listViewMagic.Items[i].SubItems[5].Text)
                 {
-                    Form1_0.ItemsAlert_0.PickItemsNormal_ByType[ThisDir.Key] = listViewMagic.Items[i].Checked;
+                    GameData.Instance.itemsAlert.PickItemsNormal_ByType[ThisDir.Key] = listViewMagic.Items[i].Checked;
                 }
             }
         }
@@ -788,11 +788,11 @@ public partial class FormItems : Form
 
         for (int i = 0; i < listViewCubingRecipes.Items.Count; i++)
         {
-            Form1_0.Cubing_0.CubingRecipesEnabled[i] = listViewCubingRecipes.Items[i].Checked;
+            GameData.Instance.cubing.CubingRecipesEnabled[i] = listViewCubingRecipes.Items[i].Checked;
         }
 
-        Form1_0.SettingsLoader_0.SaveItemsSettings();
-        Form1_0.SettingsLoader_0.SaveCubingSettings();
+        GameData.Instance.settingsLoader.SaveItemsSettings();
+        GameData.Instance.settingsLoader.SaveCubingSettings();
 
         SettingsChanged = false;
     }
@@ -916,17 +916,17 @@ public partial class FormItems : Form
 
     private void button2_Click(object sender, EventArgs e)
     {
-        string AllTxt = File.ReadAllText(Form1_0.SettingsLoader_0.File_ItemsSettings);
+        string AllTxt = File.ReadAllText(GameData.Instance.settingsLoader.File_ItemsSettings);
         //AllTxt += CurrentNewItemTxt + Environment.NewLine;
         AllTxt = AllTxt.Replace("//###### CUSTOM CREATED ITEMS\n//#######################################\n", "//###### CUSTOM CREATED ITEMS\n//#######################################\n" + CurrentNewItemTxt + Environment.NewLine);
 
-        File.Create(Form1_0.SettingsLoader_0.File_ItemsSettings).Dispose();
-        File.WriteAllText(Form1_0.SettingsLoader_0.File_ItemsSettings, AllTxt);
+        File.Create(GameData.Instance.settingsLoader.File_ItemsSettings).Dispose();
+        File.WriteAllText(GameData.Instance.settingsLoader.File_ItemsSettings, AllTxt);
 
-        Form1_0.method_1("File saved: " + Path.GetFileName(Form1_0.SettingsLoader_0.File_ItemsSettings), Color.DarkGreen);
+        GameData.Instance.method_1("File saved: " + Path.GetFileName(GameData.Instance.settingsLoader.File_ItemsSettings), Color.DarkGreen);
 
-        Form1_0.SettingsLoader_0.AllLines = File.ReadAllLines(Form1_0.SettingsLoader_0.File_ItemsSettings);
-        Form1_0.SettingsLoader_0.LoadItemsSettings();
+        GameData.Instance.settingsLoader.AllLines = File.ReadAllLines(GameData.Instance.settingsLoader.File_ItemsSettings);
+        GameData.Instance.settingsLoader.LoadItemsSettings();
 
         panel_NewItem.Visible = false;
 
@@ -961,7 +961,7 @@ public partial class FormItems : Form
         DialogResult result = openFileDialog1.ShowDialog();
         if (result == DialogResult.OK)
         {
-            Form1_0.SettingsLoader_0.LoadThisFileSettings(openFileDialog1.FileName);
+            GameData.Instance.settingsLoader.LoadThisFileSettings(openFileDialog1.FileName);
             LoadSettings();
             Application.DoEvents();
         }

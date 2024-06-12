@@ -6,18 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class Summoner
+public class Summoner : IBot
 {
-    Form1 Form1_0;
-
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
 
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -27,76 +21,77 @@ public class Summoner
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 2; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 2; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(2, 7);
+            gameData.townStruc.GoToWPArea(2, 7);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING SUMMONER");
-                Form1_0.Battle_0.CastDefense();
-                Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING SUMMONER");
+                gameData.battle.CastDefense();
+                gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ArcaneSanctuary)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.ArcaneSanctuary)
                 {
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
             if (CurrentStep == 1)
             {
-                Form1_0.PathFinding_0.MoveToNPC("Summoner");
+                gameData.pathFinding.MoveToNPC("Summoner");
 
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
-                Form1_0.Potions_0.CanUseSkillForRegen = false;
-                Form1_0.SetGameStatus("KILLING SUMMONER");
-                Form1_0.MobsStruc_0.DetectThisMob("getBossName", "Summoner", false, 200, new List<long>());
-                if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Summoner", false, 200, new List<long>()))
+                gameData.potions.CanUseSkillForRegen = false;
+                gameData.SetGameStatus("KILLING SUMMONER");
+                gameData.mobsStruc.DetectThisMob("getBossName", "Summoner", false, 200, new List<long>());
+                if (gameData.mobsStruc.GetMobs("getBossName", "Summoner", false, 200, new List<long>()))
                 {
-                    if (Form1_0.MobsStruc_0.MobsHP > 0)
+                    if (gameData.mobsStruc.MobsHP > 0)
                     {
-                        Form1_0.Battle_0.RunBattleScriptOnThisMob("getBossName", "Summoner", new List<long>());
+                        gameData.battle.RunBattleScriptOnThisMob("getBossName", "Summoner", new List<long>());
                     }
                     else
                     {
-                        if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                        if (gameData.battle.EndBossBattle()) ScriptDone = true;
                         return;
                     }
                 }
                 else
                 {
-                    Form1_0.method_1("Summoner not detected!", Color.Red);
+                    gameData.method_1("Summoner not detected!", Color.Red);
 
                     //baal not detected...
-                    Form1_0.ItemsStruc_0.GetItems(true);
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Summoner", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.ItemsStruc_0.GrabAllItemsForGold();
-                    if (Form1_0.MobsStruc_0.GetMobs("getBossName", "Summoner", false, 200, new List<long>())) return; //redetect baal?
-                    Form1_0.Potions_0.CanUseSkillForRegen = true;
+                    gameData.itemsStruc.GetItems(true);
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Summoner", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.itemsStruc.GrabAllItemsForGold();
+                    if (gameData.mobsStruc.GetMobs("getBossName", "Summoner", false, 200, new List<long>())) return; //redetect baal?
+                    gameData.potions.CanUseSkillForRegen = true;
 
-                    if (Form1_0.Battle_0.EndBossBattle()) ScriptDone = true;
+                    if (gameData.battle.EndBossBattle()) ScriptDone = true;
                     return;
                 }
             }

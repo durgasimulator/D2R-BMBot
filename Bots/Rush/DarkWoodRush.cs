@@ -6,19 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class DarkWoodRush
+public class DarkWoodRush : IBot
 {
-    Form1 Form1_0;
 
+    GameData gameData;
     public int CurrentStep = 0;
-    public bool ScriptDone = false;
+    public bool ScriptDone { get; set; } = false;
     public Position InifussTree = new Position { X = 0, Y = 0 };
-
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void ResetVars()
     {
@@ -28,58 +22,59 @@ public class DarkWoodRush
 
     public void RunScript()
     {
-        Form1_0.Town_0.ScriptTownAct = 1; //set to town act 5 when running this script
+        gameData = GameData.Instance;
+        gameData.townStruc.ScriptTownAct = 1; //set to town act 5 when running this script
 
-        if (!Form1_0.Running || !Form1_0.GameStruc_0.IsInGame())
+        if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
             ScriptDone = true;
             return;
         }
 
-        if (Form1_0.Town_0.GetInTown())
+        if (gameData.townStruc.GetInTown())
         {
-            Form1_0.SetGameStatus("GO TO WP");
+            gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            Form1_0.Town_0.GoToWPArea(1, 3);
+            gameData.townStruc.GoToWPArea(1, 3);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                Form1_0.SetGameStatus("DOING DARKWOOD");
-                //Form1_0.Battle_0.CastDefense();
-                //Form1_0.WaitDelay(15);
+                gameData.SetGameStatus("DOING DARKWOOD");
+                //gameData.battle.CastDefense();
+                //gameData.WaitDelay(15);
 
-                if ((Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.DarkWood)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.DarkWood)
                 {
-                    Form1_0.Town_0.SpawnTP();
-                    Form1_0.WaitDelay(15);
-                    Form1_0.Battle_0.CastDefense();
+                    gameData.townStruc.SpawnTP();
+                    gameData.WaitDelay(15);
+                    gameData.battle.CastDefense();
                     CurrentStep++;
                 }
                 else
                 {
-                    Form1_0.Town_0.FastTowning = false;
-                    Form1_0.Town_0.GoToTown();
+                    gameData.townStruc.FastTowning = false;
+                    gameData.townStruc.GoToTown();
                 }
             }
 
             if (CurrentStep == 1)
             {
-                InifussTree = Form1_0.MapAreaStruc_0.GetPositionOfObject("object", "InifussTree", (int)Enums.Area.DarkWood, new List<int>());
+                InifussTree = gameData.mapAreaStruc.GetPositionOfObject("object", "InifussTree", (int)Enums.Area.DarkWood, new List<int>());
                 if (InifussTree.X != 0 && InifussTree.Y != 0)
                 {
-                    Form1_0.PathFinding_0.MoveToThisPos(InifussTree);
+                    gameData.pathFinding.MoveToThisPos(InifussTree);
 
                     //repeat clic on tree
                     int tryyy = 0;
                     while (tryyy <= 25)
                     {
-                        Position itemScreenPos = Form1_0.GameStruc_0.World2Screen(Form1_0.PlayerScan_0.xPosFinal, Form1_0.PlayerScan_0.yPosFinal, InifussTree.X, InifussTree.Y);
+                        Position itemScreenPos = gameData.gameStruc.World2Screen(gameData.playerScan.xPosFinal, gameData.playerScan.yPosFinal, InifussTree.X, InifussTree.Y);
 
-                        Form1_0.KeyMouse_0.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
-                        Form1_0.PlayerScan_0.GetPositions();
+                        gameData.keyMouse.MouseClicc_RealPos(itemScreenPos.X, itemScreenPos.Y);
+                        gameData.playerScan.GetPositions();
                         tryyy++;
                     }
 
@@ -87,9 +82,9 @@ public class DarkWoodRush
                 }
                 else
                 {
-                    Form1_0.method_1("Inifuss Tree location not detected!", Color.Red);
-                    Form1_0.Town_0.UseLastTP = false;
-                    Form1_0.Town_0.FastTowning = false;
+                    gameData.method_1("Inifuss Tree location not detected!", Color.Red);
+                    gameData.townStruc.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
                     ScriptDone = true;
                     return;
                 }
@@ -97,12 +92,12 @@ public class DarkWoodRush
 
             if (CurrentStep == 2)
             {
-                if (!Form1_0.Battle_0.DoBattleScript(25))
+                if (!gameData.battle.DoBattleScript(25))
                 {
                     Position ThisTPPos = new Position { X = InifussTree.X - 10, Y = InifussTree.Y + 5 };
-                    Form1_0.PathFinding_0.MoveToThisPos(ThisTPPos);
+                    gameData.pathFinding.MoveToThisPos(ThisTPPos);
 
-                    Form1_0.Town_0.TPSpawned = false;
+                    gameData.townStruc.TPSpawned = false;
 
                     CurrentStep++;
                 }
@@ -110,16 +105,16 @@ public class DarkWoodRush
 
             if (CurrentStep == 3)
             {
-                Form1_0.SetGameStatus("DarkWood waiting on leecher");
+                gameData.SetGameStatus("DarkWood waiting on leecher");
 
-                if (!Form1_0.Town_0.TPSpawned) Form1_0.Town_0.SpawnTP();
+                if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.DarkWood)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.DarkWood)
                 {
                     CurrentStep++;
                 }
@@ -127,17 +122,17 @@ public class DarkWoodRush
 
             if (CurrentStep == 4)
             {
-                Form1_0.SetGameStatus("DarkWood waiting on leecher #2");
+                gameData.SetGameStatus("DarkWood waiting on leecher #2");
 
-                Form1_0.Battle_0.DoBattleScript(25);
+                gameData.battle.DoBattleScript(25);
 
                 //get leecher infos
-                Form1_0.PlayerScan_0.GetLeechPositions();
+                gameData.playerScan.GetLeechPositions();
 
-                if (Form1_0.PlayerScan_0.LeechlevelNo == (int)Enums.Area.RogueEncampment)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.RogueEncampment)
                 {
-                    Form1_0.Town_0.UseLastTP = false;
-                    Form1_0.Town_0.FastTowning = false;
+                    gameData.townStruc.UseLastTP = false;
+                    gameData.townStruc.FastTowning = false;
                     ScriptDone = true;
                 }
             }

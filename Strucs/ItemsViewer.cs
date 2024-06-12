@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 public class ItemsViewer
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public List<Bitmap> SoldItemsScreenshots = new List<Bitmap>();
     public Panel PicturePanel = new Panel();
@@ -36,14 +36,12 @@ public class ItemsViewer
         public int Bottom;
     }
 
-    public void SetForm1(Form1 form1_1)
+    public void Init()
     {
-        Form1_0 = form1_1;
-
         PicturePanel.Size = new System.Drawing.Size(1, 1);
         PicturePanel.BackgroundImageLayout = ImageLayout.Stretch;
         PicturePanel.Visible = false;
-        Form1_0.overlayForm.Controls.Add(PicturePanel);
+        gameData.overlayForm.Controls.Add(PicturePanel);
     }
 
     public void ItemViewerDebug()
@@ -52,32 +50,32 @@ public class ItemsViewer
         {
             if (CharConfig.InventoryDontCheckItem[i] == 0) continue;
 
-            //Console.WriteLine("HasStashItem:" + Form1_0.InventoryStruc_0.InventoryHasStashItem[i] + ", HasUnidItem:" + Form1_0.InventoryStruc_0.InventoryHasUnidItem[i]);
+            //Console.WriteLine("HasStashItem:" + gameData.inventoryStruc.InventoryHasStashItem[i] + ", HasUnidItem:" + gameData.inventoryStruc.InventoryHasUnidItem[i]);
 
             //################
             //GET ITEM SOLD INFOS
             string SoldTxt = "";
             Color ThisCol = Color.Black;
-            Dictionary<string, int> itemXYPos = Form1_0.InventoryStruc_0.ConvertIndexToXY(i);
-            if (Form1_0.ItemsStruc_0.GetSpecificItem(0, "", itemXYPos["x"], itemXYPos["y"], Form1_0.PlayerScan_0.unitId, 0))
+            Dictionary<string, int> itemXYPos = gameData.inventoryStruc.ConvertIndexToXY(i);
+            if (gameData.itemsStruc.GetSpecificItem(0, "", itemXYPos["x"], itemXYPos["y"], gameData.playerScan.unitId, 0))
             {
-                SoldTxt = "Sold Item:" + Form1_0.ItemsStruc_0.ItemNAAME + " (ID:" + Form1_0.ItemsStruc_0.txtFileNo + ")";
-                ThisCol = Form1_0.ItemsStruc_0.GetColorFromQuality((int)Form1_0.ItemsStruc_0.itemQuality);
+                SoldTxt = "Sold Item:" + gameData.itemsStruc.ItemNAAME + " (ID:" + gameData.itemsStruc.txtFileNo + ")";
+                ThisCol = gameData.itemsStruc.GetColorFromQuality((int)gameData.itemsStruc.itemQuality);
             }
-            //Form1_0.ItemsViewer_0.TakeItemPicture();
+            //gameData.itemsViewer.TakeItemPicture();
             //################
 
-            Dictionary<string, int> itemScreenPos = Form1_0.InventoryStruc_0.ConvertIndexToXY(i);
-            itemScreenPos = Form1_0.InventoryStruc_0.ConvertInventoryLocToScreenPos(itemScreenPos["x"], itemScreenPos["y"]);
+            Dictionary<string, int> itemScreenPos = gameData.inventoryStruc.ConvertIndexToXY(i);
+            itemScreenPos = gameData.inventoryStruc.ConvertInventoryLocToScreenPos(itemScreenPos["x"], itemScreenPos["y"]);
 
-            Form1_0.KeyMouse_0.MouseMoveTo(itemScreenPos["x"], itemScreenPos["y"]);
-            Form1_0.ItemsViewer_0.TakeItemPicture();
-            Form1_0.WaitDelay(5);
+            gameData.keyMouse.MouseMoveTo(itemScreenPos["x"], itemScreenPos["y"]);
+            gameData.itemsViewer.TakeItemPicture();
+            gameData.WaitDelay(5);
 
             if (SoldTxt != "")
             {
-                Form1_0.method_1_SoldItems(SoldTxt, ThisCol);
-                Form1_0.ItemsViewer_0.AddBufferPicture("Sold");
+                gameData.form.method_1_SoldItems(SoldTxt, ThisCol);
+                gameData.itemsViewer.AddBufferPicture("Sold");
             }
         }
     }
@@ -116,7 +114,7 @@ public class ItemsViewer
 
         //AllItemsScreenshots.Add(ItemScreenshot);
         BufferItemPicture = CaptureScreen(StartX, StartY, SizeX, SizeY);
-        //BufferItemPicture = CaptureRegion((IntPtr) Form1_0.hWnd, StartX, StartY, SizeX, SizeY);
+        //BufferItemPicture = CaptureRegion((IntPtr) gameData.hWnd, StartX, StartY, SizeX, SizeY);
     }
 
     public void AddBufferPicture(string ThisCategory)

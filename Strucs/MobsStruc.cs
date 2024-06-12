@@ -12,7 +12,7 @@ using static EnumsStates;
 
 public class MobsStruc
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
     public long MobsPointerLocation = 0;
     public long LastMobsPointerLocation = 0;
     public string MobsName = "";
@@ -50,24 +50,19 @@ public class MobsStruc
     List<EnumsStates.State> MobsStates = new List<EnumsStates.State>();
     List<EnumsStates.State> MobsStatesAll = new List<EnumsStates.State>();
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public bool IsThisMobInBound()
     {
         //return true;
 
         //GetUnitPathData();
 
-        bool[,] ThisCollisionGrid = Form1_0.MapAreaStruc_0.CollisionGrid((Enums.Area)Form1_0.PlayerScan_0.levelNo);
+        bool[,] ThisCollisionGrid = gameData.mapAreaStruc.CollisionGrid((Enums.Area)gameData.playerScan.levelNo);
 
         if (ThisCollisionGrid.GetLength(0) == 0 || ThisCollisionGrid.GetLength(1) == 0) return false;
-        if (Form1_0.MapAreaStruc_0.AllMapData.Count == 0) return false;
+        if (gameData.mapAreaStruc.AllMapData.Count == 0) return false;
 
-        int ThisX = xPosFinal - Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.X;
-        int ThisY = yPosFinal - Form1_0.MapAreaStruc_0.AllMapData[(int)Form1_0.PlayerScan_0.levelNo - 1].Offset.Y;
+        int ThisX = xPosFinal - gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.X;
+        int ThisY = yPosFinal - gameData.mapAreaStruc.AllMapData[(int)gameData.playerScan.levelNo - 1].Offset.Y;
 
         //Console.WriteLine(xPosFinal + ", " + yPosFinal);
 
@@ -90,13 +85,13 @@ public class MobsStruc
     public bool GetLastMobs()
     {
         //mobsdatastruc = new byte[144];
-        //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+        //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
         //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
 
         MobsPointerLocation = LastMobsPointerLocation;
 
         CurrentPointerBytes = new byte[4];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         txtFileNo = BitConverter.ToUInt32(CurrentPointerBytes, 0);
 
         GetUnitPathData();
@@ -105,14 +100,14 @@ public class MobsStruc
 
         if (txtFileNo != LastMobtxtFileNo)
         {
-            Form1_0.method_1("Bad Last mob ID!", Color.OrangeRed);
+            gameData.method_1("Bad Last mob ID!", Color.OrangeRed);
 
             return false;
         }
 
         if (xPosFinal == 0 && yPosFinal == 0)
         {
-            Form1_0.method_1("Bad Last mob positions!", Color.OrangeRed);
+            gameData.method_1("Bad Last mob positions!", Color.OrangeRed);
             xPosFinal = (ushort)LastMobPos.X;
             yPosFinal = (ushort)LastMobPos.Y;
         }
@@ -128,11 +123,11 @@ public class MobsStruc
     {
         MobsPointerLocation = TPointer;
         //mobsdatastruc = new byte[144];
-        //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+        //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
         //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
 
         CurrentPointerBytes = new byte[4];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         txtFileNo = BitConverter.ToUInt32(CurrentPointerBytes, 0);
 
         GetUnitPathData();
@@ -147,39 +142,39 @@ public class MobsStruc
         int Count = 0;
         try
         {
-            Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            gameData.patternsScan.scanForUnitsPointer("NPC");
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 MobsPointerLocation = ThisCurrentPointer.Key;
                 if (MobsPointerLocation > 0)
                 {
                     //mobsdatastruc = new byte[144];
-                    //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+                    //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
                     //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
                     //uint FirrstName = txtFileNo;
 
                     CurrentPointerBytes = new byte[4];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     uint txtFileNo2 = BitConverter.ToUInt32(CurrentPointerBytes, 0);
 
                     //long pStatsListExPtr = BitConverter.ToInt64(mobsdatastruc, 0x88);
                     CurrentPointerBytes = new byte[8];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     long pStatsListExPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
 
-                    if ((Form1_0.NPCStruc_0.HideNPC((int)txtFileNo2) == 0 && !DebuggingMobs) || DebuggingMobs)
+                    if ((gameData.npcStruc.HideNPC((int)txtFileNo2) == 0 && !DebuggingMobs) || DebuggingMobs)
                     //&& !ShouldBeIgnored(txtFileNo2))
                     {
-                        if (Form1_0.NPCStruc_0.getTownNPC((int)txtFileNo2) == "")
+                        if (gameData.npcStruc.getTownNPC((int)txtFileNo2) == "")
                         {
                             bool isPlayerMinion = false;
                             if (getPlayerMinion((int)txtFileNo2) != "") isPlayerMinion = true;
-                            else isPlayerMinion = ((Form1_0.Mem_0.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
+                            else isPlayerMinion = ((gameData.mem.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
 
                             if (!isPlayerMinion)
                             {
-                                MobsStatesAll = Form1_0.PlayerScan_0.GetStates(pStatsListExPtr);
-                                if (!Form1_0.PlayerScan_0.HasState(EnumsStates.State.Revive, MobsStatesAll))
+                                MobsStatesAll = gameData.playerScan.GetStates(pStatsListExPtr);
+                                if (!gameData.playerScan.HasState(EnumsStates.State.Revive, MobsStatesAll))
                                 {
                                     GetUnitPathDataAll();
                                     GetStatsAddrAll();
@@ -204,7 +199,7 @@ public class MobsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetMobsCount()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetMobsCount()'", Color.OrangeRed);
         }
 
         return Count;
@@ -215,7 +210,7 @@ public class MobsStruc
 
     public List<int[]> GetAllMobsNearby()
     {
-        Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
+        gameData.patternsScan.scanForUnitsPointer("NPC");
 
         List<int[]> monsterPositions2 = new List<int[]>();
         monsterIDs = new List<int>();
@@ -223,44 +218,44 @@ public class MobsStruc
 
         try
         {
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 MobsPointerLocation = ThisCurrentPointer.Key;
                 if (MobsPointerLocation > 0)
                 {
                     //mobsdatastruc = new byte[144];
-                    //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+                    //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
                     //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
                     //uint FirrstName = txtFileNo;
 
                     CurrentPointerBytes = new byte[4];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     uint txtFileNo2 = BitConverter.ToUInt32(CurrentPointerBytes, 0);
 
 
                     CurrentPointerBytes = new byte[8];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x10, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 0x10, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     long unitDataPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
-                    byte flag = Form1_0.Mem_0.ReadByteRaw((IntPtr)(unitDataPtr + 0x1A));
+                    byte flag = gameData.mem.ReadByteRaw((IntPtr)(unitDataPtr + 0x1A));
 
                     //long pStatsListExPtr = BitConverter.ToInt64(mobsdatastruc, 0x88);
                     CurrentPointerBytes = new byte[8];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     long pStatsListExPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
 
-                    if ((Form1_0.NPCStruc_0.HideNPC((int)txtFileNo2) == 0 && !DebuggingMobs) || DebuggingMobs)
+                    if ((gameData.npcStruc.HideNPC((int)txtFileNo2) == 0 && !DebuggingMobs) || DebuggingMobs)
                     //&& !ShouldBeIgnored(txtFileNo2))
                     {
-                        if (Form1_0.NPCStruc_0.getTownNPC((int)txtFileNo2) == "")
+                        if (gameData.npcStruc.getTownNPC((int)txtFileNo2) == "")
                         {
                             bool isPlayerMinion = false;
                             if (getPlayerMinion((int)txtFileNo2) != "") isPlayerMinion = true;
-                            else isPlayerMinion = ((Form1_0.Mem_0.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
+                            else isPlayerMinion = ((gameData.mem.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
 
                             if (!isPlayerMinion)
                             {
-                                MobsStatesAll = Form1_0.PlayerScan_0.GetStates(pStatsListExPtr);
-                                if (!Form1_0.PlayerScan_0.HasState(EnumsStates.State.Revive, MobsStatesAll))
+                                MobsStatesAll = gameData.playerScan.GetStates(pStatsListExPtr);
+                                if (!gameData.playerScan.HasState(EnumsStates.State.Revive, MobsStatesAll))
                                 {
 
                                     GetUnitPathDataAll();
@@ -269,9 +264,9 @@ public class MobsStruc
 
                                     if (DebuggingMobs)
                                     {
-                                        if ((xPosFinalAll != 0 && yPosFinalAll != 0 && Form1_0.checkBoxShowOnlyValidMobs.Checked) || !Form1_0.checkBoxShowOnlyValidMobs.Checked)
+                                        if ((xPosFinalAll != 0 && yPosFinalAll != 0 && gameData.form.checkBoxShowOnlyValidMobs.Checked) || !gameData.form.checkBoxShowOnlyValidMobs.Checked)
                                         {
-                                            Form1_0.AppendTextDebugMobs("ID:" + txtFileNo2 + "(" + (EnumsMobsNPC.MonsterType)((int)txtFileNo2) + ") at:" + xPosFinalAll + ", " + yPosFinalAll + " - HP:" + MobsHPAll + ", Type:" + ((Enums.MonsterType)GetMonsterType(flag)) + Environment.NewLine);
+                                            gameData.form.AppendTextDebugMobs("ID:" + txtFileNo2 + "(" + (EnumsMobsNPC.MonsterType)((int)txtFileNo2) + ") at:" + xPosFinalAll + ", " + yPosFinalAll + " - HP:" + MobsHPAll + ", Type:" + ((Enums.MonsterType)GetMonsterType(flag)) + Environment.NewLine);
                                         }
                                     }
 
@@ -293,7 +288,7 @@ public class MobsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetAllMobsNearby()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetAllMobsNearby()'", Color.OrangeRed);
         }
 
         return monsterPositions2;
@@ -326,7 +321,7 @@ public class MobsStruc
     {
         if (this.statCount < 100)
         {
-            Form1_0.Mem_0.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
+            gameData.mem.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
             for (int i = 0; i < this.statCount; i++)
             {
                 int offset = i * 8;
@@ -363,11 +358,11 @@ public class MobsStruc
     {
         //pPathPtr = BitConverter.ToInt64(mobsdatastruc, 0x38);
         CurrentPointerBytes = new byte[8];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x38, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 0x38, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         pPathPtrAll = BitConverter.ToInt64(CurrentPointerBytes, 0);
         //pPath = new byte[144];
         pPathAll = new byte[0x08];
-        Form1_0.Mem_0.ReadRawMemory(pPathPtrAll, ref pPathAll, pPathAll.Length);
+        gameData.mem.ReadRawMemory(pPathPtrAll, ref pPathAll, pPathAll.Length);
 
         ushort itemx2 = BitConverter.ToUInt16(pPathAll, 0x02);
         ushort itemy2 = BitConverter.ToUInt16(pPathAll, 0x06);
@@ -383,12 +378,12 @@ public class MobsStruc
     {
         //long pStatsListExPtr = BitConverter.ToInt64(mobsdatastruc, 0x88);
         CurrentPointerBytes = new byte[8];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         try
         {
             long pStatsListExPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
-            statPtrAll = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
-            statCountAll = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
+            statPtrAll = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
+            statCountAll = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
         }
         catch { }
     }
@@ -399,7 +394,7 @@ public class MobsStruc
         {
             if (this.statCountAll < 100)
             {
-                Form1_0.Mem_0.ReadRawMemory(this.statPtrAll, ref statBufferAll, (int)(this.statCountAll * 10));
+                gameData.mem.ReadRawMemory(this.statPtrAll, ref statBufferAll, (int)(this.statCountAll * 10));
                 for (int i = 0; i < this.statCountAll; i++)
                 {
                     int offset = i * 8;
@@ -415,7 +410,7 @@ public class MobsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't get Mob HP from Stats!", Color.OrangeRed);
+            gameData.method_1("Couldn't get Mob HP from Stats!", Color.OrangeRed);
         }
         return 0; // or some other default value
     }
@@ -428,7 +423,7 @@ public class MobsStruc
         int IncreaseCount = 0;
         while (!FoundMob && IncreaseCount < 10)
         {
-            Form1_0.PatternsScan_0.IncreaseV1Scanning();
+            gameData.patternsScan.IncreaseV1Scanning();
             IncreaseCount++;
 
             FoundMob = GetMobs(MobType, MobName, Nearest, MaxMobDistance, IgnoredListPointers);
@@ -441,7 +436,7 @@ public class MobsStruc
         {
             txtFileNo = 0;
             MobsName = "";
-            Form1_0.PatternsScan_0.scanForUnitsPointer("NPC");
+            gameData.patternsScan.scanForUnitsPointer("NPC");
             long NearestMobPointer = 0;
             int LastDiffX = 999;
             int LastDiffY = 999;
@@ -449,60 +444,60 @@ public class MobsStruc
 
             //Set Kill Only the Uniques Mobs
             if (CharConfig.KillOnlySuperUnique && MobType == "" && MobName == ""
-                && (Enums.Area)Form1_0.PlayerScan_0.levelNo != Enums.Area.ThroneOfDestruction)
+                && (Enums.Area)gameData.playerScan.levelNo != Enums.Area.ThroneOfDestruction)
             {
                 MobType = "getUniqueName";
             }
 
             //Set Fast Chaos Only Super Uniques
-            if ((Form1_0.Chaos_0.FastChaos || Form1_0.Chaos_0.FastChaosPopingSeals)
+            if ((((Chaos)gameData.chaos).FastChaos || ((Chaos)gameData.chaos).FastChaosPopingSeals)
                 && MobType == "" && MobName == ""
-                && (Enums.Area)Form1_0.PlayerScan_0.levelNo == Enums.Area.ChaosSanctuary)
+                && (Enums.Area)gameData.playerScan.levelNo == Enums.Area.ChaosSanctuary)
             {
                 MobType = "getSuperUniqueName";
             }
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllNPCPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllNPCPointers)
             {
                 MobsPointerLocation = ThisCurrentPointer.Key;
                 if (MobsPointerLocation > 0 && !IsIgnored(IgnoredListPointers))
                 {
                     //mobsdatastruc = new byte[144];
-                    //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+                    //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
                     //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
 
                     CurrentPointerBytes = new byte[4];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     txtFileNo = BitConverter.ToUInt32(CurrentPointerBytes, 0);
                     MobsName = ((EnumsMobsNPC.MonsterType)((int)txtFileNo)).ToString();
 
                     //long pStatsListExPtr = BitConverter.ToInt64(mobsdatastruc, 0x88);
                     CurrentPointerBytes = new byte[8];
-                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                    gameData.mem.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                     long pStatsListExPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
 
-                    if ((Form1_0.NPCStruc_0.HideNPC((int)txtFileNo) == 0 && !DebuggingMobs) || DebuggingMobs)
+                    if ((gameData.npcStruc.HideNPC((int)txtFileNo) == 0 && !DebuggingMobs) || DebuggingMobs)
                     //&& !ShouldBeIgnored(txtFileNo2))
                     {
-                        if (Form1_0.NPCStruc_0.getTownNPC((int)txtFileNo) == "")
+                        if (gameData.npcStruc.getTownNPC((int)txtFileNo) == "")
                         {
                             bool isPlayerMinion = false;
                             if (getPlayerMinion((int)txtFileNo) != "") isPlayerMinion = true;
-                            else isPlayerMinion = ((Form1_0.Mem_0.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
+                            else isPlayerMinion = ((gameData.mem.ReadUInt32((IntPtr)(pStatsListExPtr + 0xAC8 + 0xc)) & 31) == 1); //is a revive
 
                             if (!isPlayerMinion)
                             {
-                                MobsStates = Form1_0.PlayerScan_0.GetStates(pStatsListExPtr);
-                                if (!Form1_0.PlayerScan_0.HasState(EnumsStates.State.Revive, MobsStates))
+                                MobsStates = gameData.playerScan.GetStates(pStatsListExPtr);
+                                if (!gameData.playerScan.HasState(EnumsStates.State.Revive, MobsStates))
                                 {
                                     GetUnitPathData();
                                     GetStatsAddr();
                                     int MobHPBuffer = GetHPFromStats();
 
                                     CurrentPointerBytes = new byte[8];
-                                    Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x10, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                                    gameData.mem.ReadRawMemory(MobsPointerLocation + 0x10, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                                     long unitDataPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
-                                    byte flag = Form1_0.Mem_0.ReadByteRaw((IntPtr)(unitDataPtr + 0x1A));
+                                    byte flag = gameData.mem.ReadByteRaw((IntPtr)(unitDataPtr + 0x1A));
 
                                     /*if (MobType == "getBossName"
                                         && (Enums.MonsterType)GetMonsterType(flag) != Enums.MonsterType.Champion)
@@ -538,7 +533,7 @@ public class MobsStruc
                                             || IsImmune(Enums.StatResist.PoisonImmune) && CharConfig.AvoidPoisonImmune
                                             || IsImmune(Enums.StatResist.MagicImmune) && CharConfig.AvoidMagicImmune)
                                         {
-                                            //Form1_0.method_1(MobName + ", isImmune", Color.Red);
+                                            //gameData.method_1(MobName + ", isImmune", Color.Red);
                                             if (MobType != "getBossName" && MobType != "getSuperUniqueName") continue; //go to next mobs
                                         }
                                     }
@@ -546,7 +541,7 @@ public class MobsStruc
                                     bool IsMobInBound = true;
                                     if (MobType != "getBossName" && MobType != "getSuperUniqueName") IsMobInBound = IsThisMobInBound();
 
-                                    //Form1_0.method_1(MobName + ", isInBound: " + IsMobInBound + ", HP Buffer: " + MobHPBuffer, Color.Red);
+                                    //gameData.method_1(MobName + ", isInBound: " + IsMobInBound + ", HP Buffer: " + MobHPBuffer, Color.Red);
 
                                     //Console.WriteLine("found near mob " + txtFileNo + " at: " + xPosFinal + ", " + yPosFinal + " HP:" + MobHPBuffer);
                                     if ((MobHPBuffer > 0 || (MobHPBuffer == 0 && MobName != ""))
@@ -555,17 +550,17 @@ public class MobsStruc
                                     {
                                         if (CharConfig.LeaveDiabloClone && (EnumsMobsNPC.MonsterType)txtFileNo == EnumsMobsNPC.MonsterType.Diabloclone)
                                         {
-                                            Form1_0.method_1("DClone found near, leaving game!", Color.Red);
-                                            Form1_0.LeaveGame(false);
-                                            Form1_0.WaitDelay(100);
+                                            gameData.method_1("DClone found near, leaving game!", Color.Red);
+                                            gameData.LeaveGame(false);
+                                            gameData.WaitDelay(100);
                                             return false;
                                         }
 
                                         //get nearest mobs in all mobs
                                         if (Nearest)
                                         {
-                                            int DiffXPlayer = xPosFinal - Form1_0.PlayerScan_0.xPosFinal;
-                                            int DiffYPlayer = yPosFinal - Form1_0.PlayerScan_0.yPosFinal;
+                                            int DiffXPlayer = xPosFinal - gameData.playerScan.xPosFinal;
+                                            int DiffYPlayer = yPosFinal - gameData.playerScan.yPosFinal;
                                             if (DiffXPlayer < 0) DiffXPlayer = -DiffXPlayer;
                                             if (DiffYPlayer < 0) DiffYPlayer = -DiffYPlayer;
 
@@ -650,18 +645,18 @@ public class MobsStruc
                     }
                 }
             }
-            //Form1_0.method_1("Nearest: " + Nearest + ", NearestMobPointer: 0x" + NearestMobPointer.ToString("X") + ", GoodMob:" + GoodMob, Color.Red);
+            //gameData.method_1("Nearest: " + Nearest + ", NearestMobPointer: 0x" + NearestMobPointer.ToString("X") + ", GoodMob:" + GoodMob, Color.Red);
 
             //load nearest mobs
             if (Nearest && NearestMobPointer != 0 && GoodMob)
             {
                 MobsPointerLocation = NearestMobPointer;
                 //mobsdatastruc = new byte[144];
-                //Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
+                //gameData.mem.ReadRawMemory(MobsPointerLocation, ref mobsdatastruc, 144);
                 //txtFileNo = BitConverter.ToUInt32(mobsdatastruc, 4);
 
                 CurrentPointerBytes = new byte[4];
-                Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+                gameData.mem.ReadRawMemory(MobsPointerLocation + 4, ref CurrentPointerBytes, CurrentPointerBytes.Length);
                 txtFileNo = BitConverter.ToUInt32(CurrentPointerBytes, 0);
                 MobsName = ((EnumsMobsNPC.MonsterType)((int)txtFileNo)).ToString();
 
@@ -679,7 +674,7 @@ public class MobsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'GetMobs()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'GetMobs()'", Color.OrangeRed);
         }
 
         return false;
@@ -704,24 +699,24 @@ public class MobsStruc
     {
         //long pStatsListExPtr = BitConverter.ToInt64(mobsdatastruc, 0x88);
         CurrentPointerBytes = new byte[8];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 0x88, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         try
         {
             long pStatsListExPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
 
             /*pStatB = new byte[180];
-            Form1_0.Mem_0.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
+            gameData.mem.ReadRawMemory(pStatsListExPtr, ref pStatB, 180);
             statPtr = BitConverter.ToInt64(pStatB, 0x30);
             statCount = BitConverter.ToUInt32(pStatB, 0x38);
             statExPtr = BitConverter.ToInt64(pStatB, 0x88);
             statExCount = BitConverter.ToUInt32(pStatB, 0x90);*/
 
-            statPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
-            statCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
-            //statExPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
-            //statExCount = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
+            statPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x30));
+            statCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x38));
+            //statExPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListExPtr + 0x88));
+            //statExCount = gameData.mem.ReadUInt32Raw((IntPtr)(pStatsListExPtr + 0x90));
 
-            //string SavePathh = Form1_0.ThisEndPath + "DumpItempStatBStruc";
+            //string SavePathh = gameData.ThisEndPath + "DumpItempStatBStruc";
             //File.Create(SavePathh).Dispose();
             //File.WriteAllBytes(SavePathh, pStatB);
         }
@@ -732,11 +727,11 @@ public class MobsStruc
     {
         //pPathPtr = BitConverter.ToInt64(mobsdatastruc, 0x38);
         CurrentPointerBytes = new byte[8];
-        Form1_0.Mem_0.ReadRawMemory(MobsPointerLocation + 0x38, ref CurrentPointerBytes, CurrentPointerBytes.Length);
+        gameData.mem.ReadRawMemory(MobsPointerLocation + 0x38, ref CurrentPointerBytes, CurrentPointerBytes.Length);
         pPathPtr = BitConverter.ToInt64(CurrentPointerBytes, 0);
         //pPath = new byte[144];
         pPath = new byte[0x08];
-        Form1_0.Mem_0.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
+        gameData.mem.ReadRawMemory(pPathPtr, ref pPath, pPath.Length);
 
         itemx = BitConverter.ToUInt16(pPath, 0x02);
         itemy = BitConverter.ToUInt16(pPath, 0x06);
@@ -747,7 +742,7 @@ public class MobsStruc
         xPosFinal = (ushort)(itemx + xPosOffsetPercent);
         yPosFinal = (ushort)(itemy + yPosOffsetPercent);
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpItempPathStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpItempPathStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, pPath);
     }
@@ -758,7 +753,7 @@ public class MobsStruc
         {
             if (this.statCount < 100)
             {
-                Form1_0.Mem_0.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
+                gameData.mem.ReadRawMemory(this.statPtr, ref statBuffer, (int)(this.statCount * 10));
                 for (int i = 0; i < this.statCount; i++)
                 {
                     int offset = i * 8;
@@ -769,7 +764,7 @@ public class MobsStruc
                     {
                         //int NewV = 1 << 8;
                         //byte[] RunBuf = new byte[4] { 0x01, 0x00, 0x00, 0x00 };
-                        //Form1_0.Mem_0.WriteRawMemory((IntPtr)(this.statPtr + offset + 0x4), RunBuf, 4);
+                        //gameData.mem.WriteRawMemory((IntPtr)(this.statPtr + offset + 0x4), RunBuf, 4);
 
                         return statValue;
                     }
@@ -778,7 +773,7 @@ public class MobsStruc
 
             /*if (this.statExCount < 100)
             {
-                Form1_0.Mem_0.ReadRawMemory(this.statExPtr, ref statBuffer, (int)(this.statExCount * 10));
+                gameData.mem.ReadRawMemory(this.statExPtr, ref statBuffer, (int)(this.statExCount * 10));
                 for (int i = 0; i < this.statExCount; i++)
                 {
                     int offset = i * 8;
@@ -788,7 +783,7 @@ public class MobsStruc
                     if (statEnum == 6)
                     {
                         //byte[] RunBuf = new byte[4];
-                        //Form1_0.Mem_0.WriteRawMemory((IntPtr)(this.statExPtr + offset + 0x4), RunBuf, 4);
+                        //gameData.mem.WriteRawMemory((IntPtr)(this.statExPtr + offset + 0x4), RunBuf, 4);
                         return statValue;
                     }
                 }
@@ -800,7 +795,7 @@ public class MobsStruc
         }
         catch
         {
-            Form1_0.method_1("Couldn't get Mob HP from Stats!", Color.OrangeRed);
+            gameData.method_1("Couldn't get Mob HP from Stats!", Color.OrangeRed);
         }
 
         return 0; // or some other default value

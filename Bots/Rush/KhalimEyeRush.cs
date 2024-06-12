@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static MapAreaStruc;
 
-public class HallOfDeadRushCube : IBot
+public class KhalimEyeRush : IBot
 {
     GameData gameData;
 
@@ -22,14 +22,14 @@ public class HallOfDeadRushCube : IBot
 
     public void DetectCurrentStep()
     {
-        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.HallsOfTheDeadLevel2) CurrentStep = 1;
-        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.HallsOfTheDeadLevel3) CurrentStep = 2;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderForest) CurrentStep = 1;
+        if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderCavern) CurrentStep = 2;
     }
 
     public void RunScript()
     {
         gameData = GameData.Instance;
-        gameData.townStruc.ScriptTownAct = 2; //set to town act 5 when running this script
+        gameData.townStruc.ScriptTownAct = 3; //set to town act 5 when running this script
 
         if (!gameData.Running || !gameData.gameStruc.IsInGame())
         {
@@ -42,17 +42,17 @@ public class HallOfDeadRushCube : IBot
             gameData.SetGameStatus("GO TO WP");
             CurrentStep = 0;
 
-            gameData.townStruc.GoToWPArea(2, 3);
+            gameData.townStruc.GoToWPArea(3, 1);
         }
         else
         {
             if (CurrentStep == 0)
             {
-                gameData.SetGameStatus("DOING HALL OF THE DEAD (CUBE)");
+                gameData.SetGameStatus("DOING KAHLIM EYE");
                 //gameData.battle.CastDefense();
                 //gameData.WaitDelay(15);
 
-                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.HallsOfTheDeadLevel2)
+                if ((Enums.Area)gameData.playerScan.levelNo == Enums.Area.SpiderForest)
                 {
                     gameData.townStruc.SpawnTP();
                     gameData.WaitDelay(15);
@@ -73,28 +73,28 @@ public class HallOfDeadRushCube : IBot
             if (CurrentStep == 1)
             {
                 //####
-                if (gameData.playerScan.levelNo == (int)Enums.Area.HallsOfTheDeadLevel3)
+                if (gameData.playerScan.levelNo == (int)Enums.Area.SpiderCavern)
                 {
                     CurrentStep++;
                     return;
                 }
                 //####
 
-                gameData.pathFinding.MoveToExit(Enums.Area.HallsOfTheDeadLevel3);
+                gameData.pathFinding.MoveToExit(Enums.Area.SpiderCavern);
                 CurrentStep++;
             }
 
             if (CurrentStep == 2)
             {
                 //####
-                if (gameData.playerScan.levelNo != (int)Enums.Area.HallsOfTheDeadLevel3)
+                if (gameData.playerScan.levelNo != (int)Enums.Area.SpiderCavern)
                 {
                     CurrentStep--;
                     return;
                 }
                 //####
 
-                ChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "HoradricCubeChest", (int)Enums.Area.HallsOfTheDeadLevel3, new List<int>());
+                ChestPos = gameData.mapAreaStruc.GetPositionOfObject("object", "KhalimChest3", (int)Enums.Area.SpiderCavern, new List<int>());
                 if (ChestPos.X != 0 && ChestPos.Y != 0)
                 {
                     gameData.pathFinding.MoveToThisPos(ChestPos);
@@ -114,7 +114,7 @@ public class HallOfDeadRushCube : IBot
                 }
                 else
                 {
-                    gameData.method_1("Cube location not detected!", Color.Red);
+                    gameData.method_1("Kahlim Eye Chest location not detected!", Color.Red);
                     gameData.townStruc.FastTowning = false;
                     gameData.townStruc.UseLastTP = false;
                     ScriptDone = true;
@@ -124,7 +124,7 @@ public class HallOfDeadRushCube : IBot
 
             if (CurrentStep == 3)
             {
-                if (!gameData.battle.DoBattleScript(25))
+                if (!gameData.battle.DoBattleScript(15))
                 {
                     Position ThisTPPos = new Position { X = ChestPos.X - 10, Y = ChestPos.Y + 5 };
                     gameData.pathFinding.MoveToThisPos(ThisTPPos);
@@ -137,16 +137,16 @@ public class HallOfDeadRushCube : IBot
 
             if (CurrentStep == 4)
             {
-                gameData.SetGameStatus("Cube waiting on leecher");
+                gameData.SetGameStatus("Kahlim Eye waiting on leecher");
 
                 if (!gameData.townStruc.TPSpawned) gameData.townStruc.SpawnTP();
 
-                gameData.battle.DoBattleScript(25);
+                gameData.battle.DoBattleScript(15);
 
                 //get leecher infos
                 gameData.playerScan.GetLeechPositions();
 
-                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.HallsOfTheDeadLevel3)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.SpiderCavern)
                 {
                     CurrentStep++;
                 }
@@ -154,14 +154,14 @@ public class HallOfDeadRushCube : IBot
 
             if (CurrentStep == 5)
             {
-                gameData.SetGameStatus("Cube waiting on leecher #2");
+                gameData.SetGameStatus("Kahlim Eye waiting on leecher #2");
 
-                gameData.battle.DoBattleScript(25);
+                gameData.battle.DoBattleScript(15);
 
                 //get leecher infos
                 gameData.playerScan.GetLeechPositions();
 
-                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.LutGholein)
+                if (gameData.playerScan.LeechlevelNo == (int)Enums.Area.KurastDocks)
                 {
                     gameData.townStruc.FastTowning = false;
                     gameData.townStruc.UseLastTP = false;

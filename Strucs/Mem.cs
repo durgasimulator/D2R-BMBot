@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class Mem
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     [DllImport("kernel32.dll")]
     public static extern bool ReadProcessMemory(int hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
@@ -16,10 +16,6 @@ public class Mem
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool WriteProcessMemory(int hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize, ref int lpNumberOfBytesWritten);
 
-    public void SetForm1(Form1 Form1_1)
-    {
-        Form1_0 = Form1_1;
-    }
 
     Dictionary<string, int> aTypeSize = new Dictionary<string, int>
         {
@@ -33,12 +29,12 @@ public class Mem
     public void WriteRawMemory(IntPtr address, byte[] buffer, int writesize)
     {
         int pBytesWrite = 0;
-        WriteProcessMemory((int)Form1_0.processHandle, address, buffer, writesize, ref pBytesWrite);
+        WriteProcessMemory((int)gameData.processHandle, address, buffer, writesize, ref pBytesWrite);
     }
 
     public void ReadMemory(IntPtr address, ref byte[] buffer, int bytes, ref int pBytesRead)
     {
-        ReadProcessMemory((int)Form1_0.processHandle, address, buffer, bytes, ref pBytesRead);
+        ReadProcessMemory((int)gameData.processHandle, address, buffer, bytes, ref pBytesRead);
     }
 
     public void ReadRawMemory(long address, ref byte[] buffer, int bytes = 4, params int[] aOffsets)
@@ -52,11 +48,11 @@ public class Mem
 
         try
         {
-            ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)address, buffer, bytes, ref pBytesRead);
+            ReadProcessMemory((int)gameData.processHandle, (IntPtr)address, buffer, bytes, ref pBytesRead);
         }
         catch
         {
-            Form1_0.method_1("Couldn't read D2R process memory!", Color.Red);
+            gameData.method_1("Couldn't read D2R process memory!", Color.Red);
         }
     }
 
@@ -80,12 +76,12 @@ public class Mem
     public int ReadInt(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-        ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int"]];
+        ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return BitConverter.ToInt32(Form1_0.bufferRead, 0);
+            return BitConverter.ToInt32(gameData.bufferRead, 0);
         }
         return 0;
     }
@@ -93,12 +89,12 @@ public class Mem
     public UInt16 ReadUInt16(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Short"]];
-        ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["Short"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Short"]];
+        ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["Short"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return BitConverter.ToUInt16(Form1_0.bufferRead, 0);
+            return BitConverter.ToUInt16(gameData.bufferRead, 0);
         }
         return 0;
     }
@@ -108,12 +104,12 @@ public class Mem
         try
         {
             int bytesRead = 0;
-            Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-            ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+            gameData.bufferRead = new byte[aTypeSize["Int"]];
+            ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
             if (bytesRead > 0)
             {
-                return BitConverter.ToUInt32(Form1_0.bufferRead, 0);
+                return BitConverter.ToUInt32(gameData.bufferRead, 0);
             }
         }
         catch { }
@@ -123,12 +119,12 @@ public class Mem
     public Int32 ReadInt32(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-        ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int"]];
+        ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return BitConverter.ToInt32(Form1_0.bufferRead, 0);
+            return BitConverter.ToInt32(gameData.bufferRead, 0);
         }
         return 0;
     }
@@ -136,12 +132,12 @@ public class Mem
     public Int64 ReadInt64(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int64"]];
-        ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["Int64"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int64"]];
+        ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["Int64"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return BitConverter.ToInt64(Form1_0.bufferRead, 0);
+            return BitConverter.ToInt64(gameData.bufferRead, 0);
         }
         return 0;
     }
@@ -149,12 +145,12 @@ public class Mem
     public char ReadUChar(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["UChar"]];
-        ReadProcessMemory((int)Form1_0.processHandle, (IntPtr)((long)Form1_0.BaseAddress + (long)ThisAd), Form1_0.bufferRead, aTypeSize["UChar"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["UChar"]];
+        ReadProcessMemory((int)gameData.processHandle, (IntPtr)((long)gameData.BaseAddress + (long)ThisAd), gameData.bufferRead, aTypeSize["UChar"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return (char)Form1_0.bufferRead[0];
+            return (char)gameData.bufferRead[0];
         }
         return '\0';
     }
@@ -164,12 +160,12 @@ public class Mem
     public byte ReadByteRaw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[1];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, 1, ref bytesRead);
+        gameData.bufferRead = new byte[1];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, 1, ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return Form1_0.bufferRead[0];
+            return gameData.bufferRead[0];
         }
         return 0;
     }
@@ -177,14 +173,14 @@ public class Mem
     public int ReadIntRaw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
         if (bytesRead > 0)
         {
             try
             {
-                return BitConverter.ToInt32(Form1_0.bufferRead, 0);
+                return BitConverter.ToInt32(gameData.bufferRead, 0);
             }
             catch { }
         }
@@ -194,14 +190,14 @@ public class Mem
     public UInt16 ReadUInt16Raw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Short"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["Short"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Short"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["Short"], ref bytesRead);
 
         if (bytesRead > 0)
         {
             try
             {
-                return BitConverter.ToUInt16(Form1_0.bufferRead, 0);
+                return BitConverter.ToUInt16(gameData.bufferRead, 0);
             }
             catch { }
         }
@@ -211,14 +207,14 @@ public class Mem
     public UInt32 ReadUInt32Raw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
         if (bytesRead > 0)
         {
             try
             {
-                return BitConverter.ToUInt32(Form1_0.bufferRead, 0);
+                return BitConverter.ToUInt32(gameData.bufferRead, 0);
             }
             catch { }
         }
@@ -228,14 +224,14 @@ public class Mem
     public Int32 ReadInt32Raw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["Int"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["Int"], ref bytesRead);
 
         if (bytesRead > 0)
         {
             try
             {
-                return BitConverter.ToInt32(Form1_0.bufferRead, 0);
+                return BitConverter.ToInt32(gameData.bufferRead, 0);
             }
             catch { }
         }
@@ -245,14 +241,14 @@ public class Mem
     public Int64 ReadInt64Raw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["Int64"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["Int64"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["Int64"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["Int64"], ref bytesRead);
 
         if (bytesRead > 0)
         {
             try
             {
-                return BitConverter.ToInt64(Form1_0.bufferRead, 0);
+                return BitConverter.ToInt64(gameData.bufferRead, 0);
             }
             catch { }
         }
@@ -262,12 +258,12 @@ public class Mem
     public char ReadUCharRaw(IntPtr ThisAd)
     {
         int bytesRead = 0;
-        Form1_0.bufferRead = new byte[aTypeSize["UChar"]];
-        ReadProcessMemory((int)Form1_0.processHandle, ThisAd, Form1_0.bufferRead, aTypeSize["UChar"], ref bytesRead);
+        gameData.bufferRead = new byte[aTypeSize["UChar"]];
+        ReadProcessMemory((int)gameData.processHandle, ThisAd, gameData.bufferRead, aTypeSize["UChar"], ref bytesRead);
 
         if (bytesRead > 0)
         {
-            return (char)Form1_0.bufferRead[0];
+            return (char)gameData.bufferRead[0];
         }
         return '\0';
     }

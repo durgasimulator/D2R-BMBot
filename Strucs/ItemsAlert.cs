@@ -25,8 +25,7 @@ using static Enums;
 
 public class ItemsAlert
 {
-    Form1 Form1_0;
-
+    GameData gameData = GameData.Instance;
     public Dictionary<string, bool> PickItemsRunesKeyGems = new Dictionary<string, bool>();
     public Dictionary<string, int> PickItemsRunesKeyGems_Quantity = new Dictionary<string, int>();
     public Dictionary<string, bool> PickItemsPotions = new Dictionary<string, bool>();
@@ -49,10 +48,8 @@ public class ItemsAlert
 
     public Dictionary<string, List<string>> typeMapping = new Dictionary<string, List<string>>();
 
-    public void SetForm1(Form1 form1_1)
+    public void Init()
     {
-        Form1_0 = form1_1;
-
         typeMapping = new Dictionary<string, List<string>>()
         {
             {"amulet", new List<string>{"Amulet"}},
@@ -114,7 +111,7 @@ public class ItemsAlert
 
                 for (int i = 0; i < 659; i++)
                 {
-                    if (Form1_0.ItemsNames_0.getItemBaseName(i).Replace(" ", "") == CheckName)
+                    if (gameData.itemsNames.getItemBaseName(i).Replace(" ", "") == CheckName)
                     {
                         FoundItemName = true;
                         break;
@@ -123,7 +120,7 @@ public class ItemsAlert
 
                 if (!FoundItemName)
                 {
-                    Form1_0.method_1("Item '" + ThisDir.Key + "' from the pickit doesn't exist", Color.Red);
+                    gameData.method_1("Item '" + ThisDir.Key + "' from the pickit doesn't exist", Color.Red);
                 }
             }
         }
@@ -136,7 +133,7 @@ public class ItemsAlert
 
                 for (int i = 0; i < 659; i++)
                 {
-                    if (Form1_0.ItemsNames_0.getItemBaseName(i).Replace(" ", "") == CheckName)
+                    if (gameData.itemsNames.getItemBaseName(i).Replace(" ", "") == CheckName)
                     {
                         FoundItemName = true;
                         break;
@@ -145,7 +142,7 @@ public class ItemsAlert
 
                 if (!FoundItemName)
                 {
-                    Form1_0.method_1("Item '" + CheckName + "' from the pickit doesn't exist", Color.Red);
+                    gameData.method_1("Item '" + CheckName + "' from the pickit doesn't exist", Color.Red);
                 }
                 else
                 {
@@ -153,8 +150,8 @@ public class ItemsAlert
                     {
                         foreach (var ThisDir2 in PickItemsNormal_ByName_Stats[ThisDir.Key])
                         {
-                            //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + ThisDir2.Key + "=" + ThisDir2.Value);
-                            Form1_0.ItemsStruc_0.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisDir.Key][ThisDir2.Key]);
+                            //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + ThisDir2.Key + "=" + ThisDir2.Value);
+                            gameData.itemsStruc.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisDir.Key][ThisDir2.Key]);
                         }
                     }
                 }
@@ -244,7 +241,7 @@ public class ItemsAlert
 
     public bool ShouldPickItem(bool Keeping)
     {
-        string ItemName = Form1_0.ItemsStruc_0.ItemNAAME.Replace(" ", "");
+        string ItemName = gameData.itemsStruc.ItemNAAME.Replace(" ", "");
         //foreach (var ThisDir in PickItemsRunesKeyGems)
         if (PickItemsRunesKeyGems.ContainsKey(ItemName))
         {
@@ -252,7 +249,7 @@ public class ItemsAlert
             if (PickItemsRunesKeyGems[ItemName])
             {
                 if (PickItemsRunesKeyGems_Quantity[ItemName] == 0 
-                    || (PickItemsRunesKeyGems_Quantity[ItemName] > 0 && Form1_0.StashStruc_0.GetStashItemCount(Form1_0.ItemsStruc_0.ItemNAAME) < PickItemsRunesKeyGems_Quantity[ItemName]))
+                    || (PickItemsRunesKeyGems_Quantity[ItemName] > 0 && gameData.stashStruc.GetStashItemCount(gameData.itemsStruc.ItemNAAME) < PickItemsRunesKeyGems_Quantity[ItemName]))
                 {
                     return true;
                 }
@@ -267,10 +264,10 @@ public class ItemsAlert
         //if (i > 0) ThisNamee = ItemName + (i + 1);
         //foreach (var ThisDir in PickItemsNormal_ByName)
         int ThisIndex = 2;
-        //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + ThisNamee);
+        //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + ThisNamee);
         while (PickItemsNormal_ByName.ContainsKey(ThisNamee))
         {
-            //if (Form1_0.ItemsStruc_0.ItemNAAME == "Amulet") Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + ThisNamee);
+            //if (gameData.itemsStruc.ItemNAAME == "Amulet") Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + ThisNamee);
             if (PickItemsNormal_ByName[ThisNamee])
             //if (ItemName == Regex.Replace(ThisDir.Key, @"[\d-]", string.Empty) && ThisDir.Value)
             {
@@ -278,7 +275,7 @@ public class ItemsAlert
                 bool SameFlags = true;
                 if (PickItemsNormal_ByName_Quality.ContainsKey(ThisNamee))
                 {
-                    if (Form1_0.ItemsStruc_0.quality != Form1_0.ItemsStruc_0.getQuality(PickItemsNormal_ByName_Quality[ThisNamee])) SameQuality = false;
+                    if (gameData.itemsStruc.quality != gameData.itemsStruc.getQuality(PickItemsNormal_ByName_Quality[ThisNamee])) SameQuality = false;
                 }
                 if (SameQuality)
                 {
@@ -291,14 +288,14 @@ public class ItemsAlert
                         }
                         foreach (var ThisList in PickItemsNormal_ByName_Flags[ThisNamee])
                         {
-                            SameFlags = Form1_0.ItemsFlags_0.IsItemSameFlags(ThisList.Value, TotalFlags, Form1_0.ItemsStruc_0.flags);
+                            SameFlags = gameData.itemsFlags.IsItemSameFlags(ThisList.Value, TotalFlags, gameData.itemsStruc.flags);
                         }
-                        //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + SameFlags);
+                        //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + SameFlags);
                     }
 
                     if (SameFlags)
                     {
-                        if (!Form1_0.ItemsStruc_0.identified)
+                        if (!gameData.itemsStruc.identified)
                         {
                             //if (!Keeping)
                             //{
@@ -311,7 +308,7 @@ public class ItemsAlert
                                     {
                                         if (ThisDir2.Key == "Sockets")
                                         {
-                                            if (!Form1_0.ItemsStruc_0.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
+                                            if (!gameData.itemsStruc.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
                                             break;
                                         }
                                     }
@@ -327,18 +324,18 @@ public class ItemsAlert
                             {
                                 foreach (var ThisDir2 in PickItemsNormal_ByName_Stats[ThisNamee])
                                 {
-                                    //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + ThisDir2.Key + "=" + ThisDir2.Value);
-                                    if (!Form1_0.ItemsStruc_0.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
+                                    //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + ThisDir2.Key + "=" + ThisDir2.Value);
+                                    if (!gameData.itemsStruc.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByName_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
                                 }
                             }
 
-                            /*if (Form1_0.ItemsStruc_0.ItemNAAME == "Amulet")
+                            /*if (gameData.itemsStruc.ItemNAAME == "Amulet")
                             {
                                 if (PickItemsNormal_ByNameDesc.ContainsKey(ThisNamee))
                                 {
                                     if (PickItemsNormal_ByNameDesc[ThisNamee].Contains("Kaleidoscope"))
                                     {
-                                        Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + SameStats);
+                                        Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + SameStats);
                                     }
                                 }
                             }*/
@@ -369,7 +366,7 @@ public class ItemsAlert
                 bool Checking_ethereal = false;
                 if (PickItemsNormal_ByType_Quality.ContainsKey(ThisDir.Key))
                 {
-                    if (Form1_0.ItemsStruc_0.quality != Form1_0.ItemsStruc_0.getQuality(PickItemsNormal_ByType_Quality[ThisDir.Key])) SameQuality = false;
+                    if (gameData.itemsStruc.quality != gameData.itemsStruc.getQuality(PickItemsNormal_ByType_Quality[ThisDir.Key])) SameQuality = false;
                 }
                 if (SameQuality)
                 {
@@ -385,14 +382,14 @@ public class ItemsAlert
                         }
                         foreach (var ThisList in PickItemsNormal_ByType_Flags[ThisDir.Key])
                         {
-                            SameFlags = Form1_0.ItemsFlags_0.IsItemSameFlags(ThisList.Value, TotalFlags, Form1_0.ItemsStruc_0.flags);
+                            SameFlags = gameData.itemsFlags.IsItemSameFlags(ThisList.Value, TotalFlags, gameData.itemsStruc.flags);
                         }
-                        //Console.WriteLine(Form1_0.ItemsStruc_0.ItemNAAME + ":" + SameFlags);
+                        //Console.WriteLine(gameData.itemsStruc.ItemNAAME + ":" + SameFlags);
                     }
 
                     if (SameFlags)
                     //{
-                        if (!Form1_0.ItemsStruc_0.identified)
+                        if (!gameData.itemsStruc.identified)
                         {
                             //if (!Keeping)
                             //{
@@ -405,7 +402,7 @@ public class ItemsAlert
                                     {
                                         if (ThisDir2.Key == "Sockets")
                                         {
-                                            if (!Form1_0.ItemsStruc_0.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByType_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
+                                            if (!gameData.itemsStruc.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByType_Operators[ThisNamee][ThisDir2.Key])) SameStats = false;
                                             break;
                                         }
                                     }
@@ -421,7 +418,7 @@ public class ItemsAlert
                             {
                                 foreach (var ThisDir2 in PickItemsNormal_ByType_Stats[ThisDir.Key])
                                 {
-                                    if (!Form1_0.ItemsStruc_0.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByType_Operators[ThisDir.Key][ThisDir2.Key])) SameStats = false;
+                                    if (!gameData.itemsStruc.IsItemHaveSameStatMultiCheck(ThisDir2.Key, ThisDir2.Value, PickItemsNormal_ByType_Operators[ThisDir.Key][ThisDir2.Key])) SameStats = false;
                                 }
                             }
 
@@ -445,7 +442,7 @@ public class ItemsAlert
         {
             for (int i = 0; i < typeMapping[ItemTypee].Count; i++)
             {
-                if (typeMapping[ItemTypee][i] == Form1_0.ItemsStruc_0.ItemNAAME.Replace(" ", ""))
+                if (typeMapping[ItemTypee][i] == gameData.itemsStruc.ItemNAAME.Replace(" ", ""))
                 {
                     return true;
                 }
@@ -453,90 +450,90 @@ public class ItemsAlert
         }
         else
         {
-            Form1_0.method_1("Item '[Type] == " + ItemTypee + "' doesn't exist!", Color.Red);
+            gameData.method_1("Item '[Type] == " + ItemTypee + "' doesn't exist!", Color.Red);
             return false;
         }
 
         /*if (ItemTypee == "helm")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Mask")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Helm")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Crown")
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Demonhead"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Cap"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Basinet"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Bone Visage"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Shako"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "War Hat"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Sallet"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Casque"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Armet"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Skull Cap"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Hydraskull"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Giant Conch"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Diadem"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Tiara"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Circlet")
+            if (gameData.itemsStruc.ItemNAAME.Contains("Mask")
+                || gameData.itemsStruc.ItemNAAME.Contains("Helm")
+                || gameData.itemsStruc.ItemNAAME.Contains("Crown")
+                || gameData.itemsStruc.ItemNAAME == "Demonhead"
+                || gameData.itemsStruc.ItemNAAME == "Cap"
+                || gameData.itemsStruc.ItemNAAME == "Basinet"
+                || gameData.itemsStruc.ItemNAAME == "Bone Visage"
+                || gameData.itemsStruc.ItemNAAME == "Shako"
+                || gameData.itemsStruc.ItemNAAME == "War Hat"
+                || gameData.itemsStruc.ItemNAAME == "Sallet"
+                || gameData.itemsStruc.ItemNAAME == "Casque"
+                || gameData.itemsStruc.ItemNAAME == "Armet"
+                || gameData.itemsStruc.ItemNAAME == "Skull Cap"
+                || gameData.itemsStruc.ItemNAAME == "Hydraskull"
+                || gameData.itemsStruc.ItemNAAME == "Giant Conch"
+                || gameData.itemsStruc.ItemNAAME == "Diadem"
+                || gameData.itemsStruc.ItemNAAME == "Tiara"
+                || gameData.itemsStruc.ItemNAAME == "Circlet")
             {
                 return true;
             }
         }
         if (ItemTypee == "gloves")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Gloves")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Gauntlets")
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Heavy Bracers"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Vambraces"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Bramble Mitts")
+            if (gameData.itemsStruc.ItemNAAME.Contains("Gloves")
+                || gameData.itemsStruc.ItemNAAME.Contains("Gauntlets")
+                || gameData.itemsStruc.ItemNAAME == "Heavy Bracers"
+                || gameData.itemsStruc.ItemNAAME == "Vambraces"
+                || gameData.itemsStruc.ItemNAAME == "Bramble Mitts")
             {
                 return true;
             }
         }
         if (ItemTypee == "boots")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Boots")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Greaves"))
+            if (gameData.itemsStruc.ItemNAAME.Contains("Boots")
+                || gameData.itemsStruc.ItemNAAME.Contains("Greaves"))
             {
                 return true;
             }
         }
         if (ItemTypee == "belt")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Belt")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Sash")
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Mithril Coil"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Colossus Girdle")
+            if (gameData.itemsStruc.ItemNAAME.Contains("Belt")
+                || gameData.itemsStruc.ItemNAAME.Contains("Sash")
+                || gameData.itemsStruc.ItemNAAME == "Mithril Coil"
+                || gameData.itemsStruc.ItemNAAME == "Colossus Girdle")
             {
                 return true;
             }
         }
         if (ItemTypee == "ring")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME == "Ring") return true;
+            if (gameData.itemsStruc.ItemNAAME == "Ring") return true;
         }
         if (ItemTypee == "amulet")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME == "Amulet") return true;
+            if (gameData.itemsStruc.ItemNAAME == "Amulet") return true;
         }
         if (ItemTypee == "armor")
         {
             try
             {
-                if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Plate")
-                    || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Armor")
-                    || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Skin")
-                    || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Mail")
-                    || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Coat")
-                    || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Shell")
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Cuirass"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Dusk Shroud"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Wire Fleece"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Studded Leather"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Great Hauberk"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Boneweave"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Wyrmhide"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Scarab Husk"
-                    || Form1_0.ItemsStruc_0.ItemNAAME == "Boneweave")
+                if (gameData.itemsStruc.ItemNAAME.Contains("Plate")
+                    || gameData.itemsStruc.ItemNAAME.Contains("Armor")
+                    || gameData.itemsStruc.ItemNAAME.Contains("Skin")
+                    || gameData.itemsStruc.ItemNAAME.Contains("Mail")
+                    || gameData.itemsStruc.ItemNAAME.Contains("Coat")
+                    || gameData.itemsStruc.ItemNAAME.Contains("Shell")
+                    || gameData.itemsStruc.ItemNAAME == "Cuirass"
+                    || gameData.itemsStruc.ItemNAAME == "Dusk Shroud"
+                    || gameData.itemsStruc.ItemNAAME == "Wire Fleece"
+                    || gameData.itemsStruc.ItemNAAME == "Studded Leather"
+                    || gameData.itemsStruc.ItemNAAME == "Great Hauberk"
+                    || gameData.itemsStruc.ItemNAAME == "Boneweave"
+                    || gameData.itemsStruc.ItemNAAME == "Wyrmhide"
+                    || gameData.itemsStruc.ItemNAAME == "Scarab Husk"
+                    || gameData.itemsStruc.ItemNAAME == "Boneweave")
                 {
                     return true;
                 }
@@ -545,20 +542,20 @@ public class ItemsAlert
         }
         if (ItemTypee == "circlet")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME == "Circlet"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Tiara"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Diadem")
+            if (gameData.itemsStruc.ItemNAAME == "Circlet"
+                || gameData.itemsStruc.ItemNAAME == "Tiara"
+                || gameData.itemsStruc.ItemNAAME == "Diadem")
             {
                 return true;
             }
         }
         if (ItemTypee == "gold")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME == "Gold") return true;
+            if (gameData.itemsStruc.ItemNAAME == "Gold") return true;
         }
         if (ItemTypee == "jewel")
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME == "Jewel") return true;
+            if (gameData.itemsStruc.ItemNAAME == "Jewel") return true;
         }*/
         return false;
     }
@@ -575,88 +572,88 @@ public class ItemsAlert
         {
             for (int i = 0; i < typeMapping[ThisTypee.Key].Count; i++)
             {
-                if (typeMapping[ThisTypee.Key][i] == Form1_0.ItemsStruc_0.ItemNAAME.Replace(" ", ""))
+                if (typeMapping[ThisTypee.Key][i] == gameData.itemsStruc.ItemNAAME.Replace(" ", ""))
                 {
                     return ThisTypee.Key;
                 }
             }
         }
-        //Form1_0.method_1("Couldn't get the Item Type for: " + Form1_0.ItemsStruc_0.ItemNAAME, Color.Red);
+        //gameData.method_1("Couldn't get the Item Type for: " + gameData.itemsStruc.ItemNAAME, Color.Red);
         return "";
 
-        /*if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Mask")
-            || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Helm")
-            || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Crown")
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Demonhead"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Cap"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Basinet"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Bone Visage"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Shako"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "War Hat"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Sallet"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Casque"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Armet"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Skull Cap"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Hydraskull"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Giant Conch"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Diadem"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Tiara"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Circlet")
+        /*if (gameData.itemsStruc.ItemNAAME.Contains("Mask")
+            || gameData.itemsStruc.ItemNAAME.Contains("Helm")
+            || gameData.itemsStruc.ItemNAAME.Contains("Crown")
+            || gameData.itemsStruc.ItemNAAME == "Demonhead"
+            || gameData.itemsStruc.ItemNAAME == "Cap"
+            || gameData.itemsStruc.ItemNAAME == "Basinet"
+            || gameData.itemsStruc.ItemNAAME == "Bone Visage"
+            || gameData.itemsStruc.ItemNAAME == "Shako"
+            || gameData.itemsStruc.ItemNAAME == "War Hat"
+            || gameData.itemsStruc.ItemNAAME == "Sallet"
+            || gameData.itemsStruc.ItemNAAME == "Casque"
+            || gameData.itemsStruc.ItemNAAME == "Armet"
+            || gameData.itemsStruc.ItemNAAME == "Skull Cap"
+            || gameData.itemsStruc.ItemNAAME == "Hydraskull"
+            || gameData.itemsStruc.ItemNAAME == "Giant Conch"
+            || gameData.itemsStruc.ItemNAAME == "Diadem"
+            || gameData.itemsStruc.ItemNAAME == "Tiara"
+            || gameData.itemsStruc.ItemNAAME == "Circlet")
         {
             return "helm";
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Gloves")
-            || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Gauntlets")
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Heavy Bracers"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Vambraces"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Bramble Mitts")
+        if (gameData.itemsStruc.ItemNAAME.Contains("Gloves")
+            || gameData.itemsStruc.ItemNAAME.Contains("Gauntlets")
+            || gameData.itemsStruc.ItemNAAME == "Heavy Bracers"
+            || gameData.itemsStruc.ItemNAAME == "Vambraces"
+            || gameData.itemsStruc.ItemNAAME == "Bramble Mitts")
         {
             return "gloves";
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Boots")
-            || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Greaves"))
+        if (gameData.itemsStruc.ItemNAAME.Contains("Boots")
+            || gameData.itemsStruc.ItemNAAME.Contains("Greaves"))
         {
             return "boots";
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Belt")
-            || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Sash")
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Mithril Coil"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Colossus Girdle")
+        if (gameData.itemsStruc.ItemNAAME.Contains("Belt")
+            || gameData.itemsStruc.ItemNAAME.Contains("Sash")
+            || gameData.itemsStruc.ItemNAAME == "Mithril Coil"
+            || gameData.itemsStruc.ItemNAAME == "Colossus Girdle")
         {
             return "belt";
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Ring") return "ring";
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Amulet") return "amulet";
+        if (gameData.itemsStruc.ItemNAAME == "Ring") return "ring";
+        if (gameData.itemsStruc.ItemNAAME == "Amulet") return "amulet";
         try
         {
-            if (Form1_0.ItemsStruc_0.ItemNAAME.Contains("Plate")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Armor")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Skin")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Mail")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Coat")
-                || Form1_0.ItemsStruc_0.ItemNAAME.Contains("Shell")
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Cuirass"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Dusk Shroud"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Wire Fleece"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Studded Leather"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Great Hauberk"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Boneweave"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Wyrmhide"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Scarab Husk"
-                || Form1_0.ItemsStruc_0.ItemNAAME == "Boneweave")
+            if (gameData.itemsStruc.ItemNAAME.Contains("Plate")
+                || gameData.itemsStruc.ItemNAAME.Contains("Armor")
+                || gameData.itemsStruc.ItemNAAME.Contains("Skin")
+                || gameData.itemsStruc.ItemNAAME.Contains("Mail")
+                || gameData.itemsStruc.ItemNAAME.Contains("Coat")
+                || gameData.itemsStruc.ItemNAAME.Contains("Shell")
+                || gameData.itemsStruc.ItemNAAME == "Cuirass"
+                || gameData.itemsStruc.ItemNAAME == "Dusk Shroud"
+                || gameData.itemsStruc.ItemNAAME == "Wire Fleece"
+                || gameData.itemsStruc.ItemNAAME == "Studded Leather"
+                || gameData.itemsStruc.ItemNAAME == "Great Hauberk"
+                || gameData.itemsStruc.ItemNAAME == "Boneweave"
+                || gameData.itemsStruc.ItemNAAME == "Wyrmhide"
+                || gameData.itemsStruc.ItemNAAME == "Scarab Husk"
+                || gameData.itemsStruc.ItemNAAME == "Boneweave")
             {
                 return "armor";
             }
         }
         catch { }
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Circlet"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Tiara"
-            || Form1_0.ItemsStruc_0.ItemNAAME == "Diadem")
+        if (gameData.itemsStruc.ItemNAAME == "Circlet"
+            || gameData.itemsStruc.ItemNAAME == "Tiara"
+            || gameData.itemsStruc.ItemNAAME == "Diadem")
         {
             return "circlet";
         }
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Gold") return "gold";
-        if (Form1_0.ItemsStruc_0.ItemNAAME == "Jewel") return "jewel";
+        if (gameData.itemsStruc.ItemNAAME == "Gold") return "gold";
+        if (gameData.itemsStruc.ItemNAAME == "Jewel") return "jewel";
         return "";*/
     }
 }

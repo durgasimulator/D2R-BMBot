@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 public class SkillsStruc
 {
-    Form1 Form1_0;
+
 
     public string LeftSkillName = "";
     public string RightSkillName = "";
     public int LeftSkill = 0;
     public int RightSkill = 0;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void SetSkill(string Direction, int skill)
     {

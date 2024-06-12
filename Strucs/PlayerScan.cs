@@ -24,7 +24,7 @@ using static System.Windows.Forms.AxHost;
 
 public class PlayerScan
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public long PlayerPointer = 0;
     public long PlayerNamePointer = 0;
@@ -116,56 +116,51 @@ public class PlayerScan
     //[DllImport("checkmem.dll")]
     //public static extern uint get_seed(uint InitSeedHash1, uint InitSeedHash2, uint EndSeedHash1);
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public void GetPositions()
     {
-        Form1_0.SetProcessingTime();
+        gameData.form.SetProcessingTime();
 
 
-        long QuestOffset = (long)Form1_0.BaseAddress + 0x230E9A8;
-        long QuestAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(QuestOffset));
-        byte Q1 = Form1_0.Mem_0.ReadByteRaw((IntPtr)QuestAddress);
-        byte Q2 = Form1_0.Mem_0.ReadByteRaw((IntPtr)(QuestAddress + 1));
+        long QuestOffset = (long)gameData.BaseAddress + 0x230E9A8;
+        long QuestAddress = gameData.mem.ReadInt64Raw((IntPtr)(QuestOffset));
+        byte Q1 = gameData.mem.ReadByteRaw((IntPtr)QuestAddress);
+        byte Q2 = gameData.mem.ReadByteRaw((IntPtr)(QuestAddress + 1));
 
         //byte[] Buffer = new byte[2] { 0, 0};
-        //Form1_0.Mem_0.WriteRawMemory((IntPtr)QuestAddress, Buffer, Buffer.Length);
+        //gameData.mem.WriteRawMemory((IntPtr)QuestAddress, Buffer, Buffer.Length);
 
-        pathAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x38));
-        xPos = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pathAddress + 0x02));
-        yPos = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pathAddress + 0x06));
-        xPosOffset = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pathAddress + 0x00));
-        yPosOffset = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pathAddress + 0x04));
+        pathAddress = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x38));
+        xPos = gameData.mem.ReadUInt16Raw((IntPtr)(pathAddress + 0x02));
+        yPos = gameData.mem.ReadUInt16Raw((IntPtr)(pathAddress + 0x06));
+        xPosOffset = gameData.mem.ReadUInt16Raw((IntPtr)(pathAddress + 0x00));
+        yPosOffset = gameData.mem.ReadUInt16Raw((IntPtr)(pathAddress + 0x04));
         xPosOffsetPercent = (xPosOffset / 65536); //get percentage
         yPosOffsetPercent = (yPosOffset / 65536); //get percentage
         xPosFinal = (ushort)(xPos + xPosOffsetPercent);
         yPosFinal = (ushort)(yPos + yPosOffsetPercent);
 
-        //long UnitID = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 8));
+        //long UnitID = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 8));
         //Console.WriteLine("PlayerID: 0x" + UnitID.ToString("X"));
 
         //Console.WriteLine("X: " + xPos);
-        //Console.WriteLine("Off: " + Form1_0.Mem_0.ReadByteRaw((IntPtr)(pathAddress + 0x02)).ToString("X2"));
-        //Console.WriteLine("Off: " + Form1_0.Mem_0.ReadByteRaw((IntPtr)(pathAddress + 0x03)).ToString("X2"));
-        //Console.WriteLine("Off: " + Form1_0.Mem_0.ReadByteRaw((IntPtr)(pathAddress + 0x04)).ToString("X2"));
-        //Console.WriteLine("Off: " + Form1_0.Mem_0.ReadByteRaw((IntPtr)(pathAddress + 0x05)).ToString("X2"));
+        //Console.WriteLine("Off: " + gameData.mem.ReadByteRaw((IntPtr)(pathAddress + 0x02)).ToString("X2"));
+        //Console.WriteLine("Off: " + gameData.mem.ReadByteRaw((IntPtr)(pathAddress + 0x03)).ToString("X2"));
+        //Console.WriteLine("Off: " + gameData.mem.ReadByteRaw((IntPtr)(pathAddress + 0x04)).ToString("X2"));
+        //Console.WriteLine("Off: " + gameData.mem.ReadByteRaw((IntPtr)(pathAddress + 0x05)).ToString("X2"));
         //byte[] bytee = new byte[2] { 0x76, 0x1e  };
-        //Form1_0.Mem_0.WriteRawMemory((IntPtr)(pathAddress + 0x02), bytee, bytee.Length);
+        //gameData.mem.WriteRawMemory((IntPtr)(pathAddress + 0x02), bytee, bytee.Length);
 
-        pStatsListEx = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x88));
-        statPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pStatsListEx + 0x30));
-        statCount = Form1_0.Mem_0.ReadInt32Raw((IntPtr)(pStatsListEx + 0x38));
+        pStatsListEx = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x88));
+        statPtr = gameData.mem.ReadInt64Raw((IntPtr)(pStatsListEx + 0x30));
+        statCount = gameData.mem.ReadInt32Raw((IntPtr)(pStatsListEx + 0x38));
 
         PlayerStates = GetStates(pStatsListEx);
         HasBattleOrderState = HasState(EnumsStates.State.Battleorders, PlayerStates);
 
         byte[] buffer = new byte[statCount * 8];
-        Form1_0.Mem_0.ReadRawMemory(statPtr + 0x2, ref buffer, (int)(statCount * 8));
+        gameData.mem.ReadRawMemory(statPtr + 0x2, ref buffer, (int)(statCount * 8));
 
-        if (Form1_0.Town_0.IsInTown)
+        if (gameData.townStruc.IsInTown)
         {
             PlayerHP = PlayerMaxHP;
             if (PlayerHP == 0) PlayerHP = 100;
@@ -177,7 +172,7 @@ public class PlayerScan
 
         }
 
-        if (!Form1_0.GameStruc_0.IsInGame()) PlayerHP = PlayerMaxHP;
+        if (!gameData.gameStruc.IsInGame()) PlayerHP = PlayerMaxHP;
 
         for (int i = 0; i < statCount; i++)
         {
@@ -198,7 +193,7 @@ public class PlayerScan
                 //Console.WriteLine(buffer[offset + 0x2].ToString("X2") + buffer[offset + 0x2 + 1].ToString("X2") + buffer[offset + 0x2 + 2].ToString("X2") + buffer[offset + 0x2 + 3].ToString("X2"));
                 //byte[] bytee = new byte[4] { (byte) (buffer[offset + 0x2] + 0x03), buffer[offset + 0x2 + 1], buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
                 byte[] bytee = new byte[4] { 0xff, buffer[offset + 0x2 + 1], buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
-                Form1_0.Mem_0.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
+                gameData.mem.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
             }
             if (statEnum == (ushort)Enums.Attribute.Experience)
             //|| statEnum == (ushort)Enums.Attribute.SkillPointsRemaining)
@@ -206,14 +201,14 @@ public class PlayerScan
                 //Console.WriteLine(buffer[offset + 0x2].ToString("X2") + buffer[offset + 0x2 + 1].ToString("X2") + buffer[offset + 0x2 + 2].ToString("X2") + buffer[offset + 0x2 + 3].ToString("X2"));
                 //byte[] bytee = new byte[4] { (byte) (buffer[offset + 0x2] + 0x03), buffer[offset + 0x2 + 1], buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
                 byte[] bytee = new byte[4] { buffer[offset + 0x2], (byte) (buffer[offset + 0x2 + 1] + 0x05), buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
-                Form1_0.Mem_0.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
+                gameData.mem.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
             }
             if (statEnum == (ushort)Enums.Attribute.Vitality || statEnum == (ushort)Enums.Attribute.Energy)
             {
                 //Console.WriteLine(buffer[offset + 0x2].ToString("X2") + buffer[offset + 0x2 + 1].ToString("X2") + buffer[offset + 0x2 + 2].ToString("X2") + buffer[offset + 0x2 + 3].ToString("X2"));
                 //byte[] bytee = new byte[4] { (byte) (buffer[offset + 0x2] + 0x03), buffer[offset + 0x2 + 1], buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
                 byte[] bytee = new byte[4] { 0xff, 0xff, buffer[offset + 0x2 + 2], buffer[offset + 0x2 + 3] };
-                Form1_0.Mem_0.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
+                gameData.mem.WriteRawMemory((IntPtr)(statPtr + 0x2 + offset + 0x02), bytee, bytee.Length);
             }*/
 
             if (statEnum == (ushort)Enums.Attribute.Life)
@@ -268,43 +263,43 @@ public class PlayerScan
         else PlayerDead = false;
 
         //; get the level number
-        pRoom1Address = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pathAddress + 0x20));
-        pRoom2Address = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pRoom1Address + 0x18));
-        pLevelAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(pRoom2Address + 0x90));
-        levelNo = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(pLevelAddress + 0x1F8));
+        pRoom1Address = gameData.mem.ReadInt64Raw((IntPtr)(pathAddress + 0x20));
+        pRoom2Address = gameData.mem.ReadInt64Raw((IntPtr)(pRoom1Address + 0x18));
+        pLevelAddress = gameData.mem.ReadInt64Raw((IntPtr)(pRoom2Address + 0x90));
+        levelNo = gameData.mem.ReadUInt32Raw((IntPtr)(pLevelAddress + 0x1F8));
 
-        RoomExit[0] = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pRoom1Address + 0x10));
-        RoomExit[1] = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(pRoom1Address + 0x14));
+        RoomExit[0] = gameData.mem.ReadUInt16Raw((IntPtr)(pRoom1Address + 0x10));
+        RoomExit[1] = gameData.mem.ReadUInt16Raw((IntPtr)(pRoom1Address + 0x14));
 
         if (LastlevelNo != levelNo)
         {
-            Form1_0.overlayForm.ScanningOverlayItems = true; //try rescanning overlay if there was too much lags
+            gameData.overlayForm.ScanningOverlayItems = true; //try rescanning overlay if there was too much lags
             LastlevelNo = levelNo;
         }
 
         //; get/check for bad pointer
         if (levelNo == 0 && xPosFinal == 0 && yPosFinal == 0)
         {
-            Form1_0.HasPointers = false;
+            gameData.HasPointers = false;
         }
 
         //#####################################################################################################
         //#####################################################################################################
         //#####################################################################################################
         //; get the difficulty
-        actAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x20));
-        long aActUnk2 = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(actAddress + 0x78));
-        difficulty = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(aActUnk2 + 0x830));
+        actAddress = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x20));
+        long aActUnk2 = gameData.mem.ReadInt64Raw((IntPtr)(actAddress + 0x78));
+        difficulty = gameData.mem.ReadUInt16Raw((IntPtr)(aActUnk2 + 0x830));
 
         //; get the map seed
-        long actMiscAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(actAddress + 0x78)); //0x0000023a64ed4780; 2449824630656
-        uint dwInitSeedHash1 = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x840));
-        uint dwInitSeedHash2 = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x844));
-        uint dwEndSeedHash1 = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x868));
+        long actMiscAddress = gameData.mem.ReadInt64Raw((IntPtr)(actAddress + 0x78)); //0x0000023a64ed4780; 2449824630656
+        uint dwInitSeedHash1 = gameData.mem.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x840));
+        uint dwInitSeedHash2 = gameData.mem.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x844));
+        uint dwEndSeedHash1 = gameData.mem.ReadUInt32Raw((IntPtr)(actMiscAddress + 0x868));
 
         /*byte[] buffData = new byte[0x100];
-        Form1_0.Mem_0.ReadRawMemory(actMiscAddress + 0x800, ref buffData, buffData.Length);
-        string SavePathh = Form1_0.ThisEndPath + "DumpHashStruc";
+        gameData.mem.ReadRawMemory(actMiscAddress + 0x800, ref buffData, buffData.Length);
+        string SavePathh = gameData.ThisEndPath + "DumpHashStruc";
         File.Create(SavePathh).Dispose();
         File.WriteAllBytes(SavePathh, buffData);*/
 
@@ -317,49 +312,49 @@ public class PlayerScan
 
         mapSeedValue = mapSeed.Item1;
 
-        //Form1_0.method_1("SEED: " + mapSeed.Item1.ToString(), Color.Red);
-        //Form1_0.method_1("Difficulty: " + ((Difficulty) difficulty).ToString(), Color.Red);
-        //Form1_0.GetMapData(mapSeed.Item1.ToString(), (Difficulty) difficulty);
+        //gameData.method_1("SEED: " + mapSeed.Item1.ToString(), Color.Red);
+        //gameData.method_1("Difficulty: " + ((Difficulty) difficulty).ToString(), Color.Red);
+        //gameData.GetMapData(mapSeed.Item1.ToString(), (Difficulty) difficulty);
         //#####################################################################################################
         //#####################################################################################################
         //#####################################################################################################
         // Skills
-        long skillListPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x100));
+        long skillListPtr = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x100));
         //var skills = GetSkills(skillListPtr);
 
-        long leftSkillPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(skillListPtr + 0x08));
-        long leftSkillTxtPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)leftSkillPtr);
-        ushort leftSkillId = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)leftSkillTxtPtr);
+        long leftSkillPtr = gameData.mem.ReadInt64Raw((IntPtr)(skillListPtr + 0x08));
+        long leftSkillTxtPtr = gameData.mem.ReadInt64Raw((IntPtr)leftSkillPtr);
+        ushort leftSkillId = gameData.mem.ReadUInt16Raw((IntPtr)leftSkillTxtPtr);
         LeftSkill = (Enums.Skill)leftSkillId;
 
-        long rightSkillPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(skillListPtr + 0x10));
-        long rightSkillTxtPtr = Form1_0.Mem_0.ReadInt64Raw((IntPtr)rightSkillPtr);
-        ushort rightSkillId = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)rightSkillTxtPtr);
+        long rightSkillPtr = gameData.mem.ReadInt64Raw((IntPtr)(skillListPtr + 0x10));
+        long rightSkillTxtPtr = gameData.mem.ReadInt64Raw((IntPtr)rightSkillPtr);
+        ushort rightSkillId = gameData.mem.ReadUInt16Raw((IntPtr)rightSkillTxtPtr);
         RightSkill = (Enums.Skill)rightSkillId;
 
         // Class
-        uint classValue = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(PlayerPointer + 0x174));
+        uint classValue = gameData.mem.ReadUInt32Raw((IntPtr)(PlayerPointer + 0x174));
         CurrentPlayerClass = (Enums.PlayerClass)classValue;
         //#####################################################################################################
         //#####################################################################################################
         //#####################################################################################################
 
         //get player name
-        PlayerNamePointer = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x10));
-        pName = Form1_0.Mem_0.ReadMemString(PlayerNamePointer);
-        //Form1_0.Potions_0.CheckHPAndManaMax(); //not used here
+        PlayerNamePointer = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x10));
+        pName = gameData.mem.ReadMemString(PlayerNamePointer);
+        //gameData.potions.CheckHPAndManaMax(); //not used here
 
         SetMaxHPAndMana();
 
-        Form1_0.Grid_SetInfos("Cords", xPosFinal + "," + yPosFinal);
-        Form1_0.Grid_SetInfos("Life", PlayerHP + "/" + PlayerMaxHP);
-        Form1_0.Grid_SetInfos("Mana", PlayerMana + "/" + PlayerMaxMana);
-        Form1_0.Grid_SetInfos("Map Level", levelNo.ToString() + " " + (Enums.Area)levelNo);
-        //Form1_0.Grid_SetInfos("Room Exit", RoomExit[0].ToString() + ", " + RoomExit[1].ToString());
-        //Form1_0.Grid_SetInfos("Seed", mapSeed.ToString());
-        //Form1_0.Grid_SetInfos("Difficulty", difficulty.ToString());
+        gameData.form.Grid_SetInfos("Cords", xPosFinal + "," + yPosFinal);
+        gameData.form.Grid_SetInfos("Life", PlayerHP + "/" + PlayerMaxHP);
+        gameData.form.Grid_SetInfos("Mana", PlayerMana + "/" + PlayerMaxMana);
+        gameData.form.Grid_SetInfos("Map Level", levelNo.ToString() + " " + (Enums.Area)levelNo);
+        //gameData.Grid_SetInfos("Room Exit", RoomExit[0].ToString() + ", " + RoomExit[1].ToString());
+        //gameData.Grid_SetInfos("Seed", mapSeed.ToString());
+        //gameData.Grid_SetInfos("Difficulty", difficulty.ToString());
 
-        //Form1_0.method_1("URL: " + GetImageURL());
+        //gameData.method_1("URL: " + GetImageURL());
         //DownloadImage(GetImageURL());
     }
 
@@ -407,7 +402,7 @@ public class PlayerScan
 
     public bool ShouldSeeShopForHP()
     {
-        if (((Form1_0.PlayerScan_0.PlayerHP * 100) / Form1_0.PlayerScan_0.PlayerMaxHP) <= 80)
+        if (((gameData.playerScan.PlayerHP * 100) / gameData.playerScan.PlayerMaxHP) <= 80)
         {
             return true;
         }
@@ -417,7 +412,7 @@ public class PlayerScan
     public void SetMaxHPAndMana()
     {
         byte[] buffer = new byte[statCount * 8];
-        Form1_0.Mem_0.ReadRawMemory(statPtr + 0x2, ref buffer, (int)(statCount * 8));
+        gameData.mem.ReadRawMemory(statPtr + 0x2, ref buffer, (int)(statCount * 8));
 
         for (int i = 0; i < statCount; i++)
         {
@@ -519,18 +514,18 @@ public class PlayerScan
 
     public bool HasAnyPlayerInArea(int ThisArea)
     {
-        long UnitOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["rosterOffset"];
-        long partyStruct = Form1_0.Mem_0.ReadInt64Raw((IntPtr)UnitOffset);
+        long UnitOffset = (long)gameData.BaseAddress + (long)gameData.offsets["rosterOffset"];
+        long partyStruct = gameData.mem.ReadInt64Raw((IntPtr)UnitOffset);
 
         for (int i = 0; i < 8; i++)
         {
-            ushort RosterlevelNo = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(partyStruct + 0x5C));
+            ushort RosterlevelNo = gameData.mem.ReadUInt16Raw((IntPtr)(partyStruct + 0x5C));
             if (RosterlevelNo == ThisArea)
             {
                 return true;
             }
 
-            partyStruct = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(partyStruct + 0x148));
+            partyStruct = gameData.mem.ReadInt64Raw((IntPtr)(partyStruct + 0x148));
         }
 
         return false;
@@ -538,11 +533,11 @@ public class PlayerScan
 
     public void GetLeechPositions()
     {
-        LeechPosX = (int)Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(LeechPlayerPointer + 0x60));
-        LeechPosY = (int)Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(LeechPlayerPointer + 0x64));
-        LeechlevelNo = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(LeechPlayerPointer + 0x5C));
+        LeechPosX = (int)gameData.mem.ReadUInt32Raw((IntPtr)(LeechPlayerPointer + 0x60));
+        LeechPosY = (int)gameData.mem.ReadUInt32Raw((IntPtr)(LeechPlayerPointer + 0x64));
+        LeechlevelNo = gameData.mem.ReadUInt16Raw((IntPtr)(LeechPlayerPointer + 0x5C));
 
-        Form1_0.Grid_SetInfos("LeechCords", LeechPosX + "," + LeechPosY);
+        gameData.form.Grid_SetInfos("LeechCords", LeechPosX + "," + LeechPosY);
 
         //plevel = d2rprocess.read(partyStruct + 0x58, "UShort");
         //partyId = d2rprocess.read(partyStruct + 0x5A, "UShort");
@@ -551,37 +546,37 @@ public class PlayerScan
 
     public void ScanForLeecher()
     {
-        long UnitOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["rosterOffset"];
-        long partyStruct = Form1_0.Mem_0.ReadInt64Raw((IntPtr)UnitOffset);
+        long UnitOffset = (long)gameData.BaseAddress + (long)gameData.offsets["rosterOffset"];
+        long partyStruct = gameData.mem.ReadInt64Raw((IntPtr)UnitOffset);
         LeechPlayerPointer = 0;
         LeechPlayerUnitID = 0;
 
-        string LeeeechName = Form1_0.GameStruc_0.GameOwnerName;
+        string LeeeechName = gameData.gameStruc.GameOwnerName;
         if (CharConfig.IsRushing) LeeeechName = CharConfig.RushLeecherName;
         else if ((CharConfig.RunBaalLeechScript || CharConfig.RunChaosLeechScript) && CharConfig.SearchLeecherName != "") LeeeechName = CharConfig.SearchLeecherName;
 
         if (LeeeechName == "")
         {
-            Form1_0.method_1("Leecher name is empty!", Color.Red);
+            gameData.method_1("Leecher name is empty!", Color.Red);
         }
 
         for (int i = 0; i < 9; i++)
         {
-            string name = Form1_0.Mem_0.ReadMemString(partyStruct);
+            string name = gameData.mem.ReadMemString(partyStruct);
             if (name.ToLower() == LeeeechName.ToLower())
             {
                 if (!PrintedLeechFoundInfo)
                 {
-                    Form1_0.method_1("Leecher pointer found!", Color.DarkViolet);
+                    gameData.method_1("Leecher pointer found!", Color.DarkViolet);
                     PrintedLeechFoundInfo = true;
                 }
-                LeechPlayerUnitID = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)(partyStruct + 0x48));
+                LeechPlayerUnitID = gameData.mem.ReadUInt32Raw((IntPtr)(partyStruct + 0x48));
                 LeechPlayerPointer = partyStruct;
                 break;
             }
             else
             {
-                partyStruct = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(partyStruct + 0x148));
+                partyStruct = gameData.mem.ReadInt64Raw((IntPtr)(partyStruct + 0x148));
             }
         }
     }
@@ -600,8 +595,8 @@ public class PlayerScan
                 SizeArray = (128 + 516) * 8;
                 SizeIncrement = 8;
                 unitTableBufferT = new byte[SizeArray];
-                long UnitOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["unitTable"] + Form1_0.UnitStrucOffset;
-                Form1_0.Mem_0.ReadRawMemory(UnitOffset, ref unitTableBufferT, SizeArray);
+                long UnitOffset = (long)gameData.BaseAddress + (long)gameData.offsets["unitTable"] + gameData.UnitStrucOffset;
+                gameData.mem.ReadRawMemory(UnitOffset, ref unitTableBufferT, SizeArray);
 
                 PlayerStrucCount = 0;
                 for (int i = 0; i < SizeArray; i += SizeIncrement)
@@ -611,18 +606,18 @@ public class PlayerScan
                     if (UnitPointerLocation > 0)
                     {
                         byte[] itemdatastruc = new byte[144];
-                        Form1_0.Mem_0.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, 144);
+                        gameData.mem.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, 144);
 
                         // Do ONLY UnitType:0 && TxtFileNo:3
                         //if (BitConverter.ToUInt32(itemdatastruc, 0) == 0 && BitConverter.ToUInt32(itemdatastruc, 4) == 3)
                         if (BitConverter.ToUInt32(itemdatastruc, 0) == 0)
                         {
                             PlayerStrucCount++;
-                            //Form1_0.method_1("PPointerLocation: 0x" + (UnitPointerLocation).ToString("X"));
+                            //gameData.method_1("PPointerLocation: 0x" + (UnitPointerLocation).ToString("X"));
 
                             long pUnitDataPtr = BitConverter.ToInt64(itemdatastruc, 0x10);
                             byte[] pUnitData = new byte[144];
-                            Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
+                            gameData.mem.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
 
                             string name = "";
                             for (int i2 = 0; i2 < 16; i2++)
@@ -633,32 +628,32 @@ public class PlayerScan
                                 }
                             }
                             //name = name.Replace("?", "");
-                            //Form1_0.method_1("PNAME: " + name, Color.Red);
+                            //gameData.method_1("PNAME: " + name, Color.Red);
 
                             //Console.WriteLine(BitConverter.ToUInt32(itemdatastruc, 0));
                             //Console.WriteLine(BitConverter.ToUInt32(itemdatastruc, 4));
 
                             long ppath = BitConverter.ToInt64(itemdatastruc, 0x38);
                             byte[] ppathData = new byte[144];
-                            Form1_0.Mem_0.ReadRawMemory(ppath, ref ppathData, 144);
+                            gameData.mem.ReadRawMemory(ppath, ref ppathData, 144);
 
                             //if posX equal not zero
                             if (BitConverter.ToInt16(ppathData, 2) != 0 && name == CharConfig.PlayerCharName)
                             {
-                                Form1_0.method_1("------------------------------------------", Color.DarkBlue);
+                                gameData.method_1("------------------------------------------", Color.DarkBlue);
                                 PlayerPointer = UnitPointerLocation;
-                                Form1_0.Grid_SetInfos("Pointer", "0x" + PlayerPointer.ToString("X"));
+                                gameData.form.Grid_SetInfos("Pointer", "0x" + PlayerPointer.ToString("X"));
                                 FoundPlayer = true;
                                 unitId = BitConverter.ToUInt32(itemdatastruc, 0x08);
-                                Form1_0.method_1("Player ID: 0x" + unitId.ToString("X"), Color.DarkBlue);
+                                gameData.method_1("Player ID: 0x" + unitId.ToString("X"), Color.DarkBlue);
 
-                                /*string SavePathh = Form1_0.ThisEndPath + "DumpPlayerStruc";
+                                /*string SavePathh = gameData.ThisEndPath + "DumpPlayerStruc";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, itemdatastruc);
-                                SavePathh = Form1_0.ThisEndPath + "DumpPlayerUnitData";
+                                SavePathh = gameData.ThisEndPath + "DumpPlayerUnitData";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, pUnitData);
-                                SavePathh = Form1_0.ThisEndPath + "DumpPlayerPath";
+                                SavePathh = gameData.ThisEndPath + "DumpPlayerPath";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, ppathData);*/
 
@@ -670,28 +665,28 @@ public class PlayerScan
             }
             else
             {
-                Form1_0.PatternsScan_0.scanForUnitsPointer("player");
+                gameData.patternsScan.scanForUnitsPointer("player");
 
                 PlayerStrucCount = 0;
-                foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllPlayersPointers)
+                foreach (var ThisCurrentPointer in gameData.patternsScan.AllPlayersPointers)
                 {
                     long UnitPointerLocation = ThisCurrentPointer.Key;
 
                     if (UnitPointerLocation > 0)
                     {
                         byte[] itemdatastruc = new byte[144];
-                        Form1_0.Mem_0.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, 144);
+                        gameData.mem.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, 144);
 
                         // Do ONLY UnitType:0 && TxtFileNo:3
                         //if (BitConverter.ToUInt32(itemdatastruc, 0) == 0 && BitConverter.ToUInt32(itemdatastruc, 4) == 3)
                         if (BitConverter.ToUInt32(itemdatastruc, 0) == 0)
                         {
                             PlayerStrucCount++;
-                            //Form1_0.method_1("PPointerLocation: 0x" + (UnitPointerLocation).ToString("X"));
+                            //gameData.method_1("PPointerLocation: 0x" + (UnitPointerLocation).ToString("X"));
 
                             long pUnitDataPtr = BitConverter.ToInt64(itemdatastruc, 0x10);
                             byte[] pUnitData = new byte[144];
-                            Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
+                            gameData.mem.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
 
                             string name = "";
                             for (int i2 = 0; i2 < 16; i2++)
@@ -702,32 +697,32 @@ public class PlayerScan
                                 }
                             }
                             //name = name.Replace("?", "");
-                            //Form1_0.method_1("PNAME: " + name, Color.Red);
+                            //gameData.method_1("PNAME: " + name, Color.Red);
 
                             //Console.WriteLine(BitConverter.ToUInt32(itemdatastruc, 0));
                             //Console.WriteLine(BitConverter.ToUInt32(itemdatastruc, 4));
 
                             long ppath = BitConverter.ToInt64(itemdatastruc, 0x38);
                             byte[] ppathData = new byte[144];
-                            Form1_0.Mem_0.ReadRawMemory(ppath, ref ppathData, 144);
+                            gameData.mem.ReadRawMemory(ppath, ref ppathData, 144);
 
                             //if posX equal not zero
                             if (BitConverter.ToInt16(ppathData, 2) != 0 && name == CharConfig.PlayerCharName)
                             {
-                                Form1_0.method_1("------------------------------------------", Color.DarkBlue);
+                                gameData.method_1("------------------------------------------", Color.DarkBlue);
                                 PlayerPointer = UnitPointerLocation;
-                                Form1_0.Grid_SetInfos("Pointer", "0x" + PlayerPointer.ToString("X"));
+                                gameData.form.Grid_SetInfos("Pointer", "0x" + PlayerPointer.ToString("X"));
                                 FoundPlayer = true;
                                 unitId = BitConverter.ToUInt32(itemdatastruc, 0x08);
-                                Form1_0.method_1("Player ID: 0x" + unitId.ToString("X"), Color.DarkBlue);
+                                gameData.method_1("Player ID: 0x" + unitId.ToString("X"), Color.DarkBlue);
 
-                                /*string SavePathh = Form1_0.ThisEndPath + "DumpPlayerStruc";
+                                /*string SavePathh = gameData.ThisEndPath + "DumpPlayerStruc";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, itemdatastruc);
-                                SavePathh = Form1_0.ThisEndPath + "DumpPlayerUnitData";
+                                SavePathh = gameData.ThisEndPath + "DumpPlayerUnitData";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, pUnitData);
-                                SavePathh = Form1_0.ThisEndPath + "DumpPlayerPath";
+                                SavePathh = gameData.ThisEndPath + "DumpPlayerPath";
                                 File.Create(SavePathh).Dispose();
                                 File.WriteAllBytes(SavePathh, ppathData);*/
 
@@ -740,7 +735,7 @@ public class PlayerScan
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'scanForPlayer()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'scanForPlayer()'", Color.OrangeRed);
         }
     }
 
@@ -750,15 +745,15 @@ public class PlayerScan
         {
             //this can be used to get self corpse??
 
-            Form1_0.PatternsScan_0.scanForUnitsPointer("player");
+            gameData.patternsScan.scanForUnitsPointer("player");
 
-            foreach (var ThisCurrentPointer in Form1_0.PatternsScan_0.AllPlayersPointers)
+            foreach (var ThisCurrentPointer in gameData.patternsScan.AllPlayersPointers)
             {
                 long UnitPointerLocation = ThisCurrentPointer.Key;
                 if (UnitPointerLocation > 0)
                 {
                     byte[] itemdatastruc = new byte[0x98];
-                    Form1_0.Mem_0.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, itemdatastruc.Length);
+                    gameData.mem.ReadRawMemory(UnitPointerLocation, ref itemdatastruc, itemdatastruc.Length);
 
 
                     long pInventory = BitConverter.ToInt64(itemdatastruc, 0x90);
@@ -766,11 +761,11 @@ public class PlayerScan
                     {
                         unitIdOther = BitConverter.ToUInt32(itemdatastruc, 0x08);
 
-                        long OtherpathAddress = Form1_0.Mem_0.ReadInt64Raw((IntPtr)(PlayerPointer + 0x38));
-                        long OtherxPos = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x02));
-                        long OtheryPos = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x06));
-                        long OtherxPosOffset = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x00));
-                        long OtheryPosOffset = Form1_0.Mem_0.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x04));
+                        long OtherpathAddress = gameData.mem.ReadInt64Raw((IntPtr)(PlayerPointer + 0x38));
+                        long OtherxPos = gameData.mem.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x02));
+                        long OtheryPos = gameData.mem.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x06));
+                        long OtherxPosOffset = gameData.mem.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x00));
+                        long OtheryPosOffset = gameData.mem.ReadUInt16Raw((IntPtr)(OtherpathAddress + 0x04));
                         long OtherxPosOffsetPercent = (OtherxPosOffset / 65536); //get percentage
                         long OtheryPosOffsetPercent = (OtheryPosOffset / 65536); //get percentage
                         xPosFinalOtherP = (ushort)(OtherxPos + OtherxPosOffsetPercent);
@@ -778,7 +773,7 @@ public class PlayerScan
 
                         long pUnitDataPtr = BitConverter.ToInt64(itemdatastruc, 0x10);
                         byte[] pUnitData = new byte[144];
-                        Form1_0.Mem_0.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
+                        gameData.mem.ReadRawMemory(pUnitDataPtr, ref pUnitData, 144);
 
                         string name = "";
                         for (int i2 = 0; i2 < 16; i2++)
@@ -795,7 +790,7 @@ public class PlayerScan
                         pNameOther = name;
 
                         IsCorpse = false;
-                        if (Form1_0.Mem_0.ReadByteRaw((IntPtr)(PlayerPointer + 0x1A6)) == 1)
+                        if (gameData.mem.ReadByteRaw((IntPtr)(PlayerPointer + 0x1A6)) == 1)
                         {
                             IsCorpse = true;
                         }
@@ -813,7 +808,7 @@ public class PlayerScan
                             }
                             if (ThisPlayerName != "")
                             {
-                                //Form1_0.method_1("TEST player corpse scan name: " + ThisPlayerName + "|" + IsCorpse, Color.OrangeRed);
+                                //gameData.method_1("TEST player corpse scan name: " + ThisPlayerName + "|" + IsCorpse, Color.OrangeRed);
 
                                 if (pNameOther == ThisPlayerName)
                                 {
@@ -830,7 +825,7 @@ public class PlayerScan
         }
         catch
         {
-            Form1_0.method_1("Couldn't 'ScanForOthersPlayers()'", Color.OrangeRed);
+            gameData.method_1("Couldn't 'ScanForOthersPlayers()'", Color.OrangeRed);
         }
 
         return false;
@@ -847,14 +842,14 @@ public class PlayerScan
 
         //item_maxmana_percent	ln34	item_maxhp_percent	ln34	skill_staminapercent
 
-        if (Form1_0.ItemsStruc_0.statCount > 0)
+        if (gameData.itemsStruc.statCount > 0)
         {
-            for (int i = 0; i < Form1_0.ItemsStruc_0.statCount; i++)
+            for (int i = 0; i < gameData.itemsStruc.statCount; i++)
             {
                 int offset = i * 8;
-                //short statLayer = BitConverter.ToInt16(Form1_0.ItemsStruc_0.statBuffer, offset);
-                ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBuffer, offset + 0x2);
-                int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBuffer, offset + 0x4);
+                //short statLayer = BitConverter.ToInt16(gameData.itemsStruc.statBuffer, offset);
+                ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBuffer, offset + 0x2);
+                int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBuffer, offset + 0x4);
 
                 if (statEnum == (ushort)Enums.Attribute.Vitality)
                 {
@@ -885,14 +880,14 @@ public class PlayerScan
             }
         }
 
-        if (Form1_0.ItemsStruc_0.statExCount > 0)
+        if (gameData.itemsStruc.statExCount > 0)
         {
-            for (int i = 0; i < Form1_0.ItemsStruc_0.statExCount; i++)
+            for (int i = 0; i < gameData.itemsStruc.statExCount; i++)
             {
                 int offset = i * 8;
-                //short statLayer = BitConverter.ToInt16(Form1_0.ItemsStruc_0.statBufferEx, offset);
-                ushort statEnum = BitConverter.ToUInt16(Form1_0.ItemsStruc_0.statBufferEx, offset + 0x2);
-                int statValue = BitConverter.ToInt32(Form1_0.ItemsStruc_0.statBufferEx, offset + 0x4);
+                //short statLayer = BitConverter.ToInt16(gameData.itemsStruc.statBufferEx, offset);
+                ushort statEnum = BitConverter.ToUInt16(gameData.itemsStruc.statBufferEx, offset + 0x2);
+                int statValue = BitConverter.ToInt32(gameData.itemsStruc.statBufferEx, offset + 0x4);
 
                 if (statEnum == (ushort)Enums.Attribute.Vitality)
                 {
@@ -949,7 +944,7 @@ public class PlayerScan
         for (int i = 0; i < 6; i++)
         {
             int offset = i * 4;
-            byte stateByte = Form1_0.Mem_0.ReadByteRaw((IntPtr)(statsListExPtr + 0xAD0 + (uint)offset));
+            byte stateByte = gameData.mem.ReadByteRaw((IntPtr)(statsListExPtr + 0xAD0 + (uint)offset));
 
             offset = (32 * i) - 1;
             states.AddRange(CalculateStates(stateByte, (uint)offset));

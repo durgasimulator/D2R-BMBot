@@ -13,7 +13,7 @@ using System.Net.NetworkInformation;
 
 public class UIScan
 {
-    Form1 Form1_0;
+    GameData gameData = GameData.Instance;
 
     public bool invMenu = false;
     public bool charMenu = false;
@@ -39,11 +39,6 @@ public class UIScan
 
     public int MaxTryUIOpen = 5;
     public int MaxWaitingDelayForMenuInteractions = 10;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
 
     public void CloseAllUIMenu()
     {
@@ -81,8 +76,8 @@ public class UIScan
         bool ThisMenuClose = !GetMenuActive(UIName);
         while (!ThisMenuClose && TryClic < MaxTryUIOpen)
         {
-            Form1_0.KeyMouse_0.PressKey(ThisKey);
-            Form1_0.WaitDelay(5);
+            gameData.keyMouse.PressKey(ThisKey);
+            gameData.WaitDelay(5);
             ThisMenuClose = !GetMenuActive(UIName);
             //Application.DoEvents();
             TryClic++;
@@ -97,8 +92,8 @@ public class UIScan
 
         while (!ThisMenuOpen && TryClic < MaxTryUIOpen)
         {
-            Form1_0.KeyMouse_0.PressKey(ThisKey);
-            Form1_0.WaitDelay(5);
+            gameData.keyMouse.PressKey(ThisKey);
+            gameData.WaitDelay(5);
             ThisMenuOpen = GetMenuActive(UIName);
             //Application.DoEvents();
             TryClic++;
@@ -115,8 +110,8 @@ public class UIScan
 
         while (!ThisMenuClose && TryClic < MaxTryUIOpen)
         {
-            Form1_0.KeyMouse_0.PressKey(ThisKey);
-            Form1_0.WaitDelay(5);
+            gameData.keyMouse.PressKey(ThisKey);
+            gameData.WaitDelay(5);
             ThisMenuClose = !GetMenuActive(UIName);
             //Application.DoEvents();
             TryClic++;
@@ -134,7 +129,7 @@ public class UIScan
             int WaitTime = 0;
             while (true)
             {
-                Form1_0.WaitDelay(1);
+                gameData.WaitDelay(1);
                 IsOpen = GetMenuActive(UIName);
                 if (WaitTime > MaxWaitingDelayForMenuInteractions || IsOpen)
                 {
@@ -157,7 +152,7 @@ public class UIScan
             int WaitTime = 0;
             while (true)
             {
-                Form1_0.WaitDelay(1);
+                gameData.WaitDelay(1);
                 IsClose = !GetMenuActive(UIName);
                 if (WaitTime > MaxWaitingDelayForMenuInteractions || IsClose)
                 {
@@ -275,9 +270,9 @@ public class UIScan
     public void readUI()
     {
         //; UI offset 0x21F89AA
-        long baseAddr = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["uiOffset"] - 0xa;
+        long baseAddr = (long)gameData.BaseAddress + (long)gameData.offsets["uiOffset"] - 0xa;
         byte[] buffer = new byte[32];
-        Form1_0.Mem_0.ReadRawMemory(baseAddr, ref buffer, 32);
+        gameData.mem.ReadRawMemory(baseAddr, ref buffer, 32);
 
         invMenu = ByteToBool(buffer[0x01]);
         charMenu = ByteToBool(buffer[0x02]);
@@ -298,21 +293,21 @@ public class UIScan
         mercMenu = ByteToBool(buffer[0x1E]);
 
         //deadMenu = ByteToBool(buffer[0x12]);
-        //loading = ByteToBool(Form1_0.Mem_0.ReadByteRaw((IntPtr) baseAddr + 0x16c));
+        //loading = ByteToBool(gameData.mem.ReadByteRaw((IntPtr) baseAddr + 0x16c));
         //loading = ByteToBool(buffer[0x16C]); 16C
 
-        //string SavePathh = Form1_0.ThisEndPath + "DumpUIStruc";
+        //string SavePathh = gameData.ThisEndPath + "DumpUIStruc";
         //File.Create(SavePathh).Dispose();
         //File.WriteAllBytes(SavePathh, buffer);
 
-        //Form1_0.method_1("UI Open: 0x" + buffer[0x01].ToString("X"));
+        //gameData.method_1("UI Open: 0x" + buffer[0x01].ToString("X"));
         //if (!SetUI)
         //{
         /*    byte[] RunBuf = new byte[1] { 0x00 };
-            Form1_0.Mem_0.WriteRawMemory((IntPtr)(baseAddr + 0x0b), RunBuf, 1);
+            gameData.mem.WriteRawMemory((IntPtr)(baseAddr + 0x0b), RunBuf, 1);
 
             RunBuf = new byte[1] { 0x01 };
-            Form1_0.Mem_0.WriteRawMemory((IntPtr)(baseAddr + 0x18), RunBuf, 1);*/
+            gameData.mem.WriteRawMemory((IntPtr)(baseAddr + 0x18), RunBuf, 1);*/
         //SetUI = true;
         //}
 
@@ -320,10 +315,10 @@ public class UIScan
         rightMenu = (skillMenu || invMenu);
         fullMenu = (loading || quitMenu || npcInteract);
 
-        //Form1_0.method_1("menufull: " + fullMenu + ", left: " + leftMenu + ", right: " + rightMenu);
-        Form1_0.Grid_SetInfos("Left Open", leftMenu.ToString());
-        Form1_0.Grid_SetInfos("Right Open", rightMenu.ToString());
-        Form1_0.Grid_SetInfos("Full Open", fullMenu.ToString());
+        //gameData.method_1("menufull: " + fullMenu + ", left: " + leftMenu + ", right: " + rightMenu);
+        gameData.form.Grid_SetInfos("Left Open", leftMenu.ToString());
+        gameData.form.Grid_SetInfos("Right Open", rightMenu.ToString());
+        gameData.form.Grid_SetInfos("Full Open", fullMenu.ToString());
 
 
         /*0x01	Inventory open

@@ -15,13 +15,7 @@ using Microsoft.CSharp.RuntimeBinder;
 
 public class ScriptsLoader
 {
-    Form1 Form1_0;
-
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
+    GameData gameData = GameData.Instance;
     public void TestMethod()
     {
         Console.WriteLine("Executing MyMethod from script #2...");
@@ -108,7 +102,7 @@ public class ScriptsLoader
                     return;
                 }
 
-                //Form1_0.AllClassInstances.Add(myClassInstance);
+                //gameData.AllClassInstances.Add(myClassInstance);
 
                 // Load Andariel dynamically
                 //Andariel newAndarielInstance = LoadAndarielDynamically();
@@ -116,37 +110,37 @@ public class ScriptsLoader
                 //Assembly assembly = Assembly.LoadFrom("DynamicallyDefinedAssembly.dll");
 
                 // Replace the existing instance with the new one
-                //Form1_0.Andariel_0 = newAndarielInstance;
+                //gameData.andariel = newAndarielInstance;
                 Andariel andarielInstance = Activator.CreateInstance(myClassType) as Andariel;
                 //myClassInstance.RunScript();
-                //Form1_0.Andariel_0 = andarielInstance;
-                //Form1_0.Andariel_0 = new Andariel();
-                //Form1_0.Andariel_0.SetForm1(Form1_0);
-                //Form1_0.Andariel_0.RunScript();
+                //gameData.andariel = andarielInstance;
+                //gameData.andariel = new Andariel();
+                //gameData.andariel.SetForm1(gameData);
+                //gameData.andariel.RunScript();
 
 
                 // Use MethodInfo to get the method information
                 //MethodInfo methodInfo = myClassType.GetMethod("SetForm1");
-                //if (methodInfo != null) methodInfo.Invoke(myClassInstance, new object[] { Form1_0 });
+                //if (methodInfo != null) methodInfo.Invoke(myClassInstance, new object[] { gameData });
 
-                // Assign myClassInstance to the property Form1_0.Andariel_0
-                /*PropertyInfo propertyInfo = typeof(Form1).GetProperty("Andariel_0");
+                // Assign myClassInstance to the property gameData.andariel
+                /*PropertyInfo propertyInfo = typeof(Form1).GetProperty("andariel");
                 if (propertyInfo != null)
                 {
-                    propertyInfo.SetValue(Form1_0, myClassInstance);
+                    propertyInfo.SetValue(gameData, myClassInstance);
                 }
                 else
                 {
-                    Console.WriteLine("Property 'Andariel_0' not found.");
+                    Console.WriteLine("Property 'andariel' not found.");
                 }*/
 
-                //Form1_0.Andariel_0 = new ((Andariel) myClassInstance);
+                //gameData.andariel = new ((Andariel) myClassInstance);
 
-                Form1_0.method_1("Loaded file: " + Path.GetFileName(ThisScriptPath), Color.DarkGreen);
+                gameData.method_1("Loaded file: " + Path.GetFileName(ThisScriptPath), Color.DarkGreen);
             }
             catch (Exception ex)
             {
-                Form1_0.method_1($"Exception occurred: {ex}", Color.Red);
+                gameData.method_1($"Exception occurred: {ex}", Color.Red);
             }
         //}
 
@@ -166,21 +160,21 @@ public class ScriptsLoader
                 Type myClassType = assembly.GetType(className2);
                 dynamic myClassInstance = Activator.CreateInstance(myClassType);
 
-                Form1_0.AllClassInstances.Add(myClassInstance);
+                gameData.AllClassInstances.Add(myClassInstance);
 
                 // Use MethodInfo to get the method information
                 MethodInfo methodInfo = myClassType.GetMethod("SetForm1");
-                if (methodInfo != null) methodInfo.Invoke(myClassInstance, new object[] { Form1_0 });
+                if (methodInfo != null) methodInfo.Invoke(myClassInstance, new object[] { gameData });
 
-                // Assign myClassInstance to the property Form1_0.Andariel_0
+                // Assign myClassInstance to the property gameData.andariel
 
-                //Form1_0.Andariel_0 = new ((Andariel) myClassInstance);
+                //gameData.andariel = new ((Andariel) myClassInstance);
 
-                Form1_0.method_1("Loaded file: " + Path.GetFileName(ThisScriptPath), Color.DarkGreen);
+                gameData.method_1("Loaded file: " + Path.GetFileName(ThisScriptPath), Color.DarkGreen);
             }
             catch (Exception ex)
             {
-                Form1_0.method_1($"Exception occurred: {ex}", Color.Red);
+                gameData.method_1($"Exception occurred: {ex}", Color.Red);
             }
         }
 
@@ -191,7 +185,7 @@ public class ScriptsLoader
     Andariel LoadAndarielDynamically()
     {
         // Load the assembly containing Andariel dynamically
-        Assembly assembly = Form1_0.AllClassInstances[0] as Assembly;
+        Assembly assembly = gameData.AllClassInstances[0] as Assembly;
 
         // Get the type of Andariel
         Type andarielType = assembly.GetType("Andariel"); // Replace "Namespace" with the namespace of Andariel
@@ -205,7 +199,7 @@ public class ScriptsLoader
     public void ExecuteScript(string scriptCode, string className, string methodName)
     {
         // Create an instance of the class
-        object myClassInstance = Form1_0.AllClassInstances[0];
+        object myClassInstance = gameData.AllClassInstances[0];
 
         // Get the type of the retrieved instance
         Type myClassType = myClassInstance.GetType();
@@ -254,7 +248,7 @@ public class ScriptsLoader
             {
                 foreach (CompilerError error in compilerResults.Errors)
                 {
-                    Form1_0.method_1($"Error ({error.ErrorNumber}): {error.ErrorText}", Color.Red);
+                    gameData.method_1($"Error ({error.ErrorNumber}): {error.ErrorText}", Color.Red);
                 }
                 throw new InvalidOperationException("Script compilation failed.");
             }

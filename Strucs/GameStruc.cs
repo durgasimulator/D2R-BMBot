@@ -18,8 +18,8 @@ using static Enums;
 
 public class GameStruc
 {
-    Form1 Form1_0;
 
+    GameData gameData = GameData.Instance;
     public string GameName = "";
     public string GameDifficulty = "";
     public string GameOwnerName = "";
@@ -48,18 +48,13 @@ public class GameStruc
         [FieldOffset(1)] public byte High;
     }
 
-    public void SetForm1(Form1 form1_1)
-    {
-        Form1_0 = form1_1;
-    }
-
     public void extract()
     {
-        long gameNameOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["AllGamesOffset"];
+        long gameNameOffset = (long)gameData.BaseAddress + (long)gameData.offsets["AllGamesOffset"];
         byte[] unitTableBuffer = new byte[0xfff];
-        Form1_0.Mem_0.ReadRawMemory(gameNameOffset, ref unitTableBuffer, unitTableBuffer.Length);
+        gameData.mem.ReadRawMemory(gameNameOffset, ref unitTableBuffer, unitTableBuffer.Length);
 
-        string SavePathh = Form1_0.ThisEndPath + "DumpGameStruc";
+        string SavePathh = gameData.form.ThisEndPath + "DumpGameStruc";
         File.Create(SavePathh).Dispose();
         File.WriteAllBytes(SavePathh, unitTableBuffer);
 
@@ -68,61 +63,61 @@ public class GameStruc
 
     public bool IsPlayerConnectedToBnet()
     {
-        long baseAddr = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["SelectedChar"] - 16;
-        return Form1_0.Mem_0.ReadByteRaw((IntPtr)baseAddr) != 0x00;
+        long baseAddr = (long)gameData.BaseAddress + (long)gameData.offsets["SelectedChar"] - 16;
+        return gameData.mem.ReadByteRaw((IntPtr)baseAddr) != 0x00;
     }
 
     public void ClicCreateNewChar()
     {
-        Form1_0.method_1("Connecting to BNet/Creating new Char", Color.OrangeRed);
-        Form1_0.method_1("-> If this happens anytime after a game ends, report as bug!", Color.OrangeRed);
+        gameData.method_1("Connecting to BNet/Creating new Char", Color.OrangeRed);
+        gameData.method_1("-> If this happens anytime after a game ends, report as bug!", Color.OrangeRed);
 
-        Form1_0.KeyMouse_0.MouseClicc(1620, 50); //clic online button
-        Form1_0.WaitDelay(200);
+        gameData.keyMouse.MouseClicc(1620, 50); //clic online button
+        gameData.WaitDelay(200);
 
-        Form1_0.KeyMouse_0.MouseClicc(1700, 935); //clic create new char
-        Form1_0.WaitDelay(200);
-        Form1_0.KeyMouse_0.PressKey(Keys.Escape); //leave create new char menu
-        Form1_0.WaitDelay(200);
+        gameData.keyMouse.MouseClicc(1700, 935); //clic create new char
+        gameData.WaitDelay(200);
+        gameData.keyMouse.PressKey(Keys.Escape); //leave create new char menu
+        gameData.WaitDelay(200);
     }
 
     public void CreateNewGame(int ThisGameNumber)
     {
-        if (Form1_0.TriedToCreateNewGameCount > 0)
+        if (gameData.TriedToCreateNewGameCount > 0)
         {
-            Form1_0.KeyMouse_0.MouseClicc(960, 580); //clic 'ok' if game already exist
+            gameData.keyMouse.MouseClicc(960, 580); //clic 'ok' if game already exist
             Thread.Sleep(300);
         }
 
-        Form1_0.SetGameStatus("CREATING GAME");
-        Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-        Form1_0.KeyMouse_0.MouseClicc(1190, 990); //clic 'salon' if not in server
-        Form1_0.KeyMouse_0.MouseClicc(1275, 65);  //clic 'create game' if not in game create area
+        gameData.SetGameStatus("CREATING GAME");
+        gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+        gameData.keyMouse.MouseClicc(1190, 990); //clic 'salon' if not in server
+        gameData.keyMouse.MouseClicc(1275, 65);  //clic 'create game' if not in game create area
 
-        Form1_0.KeyMouse_0.MouseClicc(1550, 170);  //clic 'gamename'
+        gameData.keyMouse.MouseClicc(1550, 170);  //clic 'gamename'
                                                    //type game name
         for (int i = 0; i < 16; i++)
         {
-            Form1_0.KeyMouse_0.PressKey(Keys.Back);
+            gameData.keyMouse.PressKey(Keys.Back);
             Thread.Sleep(3);
         }
         Thread.Sleep(3);
         string GameName = CharConfig.GameName + ThisGameNumber.ToString("000");
-        Form1_0.method_1("Creating Game: " + GameName, Color.Black);
+        gameData.method_1("Creating Game: " + GameName, Color.Black);
         for (int i = 0; i < GameName.Length; i++)
         {
             var helper = new Helper { Value = VkKeyScan(GameName[i]) };
             byte virtualKeyCode = helper.Low;
-            Form1_0.KeyMouse_0.PressKey2((Keys)virtualKeyCode);
+            gameData.keyMouse.PressKey2((Keys)virtualKeyCode);
             Thread.Sleep(5);
         }
 
 
-        Form1_0.KeyMouse_0.MouseClicc(1550, 240);  //clic 'gamepass'
+        gameData.keyMouse.MouseClicc(1550, 240);  //clic 'gamepass'
                                                    //type game pass
         for (int i = 0; i < 16; i++)
         {
-            Form1_0.KeyMouse_0.PressKey(Keys.Back);
+            gameData.keyMouse.PressKey(Keys.Back);
             Thread.Sleep(3);
         }
         Thread.Sleep(3);
@@ -130,20 +125,20 @@ public class GameStruc
         {
             var helper = new Helper { Value = VkKeyScan(CharConfig.GamePass[i]) };
             byte virtualKeyCode = helper.Low;
-            Form1_0.KeyMouse_0.PressKey2((Keys)virtualKeyCode);
+            gameData.keyMouse.PressKey2((Keys)virtualKeyCode);
             Thread.Sleep(5);
         }
 
         //select difficulty
-        Form1_0.KeyMouse_0.MouseClicc(1360 + (100 * CharConfig.GameDifficulty), 375);
+        gameData.keyMouse.MouseClicc(1360 + (100 * CharConfig.GameDifficulty), 375);
 
-        Form1_0.KeyMouse_0.MouseClicc(1470, 670);  //clic 'create game'
+        gameData.keyMouse.MouseClicc(1470, 670);  //clic 'create game'
 
-        Form1_0.TriedToCreateNewGameCount++;
+        gameData.TriedToCreateNewGameCount++;
 
-        Form1_0.SetGameStatus("LOADING GAME");
+        gameData.SetGameStatus("LOADING GAME");
 
-        Form1_0.WaitDelay(CharConfig.CreateGameWaitDelay);
+        gameData.WaitDelay(CharConfig.CreateGameWaitDelay);
 
         //###############
         /*GetAllGamesNames();
@@ -174,19 +169,19 @@ public class GameStruc
         AllGamesNames = new List<string>();
         AllGamesPlayersCount = new List<int>();
         ClicTopRow();
-        Form1_0.KeyMouse_0.MouseClicc(1190, 990); //clic 'salon' if not in server
-        Form1_0.KeyMouse_0.MouseClicc(1415, 65);  //clic 'join game' if not in game list area
+        gameData.keyMouse.MouseClicc(1190, 990); //clic 'salon' if not in server
+        gameData.keyMouse.MouseClicc(1415, 65);  //clic 'join game' if not in game list area
 
         //#####
         if (!TypedSearchGames)
         {
-            Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-            Form1_0.KeyMouse_0.ReleaseKey(CharConfig.KeyForceMovement);
-            Form1_0.KeyMouse_0.MouseClicc(1450, 210); //clic search bar
+            gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+            gameData.keyMouse.ReleaseKey(CharConfig.KeyForceMovement);
+            gameData.keyMouse.MouseClicc(1450, 210); //clic search bar
                                                       //type 'search' type games
             for (int i = 0; i < 16; i++)
             {
-                Form1_0.KeyMouse_0.PressKey(Keys.Back);
+                gameData.keyMouse.PressKey(Keys.Back);
                 Thread.Sleep(3);
             }
             Thread.Sleep(3);
@@ -197,23 +192,23 @@ public class GameStruc
             {
                 var helper = new Helper { Value = VkKeyScan(GameName[i]) };
                 byte virtualKeyCode = helper.Low;
-                Form1_0.KeyMouse_0.PressKey2((Keys)virtualKeyCode);
+                gameData.keyMouse.PressKey2((Keys)virtualKeyCode);
                 Thread.Sleep(3);
             }
             TypedSearchGames = true;
         }
         //#####
 
-        Form1_0.KeyMouse_0.MouseClicc(1720, 210); //clic refresh
-        Form1_0.WaitDelay(60);
+        gameData.keyMouse.MouseClicc(1720, 210); //clic refresh
+        gameData.WaitDelay(60);
 
-        long gameNameOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["AllGamesOffset"];
+        long gameNameOffset = (long)gameData.BaseAddress + (long)gameData.offsets["AllGamesOffset"];
 
         for (int i = 0; i < 40; i++)
         {
             long NameOffet = gameNameOffset + 0x08 + (i * 0x128);
             long CountOffet = gameNameOffset + 0xf8 + (i * 0x128);
-            string TestName = Form1_0.Mem_0.ReadMemString(NameOffet);
+            string TestName = gameData.mem.ReadMemString(NameOffet);
 
             if (TestName != "")
             {
@@ -222,9 +217,9 @@ public class GameStruc
                     break;
                 }
                 AllGamesNames.Add(TestName);
-                AllGamesPlayersCount.Add((int)Form1_0.Mem_0.ReadByteRaw((IntPtr)CountOffet));
+                AllGamesPlayersCount.Add((int)gameData.mem.ReadByteRaw((IntPtr)CountOffet));
 
-                //Form1_0.method_1("Game: " + TestName + " - Players: " + ((int)Form1_0.Mem_0.ReadByteRaw((IntPtr)CountOffet)), Color.Red);
+                //gameData.method_1("Game: " + TestName + " - Players: " + ((int)gameData.mem.ReadByteRaw((IntPtr)CountOffet)), Color.Red);
             }
             else
             {
@@ -269,36 +264,36 @@ public class GameStruc
 
     public void GetSelectedGameInfo()
     {
-        if ((int)Form1_0.offsets["GameSelectedOffset"] <= 64)
+        if ((int)gameData.offsets["GameSelectedOffset"] <= 64)
         {
-            Form1_0.PatternsScan_0.PatternScan();
+            gameData.patternsScan.PatternScan();
         }
 
-        Form1_0.method_1("------------------------------------------", Color.Black);
+        gameData.method_1("------------------------------------------", Color.Black);
 
         //0x53F or 0x540 size
-        long gameOffset = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["GameSelectedOffset"];
+        long gameOffset = (long)gameData.BaseAddress + (long)gameData.offsets["GameSelectedOffset"];
         long PlayersNamesOffset = gameOffset + 0x138; //then 0x78 offset each others names
         AllPlayersNames = new List<string>();
 
-        SelectedGamePlayerCount = (int)Form1_0.Mem_0.ReadByteRaw((IntPtr)(gameOffset + 0x108));
-        SelectedGameTime = Form1_0.Mem_0.ReadInt32Raw((IntPtr)(gameOffset + 0xf0));
-        Form1_0.method_1("Player Count: " + SelectedGamePlayerCount, Color.OrangeRed);
+        SelectedGamePlayerCount = (int)gameData.mem.ReadByteRaw((IntPtr)(gameOffset + 0x108));
+        SelectedGameTime = gameData.mem.ReadInt32Raw((IntPtr)(gameOffset + 0xf0));
+        gameData.method_1("Player Count: " + SelectedGamePlayerCount, Color.OrangeRed);
         for (int i = 0; i < SelectedGamePlayerCount; i++)
         {
             long NameOffet = PlayersNamesOffset + (i * 0x78);
-            string TestName = Form1_0.Mem_0.ReadMemString(NameOffet);
+            string TestName = gameData.mem.ReadMemString(NameOffet);
 
             if (TestName != "")
             {
                 AllPlayersNames.Add(TestName);
-                Form1_0.method_1("Player Name: " + TestName, Color.OrangeRed);
+                gameData.method_1("Player Name: " + TestName, Color.OrangeRed);
             }
         }
 
         SelectedGameName = "";
         byte[] buffer = new byte[16];
-        Form1_0.Mem_0.ReadRawMemory(gameOffset + 0x08, ref buffer, 16);
+        gameData.mem.ReadRawMemory(gameOffset + 0x08, ref buffer, 16);
 
         for (int i2 = 0; i2 < 16; i2++)
         {
@@ -329,7 +324,7 @@ public class GameStruc
             }
         }
 
-        //Form1_0.method_1("Selecting game: " + ThisIndex + ", ENTER: " + EnterGame);
+        //gameData.method_1("Selecting game: " + ThisIndex + ", ENTER: " + EnterGame);
 
 
         if (ThisIndex >= 0 && ThisIndex <= 13)
@@ -370,32 +365,32 @@ public class GameStruc
             }
         }*/
 
-        Form1_0.WaitDelay(40);
+        gameData.WaitDelay(40);
         GetSelectedGameInfo();
     }
 
     public void ClicGameIndex(int ThisIndex)
     {
         //1345, 260 (+25px each games)
-        Form1_0.KeyMouse_0.MouseClicc(1345, (int)(260 + (ThisIndex * 27.3)));
+        gameData.keyMouse.MouseClicc(1345, (int)(260 + (ThisIndex * 27.3)));
     }
 
     public void ClicTopRow()
     {
-        Form1_0.KeyMouse_0.MouseClicc(1510, 270);
-        Form1_0.WaitDelay(10);
+        gameData.keyMouse.MouseClicc(1510, 270);
+        gameData.WaitDelay(10);
     }
 
     public void ClicMidRow()
     {
-        Form1_0.KeyMouse_0.MouseClicc(1510, 465);
-        Form1_0.WaitDelay(10);
+        gameData.keyMouse.MouseClicc(1510, 465);
+        gameData.WaitDelay(10);
     }
 
     public void ClicBottomRow()
     {
-        Form1_0.KeyMouse_0.MouseClicc(1510, 605);
-        Form1_0.WaitDelay(10);
+        gameData.keyMouse.MouseClicc(1510, 605);
+        gameData.WaitDelay(10);
     }
 
     public int ChickenTry = 0;
@@ -408,15 +403,15 @@ public class GameStruc
             {
                 if (!AlreadyChickening)
                 {
-                    TimeSpan Checkkt = (DateTime.Now - Form1_0.GameStartedTime);
+                    TimeSpan Checkkt = (DateTime.Now - gameData.GameStartedTime);
 
-                    Form1_0.method_GameTimeLabel(Checkkt.Minutes.ToString("00") + ":" + Checkkt.Seconds.ToString("00") + ":" + Checkkt.Milliseconds.ToString("0"));
+                    gameData.form.method_GameTimeLabel(Checkkt.Minutes.ToString("00") + ":" + Checkkt.Seconds.ToString("00") + ":" + Checkkt.Milliseconds.ToString("0"));
                     if (Checkkt.TotalMinutes > CharConfig.MaxGameTime)
                     {
-                        Form1_0.method_1("Leaving reason: Chicken time", Color.Red);
-                        Form1_0.LeaveGame(false);
+                        gameData.method_1("Leaving reason: Chicken time", Color.Red);
+                        gameData.LeaveGame(false);
                         AlreadyChickening = true;
-                        Form1_0.TotalChickenByTimeCount++;
+                        gameData.TotalChickenByTimeCount++;
                     }
                 }
                 else
@@ -444,18 +439,18 @@ public class GameStruc
 
     public void SetNewGame()
     {
-        //Form1_0.method_1("------------------------------------------", Color.DarkBlue);
-        Form1_0.method_1("New game started: " + GetTimeNow(), Color.DarkBlue);
+        //gameData.method_1("------------------------------------------", Color.DarkBlue);
+        gameData.method_1("New game started: " + GetTimeNow(), Color.DarkBlue);
 
-        Form1_0.GameStartedTime = DateTime.Now;
+        gameData.GameStartedTime = DateTime.Now;
 
-        long gameNameOffset = (long)Form1_0.offsets["gameDataOffset"] + 0x40;
-        long gameNameAddress = (long)Form1_0.BaseAddress + gameNameOffset;
-        GameName = Form1_0.Mem_0.ReadMemString(gameNameAddress);
+        long gameNameOffset = (long)gameData.offsets["gameDataOffset"] + 0x40;
+        long gameNameAddress = (long)gameData.BaseAddress + gameNameOffset;
+        GameName = gameData.mem.ReadMemString(gameNameAddress);
 
         method_GameLabel(GameName);
 
-        Form1_0.method_1("Entered game: " + GameName, Color.DarkBlue);
+        gameData.method_1("Entered game: " + GameName, Color.DarkBlue);
 
         AllGamesTriedNames = new List<string>();
     }
@@ -464,38 +459,38 @@ public class GameStruc
     {
         //try
         //{
-        /*if (Form1_0.labelGameName.InvokeRequired)
+        /*if (gameData.labelGameName.InvokeRequired)
         {
             // Call this same method but append THREAD2 to the text
             Action safeWrite = delegate { method_GameLabel(string_3); };
-            Form1_0.labelGameName.Invoke(safeWrite);
+            gameData.labelGameName.Invoke(safeWrite);
         }
         else
         {
-            Form1_0.labelGameName.Text = string_3;
+            gameData.labelGameName.Text = string_3;
             Application.DoEvents();
         }*/
-        Form1_0.labelGameName.Text = string_3;
+        gameData.form.labelGameName.Text = string_3;
         //}
         //catch { }
     }
 
     public void LogGameTime()
     {
-        TimeSpan ThisTimee = DateTime.Now - Form1_0.GameStartedTime;
-        Form1_0.method_1("Game Time: " + ThisTimee.Minutes.ToString("00") + ":" + ThisTimee.Seconds.ToString("00") + ":" + ThisTimee.Milliseconds.ToString("0"), Color.DarkBlue);
+        TimeSpan ThisTimee = DateTime.Now - gameData.GameStartedTime;
+        gameData.method_1("Game Time: " + ThisTimee.Minutes.ToString("00") + ":" + ThisTimee.Seconds.ToString("00") + ":" + ThisTimee.Milliseconds.ToString("0"), Color.DarkBlue);
     }
 
     public Position World2Screen(long playerX, long playerY, long targetx, long targety)
     {
         //; scale = 27
-        //double scale = Form1_0.centerModeScale * Form1_0.renderScale * 100;
+        //double scale = gameData.centerModeScale * gameData.renderScale * 100;
         double scale = 40.8;
         long xdiff = targetx - playerX;
         long ydiff = targety - playerY;
 
-        double ThisScales = (double)Form1_0.D2Widht / 1920.0;
-        //double ThisScalesInv = 1920.0 / (double)Form1_0.D2Widht;
+        double ThisScales = (double)gameData.D2Width / 1920.0;
+        //double ThisScalesInv = 1920.0 / (double)gameData.D2Width;
         //if (ThisScales != 1) scale = scale / (ThisScales * 2);
         if (ThisScales != 1) scale = scale * ThisScales;
 
@@ -503,9 +498,9 @@ public class GameStruc
         double x = xdiff * Math.Cos(angle) - ydiff * Math.Sin(angle);
         double y = xdiff * Math.Sin(angle) + ydiff * Math.Cos(angle);
 
-        int xS = (int)(Form1_0.CenterX + (x * scale));
-        //int yS = (int) (Form1_0.CenterY + (y * scale * 0.5) - 10);
-        int yS = (int)(Form1_0.CenterY + ((y * scale * 0.5) - 30));
+        int xS = (int)(gameData.CenterX + (x * scale));
+        //int yS = (int) (gameData.CenterY + (y * scale * 0.5) - 10);
+        int yS = (int)(gameData.CenterY + ((y * scale * 0.5) - 30));
 
         return FixMouseYPosition(new Position { X = xS, Y = yS });
     }
@@ -513,13 +508,13 @@ public class GameStruc
     public Position World2ScreenDisplay(long playerX, long playerY, long targetx, long targety)
     {
         //; scale = 27
-        //double scale = Form1_0.centerModeScale * Form1_0.renderScale * 100;
+        //double scale = gameData.centerModeScale * gameData.renderScale * 100;
         double scale = 40.8;
         long xdiff = targetx - playerX;
         long ydiff = targety - playerY;
 
-        double ThisScales = (double)Form1_0.D2Widht / 1920.0;
-        //double ThisScalesInv = 1920.0 / (double)Form1_0.D2Widht;
+        double ThisScales = (double)gameData.D2Width / 1920.0;
+        //double ThisScalesInv = 1920.0 / (double)gameData.D2Width;
         if (ThisScales != 1) scale = scale / (ThisScales * 2);
         //if (ThisScales != 1) scale = scale * ThisScales;
 
@@ -527,9 +522,9 @@ public class GameStruc
         double x = xdiff * Math.Cos(angle) - ydiff * Math.Sin(angle);
         double y = xdiff * Math.Sin(angle) + ydiff * Math.Cos(angle);
 
-        int xS = (int)(Form1_0.CenterX + (x * scale));
-        //int yS = (int) (Form1_0.CenterY + (y * scale * 0.5) - 10);
-        int yS = (int)(Form1_0.CenterY + ((y * scale * 0.5) - 30));
+        int xS = (int)(gameData.CenterX + (x * scale));
+        //int yS = (int) (gameData.CenterY + (y * scale * 0.5) - 10);
+        int yS = (int)(gameData.CenterY + ((y * scale * 0.5) - 30));
 
         //return FixMouseYPosition(new Position { X = xS, Y = yS });
         return new Position { X = xS, Y = yS };
@@ -540,11 +535,11 @@ public class GameStruc
         Position itemScreenPos2 = new Position { X = itemScreenPos.X, Y = itemScreenPos.Y };
 
         //calculate new Y clicking offset, else it will clic on bottom menu items
-        if (itemScreenPos2.Y >= (Form1_0.D2Height + Form1_0.ScreenYOffset - Form1_0.ScreenYMenu))
+        if (itemScreenPos2.Y >= (gameData.D2Height + gameData.ScreenYOffset - gameData.ScreenYMenu))
         {
-            int DiffX = Form1_0.CenterX - itemScreenPos2.X;
+            int DiffX = gameData.CenterX - itemScreenPos2.X;
             itemScreenPos2.X = (int)(itemScreenPos2.X + (DiffX / 6));
-            itemScreenPos2.Y = (Form1_0.D2Height + Form1_0.ScreenYOffset - Form1_0.ScreenYMenu);
+            itemScreenPos2.Y = (gameData.D2Height + gameData.ScreenYOffset - gameData.ScreenYMenu);
             //Console.WriteLine("corrected pos from: " + Sx + "," + Sy + " to: " + itemScreenPos2.X + "," + itemScreenPos2.Y);
         }
 
@@ -566,9 +561,9 @@ public class GameStruc
     {
         try
         {
-            long baseAddress = (long)Form1_0.BaseAddress + (long)Form1_0.offsets["unitTable"] - 56;
+            long baseAddress = (long)gameData.BaseAddress + (long)gameData.offsets["unitTable"] - 56;
             byte[] unitTableBuffer = new byte[1];
-            Form1_0.Mem_0.ReadRawMemory(baseAddress, ref unitTableBuffer, 1);
+            gameData.mem.ReadRawMemory(baseAddress, ref unitTableBuffer, 1);
 
             //Console.WriteLine(unitTableBuffer[0]);
             if (unitTableBuffer[0] == 0x01)
@@ -587,17 +582,17 @@ public class GameStruc
         bool SetActArea = false;
         for (int i = 0; i < 7; i++)
         {
-            //uint tzArea = Form1_0.Mem_0.ReadUInt32Raw((IntPtr) ((long)Form1_0.BaseAddress + (0x299E2D8 + (i * 4))));
-            uint tzArea = Form1_0.Mem_0.ReadUInt32Raw((IntPtr)((long)Form1_0.BaseAddress + (0x29E9558 + (i * 4))));
+            //uint tzArea = gameData.mem.ReadUInt32Raw((IntPtr) ((long)gameData.BaseAddress + (0x299E2D8 + (i * 4))));
+            uint tzArea = gameData.mem.ReadUInt32Raw((IntPtr)((long)gameData.BaseAddress + (0x29E9558 + (i * 4))));
             if (tzArea != 0)
             {
                 if (!SetActArea)
                 {
-                    CurrentTZAct = Form1_0.AreaScript_0.GetActFromArea((Area)tzArea);
+                    CurrentTZAct = gameData.areaScript.GetActFromArea((Area)tzArea);
                     SetActArea = true;
                 }
 
-                if (Form1_0.AreaScript_0.IsThisTZAreaInSameAct(CurrentTZAct, ((Area)tzArea)))
+                if (gameData.areaScript.IsThisTZAreaInSameAct(CurrentTZAct, ((Area)tzArea)))
                 {
                     Console.WriteLine("Added TZ: " + ((Area)tzArea));
                     areas.Add((Area)tzArea);
