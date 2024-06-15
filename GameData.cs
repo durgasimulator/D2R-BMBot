@@ -5,6 +5,7 @@ using System.Drawing;
 
 public class GameData
 {
+
     private static readonly Lazy<GameData> _instance = new Lazy<GameData>(() => new GameData());
 
     public static GameData Instance => _instance.Value;
